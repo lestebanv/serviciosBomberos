@@ -1,0 +1,59 @@
+/* Estilos para la página principal del plugin */
+.wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#bomberos-titulo h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+#bomberos-menu {
+    margin-bottom: 20px;
+}
+
+.bomberos-tabs {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    border-bottom: 2px solid #0073aa;
+}
+
+.bomberos-tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+    transition: all 0.3s;
+}
+
+.bomberos-tab:hover {
+    background-color: #f1f1f1;
+}
+
+.bomberos-tab.active {
+    background-color: #0073aa;
+    color: #fff;
+}
+
+#bomberos-mensaje {
+    margin-bottom: 20px;
+}
+
+#bomberos-mensaje .pqr-alert {
+    padding: 10px;
+    border-radius: 4px;
+}
+
+#bomberos-mensaje .error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+#bomberos-cuerpo {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}

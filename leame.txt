@@ -1,0 +1,98 @@
+Este plugins fue desarrollado usando un estilo de programacion ModeloVistaControlador por cada modulo que compone el plugins.
+
+Cada Modulo esta compuesto de funcionalidades y por lo tanto es necesario una clase controlador con la siguiente estructura
+
+class ControladorEmpresas extends ClaseControladorBaseBomberos {  
+
+    public function ejecutarFuncionalidad($request) {
+        $modulo=$request['modulo'];
+        $funcionalidad=$request['funcionalidad'];
+        $form_data = $request['form_data'];
+        switch ($funcionalidad){
+            case 'inicial':
+                return $this->listarEmpresas($request);
+            case 'editar':
+                return $this->formularioEdicion($request);
+            case 'actualizar':
+                return $this->actualizarEmpresa($request);
+            case 'eliminar':
+                return $this->eliminarEmpresa($request);
+            default:
+                return $this->armarRespuesta('Funcionalidad '.$funcionalidad. ' no encontrada en el modulo '.$modulo)
+        }; 
+    }
+
+Donde $request= $_POST;
+
+
+
+
+Es asi como toda peticion se realiza por medio de una peticion ajax con la siguiente estructura
+$.ajax({
+            type: 'POST',
+            url: bomberosAjax.ajax_url,
+            data: {
+                action: 'BomberosPlugin',
+                modulo: 'nombremodulo',
+                funcionalidad: 'nombrefuncionalidad',
+                form_data: formData,
+                nonce: bomberosAjax.nonce
+            },
+})
+
+y las respuestas ajax tendran siempre la misma forma
+$respuesta=[
+                'mensaje' => $mensaje,
+                'html' => $html
+            ];
+wp_send_json_success($respuesta);
+
+
+
+
+La estructura de directorios por lo tanto tiene la siguiente forma
+bomberos-servicios/
+├── assets/
+│   ├── css/
+│   │   └── bomberos-styles.css
+│   └── js/
+│       └── bomberos-scripts.js
+├── includes/
+│   ├── activacion.php
+│   ├── desactivacion.php
+│   └── utilidades.php
+├── modulos/
+│   ├── empresas/
+│   │   ├── claseControladorModulo.php
+│   │   └── vistas/
+│   │       ├── listarEmpresas.php
+│   │       ├── editarEmpresa.php
+│   │       ├── agregarEmpresa.php
+│   │       └── js/
+│   │           └── manejadorEventos.js
+│   ├── inspecciones/
+│   │   ├── claseControladorModulo.php
+│   │   └── vistas/
+│   │       ├── listarInspecciones.php
+│   │       ├── editarInspeccion.php
+│   │       ├── agregarInspeccion.php
+│   │       └── js/
+│   │           └── manejadorEventos.js
+│   ├── cursos/
+│   │   ├── claseControladorModulo.php
+│   │   └── vistas/
+│   │       ├── listarCursos.php
+│   │       ├── editarCurso.php
+│   │       ├── agregarCurso.php
+│   │       └── js/
+│   │           └── manejadorEventos.js
+│   ├── inscripciones/
+│   │   ├── claseControladorModulo.php
+│   │   └── vistas/
+│   │       ├── listarInscripciones.php
+│   │       ├── editarInscripcion.php
+│   │       ├── agregarInscripcion.php
+│   │       └── js/
+│   │           └── manejadorEventos.js
+└── bomberosServicios.php
+
