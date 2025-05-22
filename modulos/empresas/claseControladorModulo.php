@@ -2,9 +2,8 @@
 class ControladorEmpresas extends ClaseControladorBaseBomberos {  
 
     public function ejecutarFuncionalidad($request) {
-        $modulo=$request['modulo'];
         $funcionalidad=$request['funcionalidad'];
-        $form_data = $request['form_data'];
+        //$form_data = $request['form_data'];
         switch ($funcionalidad){
             case 'inicial':
                 return $this->listarEmpresas($request);

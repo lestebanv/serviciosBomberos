@@ -21,6 +21,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos {
                 return $this->armarRespuesta('Funcionalidad '.$funcionalidad. ' no encontrada en el modulo '.$modulo)
         }; 
     }
+}
 
 Donde $request= $_POST;
 
