@@ -22,19 +22,27 @@ class ControladorBomberosPublico extends ClaseControladorBaseBomberos {
             $tabla_empresas = $wpdb->prefix . 'empresa';
             parse_str($request['form_data'], $form_data);
             $nit=$form_data['nit'];
-            $this->enviarLog(' Enviar empresa request',$request);
-            $this->enviarLog(' Enviar empresa form_data despues de parse_str',$form_data);
-            ob_start();
-            include plugin_dir_path(__FILE__) . 'vistas/frmRegistrarEmpresa.php';
-            $html = ob_get_clean();
-            return $this->armarRespuesta('formulario completo enviado', $html);
+            $empresa = $wpdb->get_row(
+            $wpdb->prepare("SELECT * FROM $tabla_empresas WHERE nit = %s", $nit), ARRAY_A );
+            if ($empresa) {
+                ob_start();
+                include plugin_dir_path(__FILE__) . 'vistas/frmRegistrarSoloSolicitud.php';
+                $html = ob_get_clean();
+                return $this->armarRespuesta('formulario completo enviado', $html);// Empresa ya registrada
+            } else {
+                ob_start();
+                include plugin_dir_path(__FILE__) . 'vistas/frmRegistrarEmpresaSolicitud.php';
+                $html = ob_get_clean();
+                return $this->armarRespuesta('formulario completo enviado', $html);// Empresa no encontrada
+            }
+            
     }
-    public function registrarSolicitud($request) {
+    public function registrarSolicitudEmpresa($request) {
         global $wpdb;
         parse_str($request['form_data'], $form_data);
-        $this->enviarLog("recibido",$form_data);
         $tabla_empresas = $wpdb->prefix.'empresa';
         $tabla_inspecciones = $wpdb->prefix.'inspeccion';
+        $nit=form_data['nit'];
         $dataEmpresa = array(
             'nit'         => sanitize_text_field($form_data['nit']),
             'razon_social'       => sanitize_text_field($form_data['razon_social']),
