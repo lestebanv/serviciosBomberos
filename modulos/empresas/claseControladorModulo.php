@@ -1,25 +1,34 @@
 <?php
 class ControladorEmpresas extends ClaseControladorBaseBomberos
 {
+    protected $sanitization_rules = [
+        'id' => 'int',
+        'paged' => 'int',
+        'form_data' => [
+            'id_empresa' => 'int',
+            'email' => 'email',
+        ],
+    ];
     public function ejecutarFuncionalidad($request)
     {
+        $sanitized_request = bomberos_sanitize_input($request, $this->sanitization_rules);
         // Asumimos que 'funcionalidad' ya está sanitizado como texto
         $funcionalidad = isset($request['funcionalidad']) ? $request['funcionalidad'] : '';
 
         switch ($funcionalidad) {
             case 'inicial':
             case 'pagina_inicial':
-                return $this->listarEmpresas($request);
+                return $this->listarEmpresas($sanitized_request);
             case 'editar_empresa':
-                return $this->formularioEdicion($request);
+                return $this->formularioEdicion($sanitized_request);
             case 'actualizar_empresa':
-                return $this->actualizarEmpresa($request);
+                return $this->actualizarEmpresa($sanitized_request);
             case 'form_crear':
-                return $this->formularioCreacion($request);
+                return $this->formularioCreacion($sanitized_request);
             case 'registrar_empresa':
-                return $this->insertarEmpresa($request);
+                return $this->insertarEmpresa($sanitized_request);
             case 'eliminar_empresa':
-                return $this->eliminarEmpresa($request);
+                return $this->eliminarEmpresa($sanitized_request);
             default:
                 return $this->armarRespuesta('Funcionalidad ' . esc_html($funcionalidad) . ' no encontrada en el módulo.');
         }
@@ -32,7 +41,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
 
         // Asumimos que 'paged' ya está sanitizado como entero
         $items_per_page = 10;
-        $current_page = isset($request['paged']) ? max(1, (int)$request['paged']) : 1;
+        $current_page = isset($request['paged']) ? max(1, (int) $request['paged']) : 1;
         $offset = ($current_page - 1) * $items_per_page;
 
         $total_registros = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
@@ -53,7 +62,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
         global $wpdb;
         $table_name = $wpdb->prefix . 'empresa';
         // Asumimos que 'id' ya está sanitizado como entero
-        $id = isset($request['id']) ? (int)$request['id'] : 0;
+        $id = isset($request['id']) ? (int) $request['id'] : 0;
 
         if ($id <= 0) {
             return $this->armarRespuesta('ID inválido para edición.');
@@ -78,7 +87,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
         $tabla = $wpdb->prefix . 'empresa';
 
         // Asumimos que 'id' ya está sanitizado como entero
-        $id = isset($request['id']) ? (int)$request['id'] : 0;
+        $id = isset($request['id']) ? (int) $request['id'] : 0;
 
         if ($id <= 0) {
             return $this->armarRespuesta('ID de empresa no válido');
@@ -103,7 +112,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
         $tabla = $wpdb->prefix . 'empresa';
 
         // Validaciones básicas
-        $id = isset($form['id_empresa']) ? (int)$form['id_empresa'] : 0;
+        $id = isset($form['id_empresa']) ? (int) $form['id_empresa'] : 0;
         $datos = [
             'razon_social' => $form['razon_social'] ?? '',
             'direccion' => $form['direccion'] ?? '',

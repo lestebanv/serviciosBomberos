@@ -104,16 +104,7 @@ function bomberos_manejar_ajax()
         error_log("Bomberos Plugin: Controlador no encontrado - {$controlador_file}");
         wp_send_json_error(['mensaje' => 'Controlador no encontrado']);
     }
-    // Sanitize $_POST data with specific rules for form_data y solo para datos que no son texto
-    $sanitized_post = bomberos_sanitize_input($_POST, [
-        'id' => 'int',
-        'paged' => 'int',
-        'form_data' => [
-            'id_empresa' => 'int',
-            'id_inspeccion' => 'int',
-            'email' => 'email',
-        ],
-    ]);
+  
 
     require_once $controlador_file;
     $class_name = 'Controlador' . ucfirst($modulo);
@@ -128,6 +119,6 @@ function bomberos_manejar_ajax()
         wp_send_json_error(['mensaje' => 'Funcionalidad no encontrada']);
     }
 
-    $respuesta = $controlador->ejecutarFuncionalidad($sanitized_post);
+    $respuesta = $controlador->ejecutarFuncionalidad($_POST);
     wp_send_json_success($respuesta);
 }

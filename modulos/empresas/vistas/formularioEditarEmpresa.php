@@ -50,23 +50,7 @@ if (!defined('ABSPATH')) {
                     <input type="email" name="email" id="email" class="regular-text" value="<?php echo esc_attr($empresa['email']); ?>">
                 </td>
             </tr>
-            <!-- Campos adicionales para la solicitud de inspección -->
-            <tr class="form-field form-required">
-                <th scope="row">
-                    <label for="nombre_encargado"><?php esc_html_e('Nombre del Encargado', 'bomberos-servicios'); ?></label>
-                </th>
-                <td>
-                    <input type="text" name="nombre_encargado" id="nombre_encargado" class="regular-text" value="" required aria-required="true">
-                </td>
-            </tr>
-            <tr class="form-field">
-                <th scope="row">
-                    <label for="telefono_encargado"><?php esc_html_e('Teléfono del Encargado', 'bomberos-servicios'); ?></label>
-                </th>
-                <td>
-                    <input type="text" name="telefono_encargado" id="telefono_encargado" class="regular-text" value="">
-                </td>
-            </tr>
+           
         </table>
         <p class="submit">
             <button type="submit" class="button button-primary"><?php esc_html_e('Guardar Cambios', 'bomberos-servicios'); ?></button>

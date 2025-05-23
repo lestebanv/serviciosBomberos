@@ -1,8 +1,9 @@
 <?php
-function crear_tablas_plugin_bomberos() {
+function crear_tablas_plugin_bomberos()
+{
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
-    
+
     // Nombre de las tablas con prefijo
     $tabla_empresas = $wpdb->prefix . 'empresa';
     $tabla_inspecciones = $wpdb->prefix . 'inspeccion';
@@ -33,11 +34,27 @@ function crear_tablas_plugin_bomberos() {
         FOREIGN KEY (id_empresa) REFERENCES $tabla_empresas(id_empresa) ON DELETE CASCADE
     ) $charset_collate;";
 
+    $tabla_cursos = $wpdb->prefix . 'cursos';
+    $sql_cursos = "CREATE TABLE IF NOT EXISTS $tabla_cursos (
+                    id_curso BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+                    nombre_curso VARCHAR(255) NOT NULL,
+                    descripcion TEXT,
+                    fecha_inicio DATE NOT NULL, -- Renombrado de fecha_prevista a fecha_inicio
+                    duracion_horas INT(11),
+                    instructor VARCHAR(100),
+                    lugar VARCHAR(255),
+                    capacidad_maxima INT(11),
+                    estado ENUM('planificado', 'en_curso', 'finalizado', 'cancelado') NOT NULL DEFAULT 'planificado',
+                    fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    fecha_actualizacion DATETIME ON UPDATE CURRENT_TIMESTAMP,
+                    PRIMARY KEY (id_curso)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+
     // Incluir archivo necesario para dbDelta
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    
     // Crear las tablas
     dbDelta($sql_empresas);
     dbDelta($sql_inspecciones);
+    dbDelta($sql_cursos);
 }
 ?>
