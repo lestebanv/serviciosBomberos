@@ -63,12 +63,12 @@ function barraNavegacion($total_pages, $current_page, $align = 'left')
             <?php foreach ($lista_empresas as $empresa): ?>
                 <tr id="empresa-row-<?php echo esc_attr($empresa['id_empresa']); ?>">
                     <td>
-                        <strong><?php echo esc_html($empresa['nit']); ?></strong><br>
-                        <?php echo esc_html($empresa['razon_social']); ?>
+                        <?php echo esc_html($empresa['razon_social']); ?><br>
+                        <strong>NIT: <?php echo esc_html($empresa['nit']); ?></strong>                        
                     </td>
                     <td>
                         <?php echo esc_html($empresa['direccion']); ?><br>
-                        <?php echo esc_html($empresa['barrio']); ?>
+                        Barrio: <?php echo esc_html($empresa['barrio']); ?>
                     </td>
                     <td><?php echo esc_html($empresa['representante_legal']); ?></td>
                     <td><?php echo esc_html($empresa['email']); ?></td>

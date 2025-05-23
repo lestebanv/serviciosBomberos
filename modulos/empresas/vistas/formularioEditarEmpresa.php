@@ -1,35 +1,78 @@
-<?php if (!defined('ABSPATH')) exit; ?>
-<p> Datos de la empresa con NIT <?php echo esc_attr($empresa['nit']); ?><p>
+<?php
+// modulos/publico/vistas/frmRegistrarSoloSolicitud.php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
+<div class="wrap">
+    <h2>Datos de la Empresa con NIT <?php echo esc_html($empresa['nit']); ?></h2>
     <hr>
-<form id="form-editar-empresa">
-    <input type="hidden" name="id_empresa" value="<?php echo esc_attr($empresa['id_empresa']); ?>">
-    <div class="form-group">
-        <label for="razon_social">Razon Social</label>
-        <input type="text" name="razon_social" id="razon_social" class="regular-text" value="<?php echo esc_attr($empresa['razon_social']); ?>" required>
-    </div>
-    <div class="form-group">
-        <label for="representante_legal">Representante Legal</label>
-        <input type="text" name="representante_legal" id="representante_legal" class="regular-text" value="<?php echo esc_attr($empresa['representante_legal']); ?>">
-    </div>
-    <div class="form-group">
-        <label for="direccion">Dirección</label>
-        <input type="text" name="direccion" id="direccion" class="regular-text" value="<?php echo esc_attr($empresa['direccion']); ?>">
-    </div>
-    <div class="form-group">
-        <label for="barrio">Barrio</label>
-        <input type="text" name="barrio" id="barrio" class="regular-text" value="<?php echo esc_attr($empresa['barrio']); ?>">
-    </div>
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="text" name="email" id="email" class="regular-text" value="<?php echo esc_attr($empresa['email']); ?>">
-    </div>
-   
-
-    <div class="form-group">
-        <button type="submit" class="button button-primary">Guardar cambios</button>
-        <button type="button" class="button cancelar-edicion-empresa">Cancelar</button>
-    </div>
-
-    <div id="mensaje-editar-empresa"></div>
-</form>
-<hr>
+    <form id="form-editar-empresa" method="post" class="bomberos-form">
+        <input type="hidden" name="id_empresa" value="<?php echo esc_attr($empresa['id_empresa']); ?>">
+        <table class="form-table">
+            <tr class="form-field form-required">
+                <th scope="row">
+                    <label for="razon_social"><?php esc_html_e('Razón Social', 'bomberos-servicios'); ?></label>
+                </th>
+                <td>
+                    <input type="text" name="razon_social" id="razon_social" class="regular-text" value="<?php echo esc_attr($empresa['razon_social']); ?>" required aria-required="true">
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th scope="row">
+                    <label for="representante_legal"><?php esc_html_e('Representante Legal', 'bomberos-servicios'); ?></label>
+                </th>
+                <td>
+                    <input type="text" name="representante_legal" id="representante_legal" class="regular-text" value="<?php echo esc_attr($empresa['representante_legal']); ?>">
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th scope="row">
+                    <label for="direccion"><?php esc_html_e('Dirección', 'bomberos-servicios'); ?></label>
+                </th>
+                <td>
+                    <input type="text" name="direccion" id="direccion" class="regular-text" value="<?php echo esc_attr($empresa['direccion']); ?>">
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th scope="row">
+                    <label for="barrio"><?php esc_html_e('Barrio', 'bomberos-servicios'); ?></label>
+                </th>
+                <td>
+                    <input type="text" name="barrio" id="barrio" class="regular-text" value="<?php echo esc_attr($empresa['barrio']); ?>">
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th scope="row">
+                    <label for="email"><?php esc_html_e('Email', 'bomberos-servicios'); ?></label>
+                </th>
+                <td>
+                    <input type="email" name="email" id="email" class="regular-text" value="<?php echo esc_attr($empresa['email']); ?>">
+                </td>
+            </tr>
+            <!-- Campos adicionales para la solicitud de inspección -->
+            <tr class="form-field form-required">
+                <th scope="row">
+                    <label for="nombre_encargado"><?php esc_html_e('Nombre del Encargado', 'bomberos-servicios'); ?></label>
+                </th>
+                <td>
+                    <input type="text" name="nombre_encargado" id="nombre_encargado" class="regular-text" value="" required aria-required="true">
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th scope="row">
+                    <label for="telefono_encargado"><?php esc_html_e('Teléfono del Encargado', 'bomberos-servicios'); ?></label>
+                </th>
+                <td>
+                    <input type="text" name="telefono_encargado" id="telefono_encargado" class="regular-text" value="">
+                </td>
+            </tr>
+        </table>
+        <p class="submit">
+            <button type="submit" class="button button-primary"><?php esc_html_e('Guardar Cambios', 'bomberos-servicios'); ?></button>
+            <button type="button" class="button button-secondary cancelar-edicion-empresa"><?php esc_html_e('Cancelar', 'bomberos-servicios'); ?></button>
+        </p>
+        <div id="mensaje-editar-empresa" class="notice" style="display: none;"></div>
+    </form>
+    <hr>
+</div>
