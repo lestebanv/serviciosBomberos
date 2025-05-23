@@ -1,15 +1,16 @@
 
 <div>
-    <h2>Registrar Nueva Empresa</h2>
+    <p>Su Empresa aun no esta registrada en nuestro sistema <br>
+    Favor diligenciar la siguiente información:</p>
     <form id="frm_bomberos_empresa_completa">
+        <input type="hidden" name="nit" id="nit" value="<?php echo $nit; ?>"  />
         <table class="form-table">
-            <tr class="form-field form-required">
-                <th scope="row"><label for="nit">NIT</label></th>
-                <td><input type="text" name="nit" id="nit" value="<?php echo $nit; ?>"  /></td>
-            </tr>
+
             <tr class="form-field form-required">
                 <th scope="row"><label for="razon_social">Razón Social</label></th>
-                <td><input type="text" name="razon_social" id="razon_social" required /></td>
+                <td><input type="text" name="razon_social" id="razon_social" required /><br>
+                    NIT: <?php echo $nit; ?>
+            </td>
             </tr>
             <tr class="form-field form-required">
                 <th scope="row"><label for="direccion">Dirección</label></th>
@@ -37,7 +38,7 @@
             </tr>
         </table>
         <p class="submit">
-            <input type="submit" class="button button-primary" value="Registrar Empresa" />
+            <input type="submit" class="button button-primary" value="Registrar Solicitud de Inspección" />
         </p>
     </form>
 </div>

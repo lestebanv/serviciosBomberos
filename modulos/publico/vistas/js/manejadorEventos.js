@@ -35,7 +35,6 @@ jQuery(document).ready(function($) {
     $(document).on('submit', '#frm_bomberos_empresa_completa', function(e) {
         e.preventDefault();
         var formData = $(this).serialize();
-        alert('hola');
         $.ajax({
             type: 'POST',
             url: bomberosPublicoAjax.ajax_url,
@@ -48,7 +47,6 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 $('#empresa-contenido .bomberos-mensaje').remove();
-                console.log('Respuesta recibida:', response);
                 if (response.success) {
                     $('#empresa-contenido').html(response.data.html);
                     $('#empresa-contenido').prepend('<div class="bomberos-mensaje success">' + response.data.mensaje + '</div>');

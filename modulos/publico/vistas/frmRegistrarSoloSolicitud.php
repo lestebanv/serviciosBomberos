@@ -1,34 +1,29 @@
 
 <div>
-   <p> La empresa con NIT: <?php echo $nit; ?> ya esta registrada <br> 
-   <?php 
-         echo 'Razón social: ' . $empresa['razon_social'].'<br>';
-         echo 'Dirección: ' . $empresa['direccion'].'<br>';
-         echo 'Barrio: ' . $empresa['Barrio'].'<br>'
-    ?>
-    </p> Favor diligenciar los datos de la solicitud de inspección
+   <p> La empresa con NIT: <?php echo $nit; ?> ya esta registrada  
+    </p> <p>Favor diligenciar los datos de la actual solicitud de inspección</p>
     <form id="frm_bomberos_empresa_completa">
         <input type="hidden" name="id_empresa" id="id_empresa" value="<?php echo $empresa['id_empresa']; ?>">
         <table class="form-table">
-            <tr class="form-field form-required">
+            <tr class="form-field ">
                 <th scope="row">Razon Social</th>
-                <td>aqui razon social</td>
+                <td><?php echo $empresa['razon_social'];?></td>
             </tr>
-            <tr class="form-field form-required">
+            <tr class="form-field ">
                 <th scope="row">Direccion</th>
-                <td>aqui direccion</td>
+                <td><?php echo $empresa['direccion'];?></td>
             </tr>
-            <tr class="form-field form-required">
+            <tr class="form-field">
                 <th scope="row">Barrio</th>
-                <td>aqui barrio</td>
+                <td><?php echo $empresa['barrio'];?></td>
             </tr>
             <tr class="form-field form-required">
                 <th scope="row"><label for="representante_legal">Representante Legal</label></th>
-                <td><input type="text" name="representante_legal" id="representante_legal" required /></td>
+                <td><input type="text" name="representante_legal" id="representante_legal" value="<?php echo $empresa['representante_legal'];?>" required /></td>
             </tr>
             <tr class="form-field form-required">
                 <th scope="row"><label for="email">Email</label></th>
-                <td><input type="email" name="email" id="email" required /></td>
+                <td><input type="email" name="email" id="email" value="<?php echo $empresa['email'];?>"required /></td>
             </tr>
             <tr class="form-field form-required">
                 <th scope="row"><label for="nombre_encargado">Nombre persona encargada <br> de atender la inspeccion</label></th>
@@ -40,7 +35,7 @@
             </tr>
         </table>
         <p class="submit">
-            <input type="submit" class="button button-primary" value="Registrar Empresa" />
+            <input type="submit" class="button button-primary" value="Registrar Solicitud de inspección" />
         </p>
     </form>
 </div>
