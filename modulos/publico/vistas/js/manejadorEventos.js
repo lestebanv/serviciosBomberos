@@ -1,5 +1,5 @@
-jQuery(document).ready(function($) {
-    $(document).on('submit', '#frm_buscar_empresa', function(e) {
+jQuery(document).ready(function ($) {
+    $(document).on('submit', '#frm_buscar_empresa', function (e) {
         e.preventDefault();
         console.log('Formulario enviado');
         var formData = $(this).serialize();
@@ -14,7 +14,7 @@ jQuery(document).ready(function($) {
                 form_data: formData,
                 nonce: bomberosPublicoAjax.nonce
             },
-            success: function(response) {
+            success: function (response) {
                 $('#empresa-contenido .bomberos-mensaje').remove();
                 if (response.success) {
                     $('#empresa-contenido').html(response.data.html);
@@ -23,7 +23,7 @@ jQuery(document).ready(function($) {
                     $('#empresa-contenido').prepend('<div class="bomberos-mensaje error">' + response.data.mensaje + '</div>');
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 $('#empresa-contenido .bomberos-mensaje').remove();
                 console.error('Error AJAX:', status, error, xhr.responseText);
                 $('#empresa-contenido').prepend('<div class="bomberos-mensaje error">Error en la solicitud: ' + error + '</div>');
@@ -32,7 +32,7 @@ jQuery(document).ready(function($) {
     });
 
 
-    $(document).on('submit', '#frm_bomberos_empresa_completa', function(e) {
+    $(document).on('submit', '#frm_bomberos_empresa_completa', function (e) {
         e.preventDefault();
         var formData = $(this).serialize();
         $.ajax({
@@ -45,7 +45,7 @@ jQuery(document).ready(function($) {
                 form_data: formData,
                 nonce: bomberosPublicoAjax.nonce
             },
-            success: function(response) {
+            success: function (response) {
                 $('#empresa-contenido .bomberos-mensaje').remove();
                 if (response.success) {
                     $('#empresa-contenido').html(response.data.html);
@@ -54,7 +54,7 @@ jQuery(document).ready(function($) {
                     $('#empresa-contenido').prepend('<div class="bomberos-mensaje error">' + response.data.mensaje + '</div>');
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 $('#empresa-contenido .bomberos-mensaje').remove();
                 console.error('Error AJAX:', status, error, xhr.responseText);
                 $('#empresa-contenido').prepend('<div class="bomberos-mensaje error">Error en la solicitud: ' + error + '</div>');

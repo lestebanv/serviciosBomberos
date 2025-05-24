@@ -2,6 +2,26 @@ Este plugins fue desarrollado usando un estilo de programacion ModeloVistaContro
 
 Cada Modulo esta compuesto de funcionalidades y por lo tanto es necesario una clase controlador con la siguiente estructura
 
+
+
+
+class ClaseControladorBaseBomberos {
+    
+    public function enviarLog($mensaje,$arreglo=[],$obj=null) {
+        error_log($mensaje);
+        error_log(print_r($arreglo, true));
+        error_log(var_export($obj, true));
+    }
+    public function armarRespuesta($mensaje,$html=""){
+        return [
+                'mensaje' => $mensaje,
+                'html' => $html
+               ];
+    }
+}
+
+
+
 class ControladorEmpresas extends ClaseControladorBaseBomberos {  
 
     public function ejecutarFuncionalidad($request) {
@@ -96,3 +116,22 @@ BOMBEROSSERVICIOS/
 ├── bomberosServicios.php
 └── leame.txt
 
+
+
+la base de datos esta asi organizada
+
++-------------------+       +---------------------+       +---------------+
+|      EMPRESA      |       |     INSPECCIÓN      |       |     CURSO     |
++-------------------+       +---------------------+       +---------------+
+| PK: id_empresa    |------>| PK: id_inspeccion   |       | PK: id_curso  |
+|     nit           |       |     fecha_registro  |       | nombre_curso  |
+|     razon_social  |   1..n|     fecha_programada|       | descripcion   |
+|     direccion     |       |     fecha_expedicion|       | fecha_inicio  |
+|     barrio        |       |     estado          |       | duracion_horas|
+|     rep_legal     |       |     nombre_encargado|       | instructor    |
+|     email         |       |     telefono_encarg |       | lugar         |
++-------------------+       | FK: id_empresa      |       | capacidad_max |
+                            +---------------------+       | estado        |
+                                                          | fecha_registro|
+                                                          | fecha_actualiz|
+                                                          +---------------+

@@ -73,6 +73,17 @@ class ClaseControladorBaseBomberos {
                 'html' => $html
                ];
     }
+
+    /**
+     * Lanza una excepción personalizada para el plugin
+     * 
+     * @param string $mensaje Mensaje de error
+     * @param int $codigo Código de error (opcional)
+     * @throws Exception
+     */
+    public function lanzarExcepcion($mensaje, $codigo = 0) {
+        throw new Exception($mensaje, $codigo);
+    }
 }
 
 ?>

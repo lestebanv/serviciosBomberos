@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-    // Función reutilizable para manejar mensajes
+    // Función reutilizable para manejar mensajes en los diferentes modulos
     function manejarMensajeRespuestaAjax(response) {
         const $mensajeDiv = $('#bomberos-mensaje');
         if (response.success) {

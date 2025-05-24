@@ -89,36 +89,45 @@ function bomberos_mostrar_pagina_principal()
 
 // Manejar peticiones AJAX para la administración
 add_action('wp_ajax_BomberosPlugin', 'bomberos_manejar_ajax');
-function bomberos_manejar_ajax()
-{
-    check_ajax_referer('bomberos_nonce', 'nonce');
+function bomberos_manejar_ajax() {
+    try {
+        // Validar nonce
+        check_ajax_referer('bomberos_nonce', 'nonce');
 
-    $modulo = isset($_POST['modulo']) ? sanitize_text_field($_POST['modulo']) : '';
-    if (!in_array($modulo, MODULOS_BOMBEROS)) {
-        error_log("Bomberos Plugin: Módulo no válido - {$modulo}");
-        wp_send_json_error(['mensaje' => 'Módulo no válido']);
+        // Validar módulo
+        $modulo = isset($_POST['modulo']) ? sanitize_text_field($_POST['modulo']) : '';
+        if (!in_array($modulo, MODULOS_BOMBEROS)) {
+            throw new Exception("Módulo no válido: {$modulo}");
+        }
+
+        // Cargar controlador
+        $controlador_file = BOMBEROS_PLUGIN_DIR . "modulos/{$modulo}/claseControladorModulo.php";
+        if (!file_exists($controlador_file)) {
+            throw new Exception("Controlador no encontrado: {$controlador_file}");
+        }
+
+        require_once $controlador_file;
+        $class_name = 'Controlador' . ucfirst($modulo);
+        if (!class_exists($class_name)) {
+            throw new Exception("Clase del controlador no encontrada: {$class_name}");
+        }
+
+        $controlador = new $class_name();
+        if (!method_exists($controlador, 'ejecutarFuncionalidad')) {
+            throw new Exception("Método ejecutarFuncionalidad no encontrado en {$class_name}");
+        }
+
+        // Ejecutar funcionalidad
+        $respuesta = $controlador->ejecutarFuncionalidad($_POST);
+        wp_send_json_success($respuesta);
+
+    } catch (Exception $e) {
+        // Registrar el error
+        error_log("Bomberos Plugin: Error en AJAX - {$e->getMessage()}");
+        // Devolver respuesta de error
+        wp_send_json_error([
+            'mensaje' => $e->getMessage(),
+            'html' => ''
+        ]);
     }
-
-    $controlador_file = BOMBEROS_PLUGIN_DIR . "modulos/{$modulo}/claseControladorModulo.php";
-    if (!file_exists($controlador_file)) {
-        error_log("Bomberos Plugin: Controlador no encontrado - {$controlador_file}");
-        wp_send_json_error(['mensaje' => 'Controlador no encontrado']);
-    }
-  
-
-    require_once $controlador_file;
-    $class_name = 'Controlador' . ucfirst($modulo);
-    if (!class_exists($class_name)) {
-        error_log("Bomberos Plugin: Clase del controlador no encontrada - {$class_name}");
-        wp_send_json_error(['mensaje' => 'Clase del controlador no encontrada']);
-    }
-
-    $controlador = new $class_name();
-    if (!method_exists($controlador, 'ejecutarFuncionalidad')) {
-        error_log("Bomberos Plugin: Método ejecutarFuncionalidad no encontrado en {$class_name}");
-        wp_send_json_error(['mensaje' => 'Funcionalidad no encontrada']);
-    }
-
-    $respuesta = $controlador->ejecutarFuncionalidad($_POST);
-    wp_send_json_success($respuesta);
 }
