@@ -52,7 +52,7 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
             $tabla_empresas = $wpdb->prefix . 'empresa';
 
             $items_per_page = 5;
-            $current_page = isset($request['paged']) ? max(1, (int) $request['paged']) : 1;
+            $current_page = isset($request['form_data']['paged']) ? max(1, (int) $request['form_data']['paged']) : 1;
             $offset = ($current_page - 1) * $items_per_page;
 
             $total_registros = $wpdb->get_var("SELECT COUNT(*) FROM $tabla_inspecciones");
@@ -116,7 +116,8 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
             global $wpdb;
             $tabla_inspecciones = $wpdb->prefix . 'inspeccion';
             $tabla_empresas = $wpdb->prefix . 'empresa';
-            $id = isset($request['id']) ? (int) $request['id'] : 0;
+            $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
+            $paged = isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 1;
 
             if ($id <= 0) {
                 $this->enviarLog("ID inválido para edición", ['id' => $id]);
@@ -266,8 +267,8 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
         try {
             global $wpdb;
             $tabla_inspecciones = $wpdb->prefix . 'inspeccion';
-            $id = isset($request['id']) ? (int) $request['id'] : 0;
-
+            $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
+            $current_page = isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 1;
             if ($id <= 0) {
                 $this->enviarLog("ID de inspección no válido", ['id' => $id]);
                 $this->lanzarExcepcion('ID de inspección no válido.');
@@ -278,7 +279,6 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
                 $this->enviarLog("Error al eliminar inspección", ['id' => $id], $wpdb->last_error);
                 $this->lanzarExcepcion('Error al eliminar la inspección: ' . esc_html($wpdb->last_error));
             }
-
             return $this->listarInspecciones($request);
         } catch (Exception $e) {
             $this->enviarLog("Error en eliminarInspeccion: " . $e->getMessage(), $request);

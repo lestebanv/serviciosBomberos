@@ -60,6 +60,48 @@ function bomberos_sanitize_input($data, $rules = []) {
     return $sanitized;
 }
 
+
+function barraNavegacion($tabla, $total_pages, $current_page, $align = 'left')
+{
+    if ($total_pages > 1) {
+        $style = '';
+        if ($align === 'right') {
+            $style = 'float: right;';
+        } elseif ($align === 'center') {
+            $style = 'margin: 0 auto; text-align: center; width: fit-content;';
+        } else {
+            $style = 'float: left;';
+        }
+        $style .= ' font-size: 14px; font-weight: bold; font-family: Arial, sans-serif;';
+        $pagination_args = array(
+            'base' => '#%#%',
+            'format' => '',
+            'total' => $total_pages,
+            'current' => $current_page,
+            'prev_text' => __('« Anterior'),
+            'next_text' => __('Siguiente »'),
+            'type' => 'array',
+            'aria_current' => 'page',
+        );
+
+        $links = paginate_links($pagination_args);
+
+        echo '<div class="tablenav"><div class="tablenav-pages" style="' . esc_attr($style) . '">';
+
+        foreach ($links as $link) {
+            if (preg_match('/\#(\d+)/', $link, $matches)) {
+                $page_num = intval($matches[1]);
+                echo '<a href="#" class="paginacion-'.$tabla.'" data-paged="' . esc_attr($page_num) . '" style="margin: 0 1px; padding: 6px 12px; background-color: #e2f0fb; color: #0073aa; text-decoration: none; border-radius: 4px;">' . wp_kses_post(strip_tags($link)) . '</a> ';
+            } else {
+                echo '<span class="current" style="margin: 0 1px; padding: 6px 12px; background-color: #0073aa; color: white; border-radius: 4px;">' . wp_kses_post(strip_tags($link)) . '</span> ';
+            }
+        }
+
+        echo '</div></div><div style="clear: both;"></div>';
+    }
+}
+
+
 class ClaseControladorBaseBomberos {
     
     public function enviarLog($mensaje,$arreglo=[],$obj=null) {

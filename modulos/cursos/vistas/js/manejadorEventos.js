@@ -1,213 +1,64 @@
 jQuery(document).ready(function($) {
-    // Función reutilizable para manejar mensajes
+    /*
+       plantilla de codigo
+       var formData = 'id=' + encodeURIComponent($(this).data('id'));
+       formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
+       BomberosPlugin.enviarPeticionAjax('cursos', 'funcionalidad', formData);
+
+
+    */
     
-    // Boton de crear curso
+    // solicitar formulario de creacion de cursos
     $(document).on('click', '#btn-agregar-curso', function() {
         BomberosPlugin.enviarPeticionAjax('cursos', 'form_crear');
     });
 
-   // evento boton editar curso que envia el formulario con los datos de curso para editar
+   // solicitar formulario de edicion de cursos
     $(document).on('click', '.editar-curso', function() {
         const id = $(this).data('id');
         var formData = 'id=' + encodeURIComponent($(this).data('id'));
         formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
-        BomberosPlugin.enviarPeticionAjax('cursos', 'form_crear',formData);
+        BomberosPlugin.enviarPeticionAjax('cursos', 'editar_curso',formData);
 
     });
-
+    // eliminar un curso por id
     $(document).on('click', '.delete-curso', function() {
-        if (confirm('¿Estás seguro de eliminar este curso?')) {
-            const id = $(this).data('id');
-            $.ajax({
-                type: 'POST',
-                url: bomberosAjax.ajax_url,
-                data: {
-                    action: 'BomberosPlugin',
-                    modulo: 'cursos',
-                    funcionalidad: 'eliminar_curso',
-                    id: id,
-                    nonce: bomberosAjax.nonce
-                },
-                success: function(response) {
-                    if (response.success) {
-                        $('#cuerpo-listado-cursos').html(response.data.html);
-                    }
-                    manejarMensajeRespuestaAjax(response);
-                },
-                error: function(xhr, status, error) {
-                    manejarMensajeRespuestaAjax(null, 'Error al eliminar el curso: ' + error);
-                }
-            });
+        if (!confirm('¿Estás seguro de eliminar este curso?')) {
+            return;
         }
+        var formData = 'id=' + encodeURIComponent($(this).data('id'));
+        formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
+        BomberosPlugin.enviarPeticionAjax('cursos', 'eliminar_curso', formData);
     });
 
-    $(document).on('click', '.paginacion-ajax', function(e) {
+    // paginacion de cursos
+    $(document).on('click', '.paginacion-cursos', function(e) {
         e.preventDefault();
-        const paged = $(this).data('paged');
-        $.ajax({
-            type: 'POST',
-            url: bomberosAjax.ajax_url,
-            data: {
-                action: 'BomberosPlugin',
-                modulo: 'cursos',
-                funcionalidad: 'pagina_inicial',
-                paged: paged,
-                nonce: bomberosAjax.nonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('#cuerpo-listado-cursos').html(response.data.html);
-                }
-                manejarMensajeRespuestaAjax(response);
-            },
-            error: function(xhr, status, error) {
-                manejarMensajeRespuestaAjax(null, 'Error al cargar la página: ' + error);
-            }
-        });
+        var formData= 'paged=' + encodeURIComponent($(this).data('paged'));
+        BomberosPlugin.enviarPeticionAjax('cursos', 'pagina_inicial', formData);
     });
 
-    // Eventos del formulario de editar curso
+    // Envio del formulario de actualizacion
     $(document).on('submit', '#form-editar-curso', function(e) {
         e.preventDefault();
         const formData = $(this).serialize();
-
-        $.ajax({
-            type: 'POST',
-            url: bomberosAjax.ajax_url,
-            data: {
-                action: 'BomberosPlugin',
-                modulo: 'cursos',
-                funcionalidad: 'actualizar_curso',
-                form_data: formData,
-                nonce: bomberosAjax.nonce
-            },
-            success: function(response) {
-                manejarMensajeRespuestaAjax(response);
-                if (response.success) {
-                    setTimeout(() => {
-                        $('#curso-frm-editar').hide().empty();
-                        $.ajax({
-                            type: 'POST',
-                            url: bomberosAjax.ajax_url,
-                            data: {
-                                action: 'BomberosPlugin',
-                                modulo: 'cursos',
-                                funcionalidad: 'pagina_inicial',
-                                nonce: bomberosAjax.nonce
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    $('#cuerpo-listado-cursos').html(response.data.html);
-                                }
-                                manejarMensajeRespuestaAjax(response);
-                            },
-                            error: function(xhr, status, error) {
-                                manejarMensajeRespuestaAjax(null, 'Error al recargar la lista: ' + error);
-                            }
-                        });
-                    }, 2000);
-                }
-            },
-            error: function(xhr, status, error) {
-                manejarMensajeRespuestaAjax(null, 'Error al actualizar el curso: ' + error);
-            }
-        });
+        BomberosPlugin.enviarPeticionAjax('cursos', 'actualizar_curso', formData);
     });
 
     $(document).on('click', '.cancelar-edicion-curso', function() {
-        $('#bomberos-mensaje').hide().empty();
-        $('#curso-frm-editar').hide().empty();
-        $.ajax({
-            type: 'POST',
-            url: bomberosAjax.ajax_url,
-            data: {
-                action: 'BomberosPlugin',
-                modulo: 'cursos',
-                funcionalidad: 'pagina_inicial',
-                nonce: bomberosAjax.nonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('#cuerpo-listado-cursos').html(response.data.html);
-                }
-                manejarMensajeRespuestaAjax(response);
-            },
-            error: function(xhr, status, error) {
-                manejarMensajeRespuestaAjax(null, 'Error al recargar la lista: ' + error);
-            }
-        });
+        e.preventDefault();
+        BomberosPlugin.enviarPeticionAjax('cursos', 'pagina_inicial', formData);
     });
 
-    // Eventos del formulario de crear curso
+    // Enviar formulario para crear nuevo curso
     $(document).on('submit', '#form-crear-curso', function(e) {
         e.preventDefault();
         const formData = $(this).serialize();
-
-        $.ajax({
-            type: 'POST',
-            url: bomberosAjax.ajax_url,
-            data: {
-                action: 'BomberosPlugin',
-                modulo: 'cursos',
-                funcionalidad: 'registrar_curso',
-                form_data: formData,
-                nonce: bomberosAjax.nonce
-            },
-            success: function(response) {
-                manejarMensajeRespuestaAjax(response);
-                if (response.success) {
-                    $('#form-crear-curso')[0].reset();
-                    setTimeout(() => {
-                        $('#curso-frm-editar').hide().empty();
-                        $.ajax({
-                            type: 'POST',
-                            url: bomberosAjax.ajax_url,
-                            data: {
-                                action: 'BomberosPlugin',
-                                modulo: 'cursos',
-                                funcionalidad: 'pagina_inicial',
-                                nonce: bomberosAjax.nonce
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    $('#cuerpo-listado-cursos').html(response.data.html);
-                                }
-                                manejarMensajeRespuestaAjax(response);
-                            },
-                            error: function(xhr, status, error) {
-                                manejarMensajeRespuestaAjax(null, 'Error al recargar la lista: ' + error);
-                            }
-                        });
-                    }, 2000);
-                }
-            },
-            error: function(xhr, status, error) {
-                manejarMensajeRespuestaAjax(null, 'Error al crear el curso: ' + error);
-            }
-        });
+        BomberosPlugin.enviarPeticionAjax('cursos', 'registrar_curso', formData);
     });
-
+   //cancelar creacion de cursos
     $(document).on('click', '.cancelar-creacion-curso', function() {
-        $('#bomberos-mensaje').hide().empty();
-        $('#curso-frm-editar').hide().empty();
-        $.ajax({
-            type: 'POST',
-            url: bomberosAjax.ajax_url,
-            data: {
-                action: 'BomberosPlugin',
-                modulo: 'cursos',
-                funcionalidad: 'pagina_inicial',
-                nonce: bomberosAjax.nonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('#cuerpo-listado-cursos').html(response.data.html);
-                }
-                manejarMensajeRespuestaAjax(response);
-            },
-            error: function(xhr, status, error) {
-                manejarMensajeRespuestaAjax(null, 'Error al recargar la lista: ' + error);
-            }
-        });
+        e.preventDefault();
+        BomberosPlugin.enviarPeticionAjax('cursos', 'pagina_inicial', formData);
     });
 });

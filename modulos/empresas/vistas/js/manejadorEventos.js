@@ -26,19 +26,18 @@ jQuery(document).ready(function ($) {
     });
 
     // Paginación del listado de empresas
-    $(document).on('click', '.paginacion-ajax', function (e) {
+    $(document).on('click', '.paginacion-empresas', function (e) {
         e.preventDefault();
         const pagina = $(this).data('paged');
         const formData = 'paged=' + encodeURIComponent(pagina);
         BomberosPlugin.enviarPeticionAjax('empresas', 'pagina_inicial', formData);
     });
     
-     // Paginación del listado de empresas
+     // boton de cancelar edicion
     $(document).on('click', '.cancelar-edicion-empresa', function (e) {
         e.preventDefault();
         const pagina = $(this).data('paged');
         const formData = 'paged=' + encodeURIComponent(pagina);
-        alert(formData);
         BomberosPlugin.enviarPeticionAjax('empresas', 'pagina_inicial', formData);
     });
 

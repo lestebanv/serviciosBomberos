@@ -55,8 +55,8 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             global $wpdb;
             $tabla_cursos = $wpdb->prefix . 'cursos';
 
-            $items_per_page = 10;
-            $current_page = isset($request['paged']) ? max(1, (int) $request['paged']) : 1;
+            $items_per_page = 5;
+            $current_page = isset($request['form_data']['paged']) ? max(1, (int) $request['form_data']['paged']) : 1;
             $offset = ($current_page - 1) * $items_per_page;
 
             $total_registros = $wpdb->get_var("SELECT COUNT(*) FROM $tabla_cursos");
