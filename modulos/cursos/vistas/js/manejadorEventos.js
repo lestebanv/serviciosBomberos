@@ -1,87 +1,18 @@
 jQuery(document).ready(function($) {
     // Función reutilizable para manejar mensajes
-    function manejarMensajeRespuestaAjax(response, errorMessage) {
-        const $mensajeDiv = $('#bomberos-mensaje');
-        let mensaje = '';
-        let isSuccess = true;
-
-        // Si hay una respuesta estructurada (del servidor)
-        if (response && typeof response === 'object') {
-            isSuccess = response.success || false;
-            mensaje = response.data && response.data.mensaje ? response.data.mensaje : 'Respuesta inválida del servidor';
-        } else if (errorMessage) {
-            // Caso de error genérico
-            isSuccess = false;
-            mensaje = errorMessage;
-        } else {
-            // Caso por defecto si no hay datos
-            isSuccess = false;
-            mensaje = 'Error desconocido';
-        }
-
-        if (isSuccess) {
-            $mensajeDiv
-                .removeClass('notice-error')
-                .addClass('notice notice-success')
-                .html(mensaje)
-                .show();
-        } else {
-            $mensajeDiv
-                .removeClass('notice-success')
-                .addClass('notice notice-error')
-                .html(mensaje)
-                .show();
-        }
-        // Ocultar el mensaje después de 3 segundos
-        setTimeout(() => {
-            $mensajeDiv.hide().empty();
-        }, 3000);
-    }
-
+    
+    // Boton de crear curso
     $(document).on('click', '#btn-agregar-curso', function() {
-        $.ajax({
-            type: 'POST',
-            url: bomberosAjax.ajax_url,
-            data: {
-                action: 'BomberosPlugin',
-                modulo: 'cursos',
-                funcionalidad: 'form_crear',
-                nonce: bomberosAjax.nonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('#curso-frm-editar').html(response.data.html).show();
-                }
-                manejarMensajeRespuestaAjax(response);
-            },
-            error: function(xhr, status, error) {
-                manejarMensajeRespuestaAjax(null, 'Error al cargar el formulario de creación: ' + error);
-            }
-        });
+        BomberosPlugin.enviarPeticionAjax('cursos', 'form_crear');
     });
 
+   // evento boton editar curso que envia el formulario con los datos de curso para editar
     $(document).on('click', '.editar-curso', function() {
         const id = $(this).data('id');
-        $.ajax({
-            type: 'POST',
-            url: bomberosAjax.ajax_url,
-            data: {
-                action: 'BomberosPlugin',
-                modulo: 'cursos',
-                funcionalidad: 'editar_curso',
-                id: id,
-                nonce: bomberosAjax.nonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('#curso-frm-editar').html(response.data.html).show();
-                }
-                manejarMensajeRespuestaAjax(response);
-            },
-            error: function(xhr, status, error) {
-                manejarMensajeRespuestaAjax(null, 'Error al cargar el formulario de edición: ' + error);
-            }
-        });
+        var formData = 'id=' + encodeURIComponent($(this).data('id'));
+        formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
+        BomberosPlugin.enviarPeticionAjax('cursos', 'form_crear',formData);
+
     });
 
     $(document).on('click', '.delete-curso', function() {

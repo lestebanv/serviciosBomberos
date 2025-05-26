@@ -74,9 +74,9 @@ function barraNavegacion($total_pages, $current_page, $align = 'left')
                     <td><?php echo esc_html($empresa['email']); ?></td>
                     <td>
                         <button class="button editar-empresa"
-                            data-id="<?php echo esc_attr($empresa['id_empresa']); ?>">Editar</button>
+                            data-id="<?php echo esc_attr($empresa['id_empresa']);?>" data-paged="<?php echo $current_page; ?>">Editar</button>
                         <button class="button delete-empresa"
-                            data-id="<?php echo esc_attr($empresa['id_empresa']); ?>">Eliminar</button>
+                            data-id="<?php echo esc_attr($empresa['id_empresa']); ?>" data-paged="<?php echo $current_page; ?>">Eliminar</button>
                     </td>
                 </tr>
             <?php endforeach; ?>

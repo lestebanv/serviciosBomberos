@@ -38,42 +38,46 @@
 }
 
 #bomberos-mensaje {
-    margin-bottom: 20px;
+    border: 1px solid #ccc; /* Maintain visible border when empty */
+    box-sizing: border-box; /* Ensure padding doesn’t affect size */
+    display: block; /* Always visible */
+    background-color: #f5f5f5; /* Neutral background when empty */
 }
 
-#bomberos-mensaje .notice {
-    padding: 10px;
-    border-left: 4px solid #46b450; /* Estilo base para notificaciones */
-    background-color: #fff;
-    box-shadow: 0 1px 1px rgba(0,0,0,.04);
-    border-radius: 4px; /* Mantener consistencia con tus estilos */
+#bomberos-mensaje.notice-success {
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #3c763d;
 }
 
-#bomberos-mensaje .notice-success {
-    border-left-color: #46b450; /* Verde para éxito */
+#bomberos-mensaje.notice-error {
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    color: #a94442;
 }
 
-#bomberos-mensaje .notice-error {
-    border-left-color: #dc3232; /* Rojo para error */
+.loading {
+    opacity: 0.5;
+    pointer-events: none;
+    position: relative;
 }
 
-/* Reemplazo de .pqr-alert por .notice */
-#bomberos-mensaje .info,
-#bomberos-mensaje .success,
-#bomberos-mensaje .error {
-    display: none; /* Estos estilos ya no se usarán directamente, pero los mantenemos por compatibilidad temporal */
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #0073aa;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    transform: translate(-50%, -50%);
 }
 
-/* Sobrescribir estilos anteriores de .error para alinearlo con .notice-error */
-#bomberos-mensaje .error {
-    background-color: transparent; /* Eliminar fondo rojo heredado */
-    color: inherit; /* Usar el color del texto predeterminado */
-}
-
-/* Estilos para el cuerpo del contenido */
-#bomberos-cuerpo {
-    background-color: #fff;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
 }

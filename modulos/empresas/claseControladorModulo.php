@@ -52,7 +52,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
             $table_name = $wpdb->prefix . 'empresa';
 
             $items_per_page = 4;
-            $current_page = isset($request['paged']) ? max(1, (int) $request['paged']) : 1;
+            $current_page = isset($request['form_data']['paged']) ? max(1, (int) $request['form_data']['paged']) : 1;
             $offset = ($current_page - 1) * $items_per_page;
 
             $total_registros = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
@@ -85,8 +85,8 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
         try {
             global $wpdb;
             $table_name = $wpdb->prefix . 'empresa';
-            $id = isset($request['id']) ? (int) $request['id'] : 0;
-
+            $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
+            $paged=isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 1;
             if ($id <= 0) {
                 $this->enviarLog("ID inválido para edición", ['id' => $id]);
                 $this->lanzarExcepcion('ID inválido para edición.');
@@ -114,8 +114,8 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
         try {
             global $wpdb;
             $tabla = $wpdb->prefix . 'empresa';
-            $id = isset($request['id']) ? (int) $request['id'] : 0;
-
+            $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
+            $paged = isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 0;
             if ($id <= 0) {
                 $this->enviarLog("ID de empresa no válido", ['id' => $id]);
                 $this->lanzarExcepcion('ID de empresa no válido.');

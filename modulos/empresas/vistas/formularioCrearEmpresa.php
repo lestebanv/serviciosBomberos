@@ -32,9 +32,7 @@
         </table>
 
         <p class="submit">
-            <button type="submit" class="button button-primary">Guardar Empresa</button>
-            <button type="button" class="button cancelar-edicion-empresa">Cancelar</button>
-            
+            <button type="submit" class="button button-primary">Guardar Empresa</button>           
         </p>
     </form>
     <hr>

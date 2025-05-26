@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
     <hr>
     <form id="form-editar-empresa" method="post" class="bomberos-form">
         <input type="hidden" name="id_empresa" value="<?php echo esc_attr($empresa['id_empresa']); ?>">
+        <input type="hidden" name="paged" value="<?php echo esc_attr($paged); ?>">
         <table class="form-table">
             <tr class="form-field form-required">
                 <th scope="row">
@@ -54,7 +55,7 @@ if (!defined('ABSPATH')) {
         </table>
         <p class="submit">
             <button type="submit" class="button button-primary"><?php esc_html_e('Guardar Cambios', 'bomberos-servicios'); ?></button>
-            <button type="button" class="button button-secondary cancelar-edicion-empresa"><?php esc_html_e('Cancelar', 'bomberos-servicios'); ?></button>
+            <button type="button" class="button button-secondary cancelar-edicion-empresa"  data-paged="<?php echo esc_attr($paged); ?>">Cancelar</button>
         </p>
         <div id="mensaje-editar-empresa" class="notice" style="display: none;"></div>
     </form>

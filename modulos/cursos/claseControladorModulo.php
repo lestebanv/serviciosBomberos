@@ -150,10 +150,10 @@ class ControladorCursos extends ClaseControladorBaseBomberos
     public function formularioEdicion($request)
     {
         try {
+            $id = isset($request['form_Data']['id']) ? (int) $request['form_Data']['id'] : 0;
+            $paged = isset($request['form_Data']['paged']) ? (int) $request['form_Data']['paged'] : 1;
             global $wpdb;
             $tabla_cursos = $wpdb->prefix . 'cursos';
-            $id = isset($request['id']) ? (int) $request['id'] : 0;
-
             if ($id <= 0) {
                 $this->enviarLog("ID inválido para edición", ['id' => $id]);
                 $this->lanzarExcepcion('ID inválido para edición.');

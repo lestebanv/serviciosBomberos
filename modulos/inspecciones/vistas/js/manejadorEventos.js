@@ -39,6 +39,7 @@ jQuery(document).ready(function ($) {
     
     $(document).on('click', '.editar-inspeccion', function () {
         const id = $(this).data('id');
+        
         $.ajax({
             type: 'POST',
             url: bomberosAjax.ajax_url,
