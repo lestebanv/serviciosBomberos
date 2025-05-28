@@ -1,1 +1,2 @@
-Se añadio el modulo de inscripciones con los estados: confirmar, pendiente, cancelada.
+Se añadio el modulo y un nuevo shortcode en includes-> shortcodes.php, llamado : "bomberos_inscripcion_curso".
+De inscripciones con los estados: confirmar, pendiente, cancelada.
