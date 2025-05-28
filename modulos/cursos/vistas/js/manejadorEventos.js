@@ -1,52 +1,58 @@
 jQuery(document).ready(function($) {
     /*
-       plantilla de codigo
+       Plantilla de código para construir formData manualmente:
        var formData = 'id=' + encodeURIComponent($(this).data('id'));
-       formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
+       formData += '&paged=' + encodeURIComponent($(this).data('paged'));
        BomberosPlugin.enviarPeticionAjax('cursos', 'funcionalidad', formData);
-
-
     */
     
-    // solicitar formulario de creacion de cursos
+    // Solicitar formulario de creación de cursos
     $(document).on('click', '#btn-agregar-curso', function() {
-        BomberosPlugin.enviarPeticionAjax('cursos', 'form_crear');
+        // No se necesita paged aquí, ya que es un nuevo ítem.
+        // El controlador de formularioCreacion no espera 'paged'.
+        BomberosPlugin.enviarPeticionAjax('cursos', 'form_crear', ''); 
     });
 
-   // solicitar formulario de edicion de cursos
+   // Solicitar formulario de edición de cursos
     $(document).on('click', '.editar-curso', function() {
         const id = $(this).data('id');
-        var formData = 'id=' + encodeURIComponent($(this).data('id'));
-        formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
-        BomberosPlugin.enviarPeticionAjax('cursos', 'editar_curso',formData);
-
+        const paged = $(this).data('paged');
+        var formData = 'id=' + encodeURIComponent(id) + '&paged=' + encodeURIComponent(paged);
+        BomberosPlugin.enviarPeticionAjax('cursos', 'editar_curso', formData);
     });
-    // eliminar un curso por id
+
+    // Eliminar un curso por id
     $(document).on('click', '.delete-curso', function() {
         if (!confirm('¿Estás seguro de eliminar este curso?')) {
             return;
         }
-        var formData = 'id=' + encodeURIComponent($(this).data('id'));
-        formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
+        const id = $(this).data('id');
+        const paged = $(this).data('paged'); // Para recargar la misma página de la lista
+        var formData = 'id=' + encodeURIComponent(id) + '&paged=' + encodeURIComponent(paged);
         BomberosPlugin.enviarPeticionAjax('cursos', 'eliminar_curso', formData);
     });
 
-    // paginacion de cursos
+    // Paginación de cursos
     $(document).on('click', '.paginacion-cursos', function(e) {
         e.preventDefault();
-        var formData= 'paged=' + encodeURIComponent($(this).data('paged'));
+        const paged = $(this).data('paged');
+        var formData = 'paged=' + encodeURIComponent(paged);
         BomberosPlugin.enviarPeticionAjax('cursos', 'pagina_inicial', formData);
     });
 
-    // Envio del formulario de actualizacion
+    // Envío del formulario de actualización
     $(document).on('submit', '#form-editar-curso', function(e) {
         e.preventDefault();
-        const formData = $(this).serialize();
+        // El formData serializado ya incluye el campo oculto 'paged'
+        const formData = $(this).serialize(); 
         BomberosPlugin.enviarPeticionAjax('cursos', 'actualizar_curso', formData);
     });
 
-    $(document).on('click', '.cancelar-edicion-curso', function() {
+    // Cancelar edición de curso
+    $(document).on('click', '.cancelar-edicion-curso', function(e) { // 'e' estaba faltando
         e.preventDefault();
+        const paged = $(this).data('paged'); // Obtener 'paged' del botón
+        const formData = 'paged=' + encodeURIComponent(paged);
         BomberosPlugin.enviarPeticionAjax('cursos', 'pagina_inicial', formData);
     });
 
@@ -54,11 +60,15 @@ jQuery(document).ready(function($) {
     $(document).on('submit', '#form-crear-curso', function(e) {
         e.preventDefault();
         const formData = $(this).serialize();
+        // Después de crear, el controlador usualmente redirige a la página 1 de la lista.
+        // Si quisiéramos pasar un 'paged' específico, tendríamos que añadirlo a formData aquí.
         BomberosPlugin.enviarPeticionAjax('cursos', 'registrar_curso', formData);
     });
-   //cancelar creacion de cursos
-    $(document).on('click', '.cancelar-creacion-curso', function() {
+
+   // Cancelar creación de cursos
+    $(document).on('click', '.cancelar-creacion-curso', function(e) { // 'e' estaba faltando
         e.preventDefault();
-        BomberosPlugin.enviarPeticionAjax('cursos', 'pagina_inicial', formData);
+        // Al cancelar la creación, volvemos a la página inicial (página 1 por defecto)
+        BomberosPlugin.enviarPeticionAjax('cursos', 'pagina_inicial', ''); 
     });
 });

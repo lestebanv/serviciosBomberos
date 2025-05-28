@@ -17,9 +17,9 @@ jQuery(document).ready(function ($) {
         $mensaje.addClass(esError ? 'notice-error' : 'notice-success').html(mensaje);
 
         // Vaciar el contenido del mensaje después de 4 segundos, pero mantener el div visible
-        setTimeout(() => {
-            $mensaje.html('|');
-        }, 4000);
+        // setTimeout(() => {
+        //     $mensaje.html('|');
+        // }, 4000);
     };
 
     // Función para agregar indicador de carga

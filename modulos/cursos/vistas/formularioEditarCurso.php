@@ -2,12 +2,16 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+// La variable $paged debe ser pasada desde el controlador (ControladorCursos::formularioEdicion)
+// Si no se pasa, se asume 1 por defecto o se podría obtener de otra manera si es necesario.
+$paged = isset($paged) ? $paged : 1; 
 ?>
 <div class="wrap">
     <h2><?php esc_html_e('Editar Curso', 'bomberos-servicios'); ?> - <?php echo esc_html($curso['nombre_curso']); ?></h2>
     <hr>
     <form id="form-editar-curso" method="post" class="bomberos-form">
         <input type="hidden" name="id_curso" value="<?php echo esc_attr($curso['id_curso']); ?>">
+        <input type="hidden" name="paged" value="<?php echo esc_attr($paged); ?>"> {/* Campo oculto para paged */}
         <table class="form-table">
             <tr class="form-field form-required">
                 <th scope="row">
@@ -81,7 +85,7 @@ if (!defined('ABSPATH')) {
         </table>
         <p class="submit">
             <button type="submit" class="button button-primary"><?php esc_html_e('Guardar Cambios', 'bomberos-servicios'); ?></button>
-            <button type="button" class="button button-secondary cancelar-edicion-curso"><?php esc_html_e('Cancelar', 'bomberos-servicios'); ?></button>
+            <button type="button" class="button button-secondary cancelar-edicion-curso" data-paged="<?php echo esc_attr($paged); ?>"><?php esc_html_e('Cancelar', 'bomberos-servicios'); ?></button>
         </p>
         <div id="mensaje-editar-curso" class="notice" style="display: none;"></div>
     </form>
