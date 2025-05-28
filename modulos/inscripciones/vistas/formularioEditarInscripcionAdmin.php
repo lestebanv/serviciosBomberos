@@ -1,11 +1,7 @@
 <?php
 // modulos/inscripciones/vistas/formularioEditarInscripcionAdmin.php
 if (!defined('ABSPATH')) exit;
-/**
- * @var array $inscripcion Datos de la inscripción a editar.
- * @var array $cursos_disponibles Lista de todos los cursos para el select (opcional si no permites cambiar curso).
- * @var int $paged Página actual para el botón cancelar.
- */
+
 
 // Para el select de estado, definimos los posibles valores
 $estados_posibles = ['confirmada', 'pendiente', 'cancelada'];
@@ -48,23 +44,7 @@ $estados_posibles = ['confirmada', 'pendiente', 'cancelada'];
                     </td>
                 </tr>
                 
-                <?php /* 
-                // Opcional: Permitir cambiar el curso (esto requeriría más lógica de validación)
-                <tr class="form-field">
-                    <th scope="row">
-                        <label for="id_curso"><?php esc_html_e('Curso Inscrito', 'bomberos-servicios'); ?></label>
-                    </th>
-                    <td>
-                        <select name="id_curso" id="id_curso" class="regular-text">
-                            <?php foreach ($todos_los_cursos as $curso_opcion): // Necesitarías pasar $todos_los_cursos desde el controlador ?>
-                                <option value="<?php echo esc_attr($curso_opcion['id_curso']); ?>" <?php selected($inscripcion['id_curso'], $curso_opcion['id_curso']); ?>>
-                                    <?php echo esc_html($curso_opcion['nombre_curso']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </td>
-                </tr>
-                */ ?>
+              
 
                 <tr class="form-field form-required">
                     <th scope="row">
