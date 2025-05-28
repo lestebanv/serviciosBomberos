@@ -3,7 +3,7 @@
 if (!defined('ABSPATH')) {
     exit;
 }
-/** @var array $cursos_disponibles */ 
+//cursos_disponibles */ 
 ?>
 <div id="bomberos-inscripcion-curso-wrapper">
     <h3><?php esc_html_e('Inscribirse a un Curso', 'bomberos-servicios'); ?></h3>

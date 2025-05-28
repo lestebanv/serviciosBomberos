@@ -81,3 +81,26 @@
         transform: translate(-50%, -50%) rotate(360deg);
     }
 }
+
+
+/*Nuevo para inscripciones*/
+.estado-inscripcion-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 0.9em;
+    color: #333; /* Color de texto por defecto */
+    background-color: #f0f0f0; /* Fondo por defecto */
+}
+.estado-inscripcion-badge.confirmada {
+    background-color: #d4edda;
+    color: #155724;
+}
+.estado-inscripcion-badge.pendiente {
+    background-color: #fff3cd;
+    color: #856404;
+}
+.estado-inscripcion-badge.cancelada {
+    background-color: #f8d7da;
+    color: #721c24;
+}
