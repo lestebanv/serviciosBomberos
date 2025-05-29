@@ -20,7 +20,7 @@ define('MODULOS_BOMBEROS', ['empresas', 'inspecciones', 'cursos', 'inscripciones
 require_once BOMBEROS_PLUGIN_DIR . 'includes/activacion.php';
 require_once BOMBEROS_PLUGIN_DIR . 'includes/desactivacion.php';
 require_once BOMBEROS_PLUGIN_DIR . 'includes/utilidades.php';
-//require_once BOMBEROS_PLUGIN_DIR . 'includes/shortcodes.php'; // Nuevo archivo para shortcodes
+require_once BOMBEROS_PLUGIN_DIR . 'includes/shortcodes.php'; // Nuevo archivo para shortcodes
 
 // Registrar activación y desactivación
 register_activation_hook(__FILE__, 'crear_tablas_plugin_bomberos');
