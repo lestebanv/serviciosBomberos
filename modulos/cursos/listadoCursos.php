@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
     </div>
     <?php barraNavegacion('cursos',$total_pages, $current_page); ?>
 
-    <table id="curso-table" class="wp-list-table widefat fixed striped">
+    <table id="curso-table" class="wp-list-table widefat  striped">
         <thead>
             <tr>
                 <th><?php esc_html_e('Nombre del Curso', 'bomberos-servicios'); ?></th>

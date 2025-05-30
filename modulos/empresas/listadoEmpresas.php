@@ -7,7 +7,7 @@
     </div>
     <?php barraNavegacion('empresas',$total_pages, $current_page); ?>
 
-    <table id="empresa-table" class="wp-list-table widefat fixed striped">
+    <table id="empresa-table" class="wp-list-table widefat striped">
         <thead>
             <tr>
                 <th>NIT / Razón Social</th>

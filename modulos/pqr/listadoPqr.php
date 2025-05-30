@@ -3,7 +3,7 @@
 
      <?php barraNavegacion('pqr', $total_pages, $current_page); ?>
 
-    <table id="pqr-table" class="wp-list-table widefat fixed striped">
+    <table id="pqr-table" class="wp-list-table widefat  striped">
         <thead>
             <tr>
                 <th>Fecha</th>

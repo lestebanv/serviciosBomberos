@@ -56,20 +56,21 @@ function crear_tablas_plugin_bomberos()
                     fecha_actualizacion DATETIME ON UPDATE CURRENT_TIMESTAMP,
                     PRIMARY KEY (id_curso)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-   $tabla_pqr = $wpdb->prefix . 'pqr';
-   $sql_pqr = "CREATE TABLE $tabla_pqr (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        nombre varchar(255) NOT NULL,
-        telefono varchar(20) NOT NULL,
-        email varchar(100) NOT NULL,
-        tipo_solicitud varchar(50) NOT NULL,
-        estado_solicitud ENUM('Registrada', 'En Proceso', 'Cerrada') NOT NULL DEFAULT 'Registrada',
-        fecha_registro datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        contenido text NOT NULL,
-        respuesta text DEFAULT NULL,
-        fecha_respuesta datetime DEFAULT NULL,
-        PRIMARY KEY (id)
-    ) $charset_collate;";
+        $tabla_pqr = $wpdb->prefix . 'pqr';
+        $sql_pqr = "CREATE TABLE $tabla_pqr (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            nombre varchar(255) NOT NULL,
+            telefono varchar(20) NOT NULL,
+            email varchar(100) NOT NULL,
+            tipo_solicitud varchar(50) NOT NULL,
+            estado_solicitud ENUM('Registrada', 'En Proceso', 'Cerrada') NOT NULL DEFAULT 'Registrada',
+            fecha_registro datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            contenido text NOT NULL,
+            ip_address varchar(45) NOT NULL,
+            respuesta text DEFAULT NULL,
+            fecha_respuesta datetime DEFAULT NULL,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
 
     
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

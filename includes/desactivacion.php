@@ -7,9 +7,7 @@ function desactivar_plugin_bomberos(){
 
 function limpiar_plugin_bomberos(){
     global $wpdb;
-
     $charset_collate = $wpdb->get_charset_collate();
-
     $empresa_table     = $wpdb->prefix . 'empresa';
     $inspeccion_table  = $wpdb->prefix . 'inspeccion';
     $cursos_table      = $wpdb->prefix . 'cursos';
