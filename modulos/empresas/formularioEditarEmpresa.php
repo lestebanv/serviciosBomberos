@@ -1,5 +1,5 @@
 <?php
-// modulos/publico/vistas/frmRegistrarSoloSolicitud.php
+
 if (!defined('ABSPATH')) {
     exit;
 }

@@ -79,7 +79,7 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
             }
 
             ob_start();
-            include plugin_dir_path(__FILE__) . 'vistas/listadoInspecciones.php';
+            include plugin_dir_path(__FILE__) . 'listadoInspecciones.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Lista de inspecciones cargada con éxito', $html);
         } catch (Exception $e) {
@@ -101,7 +101,7 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
             }
 
             ob_start();
-            include plugin_dir_path(__FILE__) . 'vistas/formularioCrearInspeccion.php';
+            include plugin_dir_path(__FILE__) . 'formularioCrearInspeccion.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Formulario de creación cargado correctamente', $html);
         } catch (Exception $e) {
@@ -143,7 +143,7 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
             }
 
             ob_start();
-            include plugin_dir_path(__FILE__) . 'vistas/formularioEditarInspeccion.php';
+            include plugin_dir_path(__FILE__) . 'formularioEditarInspeccion.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Formulario de edición cargado.', $html);
         } catch (Exception $e) {

@@ -79,7 +79,7 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             }
 
             ob_start();
-            include plugin_dir_path(__FILE__) . 'vistas/listadoCursos.php';
+            include plugin_dir_path(__FILE__) . 'listadoCursos.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Lista de cursos cargada con éxito', $html);
         } catch (Exception $e) {
@@ -92,7 +92,7 @@ class ControladorCursos extends ClaseControladorBaseBomberos
     {
         try {
             ob_start();
-            include plugin_dir_path(__FILE__) . 'vistas/formularioCrearCurso.php';
+            include plugin_dir_path(__FILE__) . 'formularioCrearCurso.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Formulario de creación cargado correctamente', $html);
         } catch (Exception $e) {
@@ -166,7 +166,7 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             }
 
             ob_start();
-            include plugin_dir_path(__FILE__) . 'vistas/formularioEditarCurso.php';
+            include plugin_dir_path(__FILE__) . 'formularioEditarCurso.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Formulario de edición cargado.', $html);
         } catch (Exception $e) {

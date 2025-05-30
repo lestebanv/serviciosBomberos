@@ -1,4 +1,11 @@
 <?php
+require_once  plugin_dir_path(__FILE__).'insertarDemo.php';
+function activar_plugin_bomberos(){
+    crear_tablas_plugin_bomberos();
+    // documentar esta linea para produccion
+    insertar_datos_demo();
+}
+
 function crear_tablas_plugin_bomberos()
 {
     global $wpdb;
@@ -44,17 +51,32 @@ function crear_tablas_plugin_bomberos()
                     instructor VARCHAR(100),
                     lugar VARCHAR(255),
                     capacidad_maxima INT(11),
-                    estado ENUM('planificado', 'en_curso', 'finalizado', 'cancelado') NOT NULL DEFAULT 'planificado',
+                    estado ENUM('Planificado', 'En_curso', 'Finalizado', 'Cancelado') NOT NULL DEFAULT 'planificado',
                     fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     fecha_actualizacion DATETIME ON UPDATE CURRENT_TIMESTAMP,
                     PRIMARY KEY (id_curso)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+   $tabla_pqr = $wpdb->prefix . 'pqr';
+   $sql_pqr = "CREATE TABLE $tabla_pqr (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        nombre varchar(255) NOT NULL,
+        telefono varchar(20) NOT NULL,
+        email varchar(100) NOT NULL,
+        tipo_solicitud varchar(50) NOT NULL,
+        estado_solicitud ENUM('Registrada', 'En Proceso', 'Cerrada') NOT NULL DEFAULT 'Registrada',
+        fecha_registro datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        contenido text NOT NULL,
+        respuesta text DEFAULT NULL,
+        fecha_respuesta datetime DEFAULT NULL,
+        PRIMARY KEY (id)
+    ) $charset_collate;";
 
-    // Incluir archivo necesario para dbDelta
+    
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     // Crear las tablas
     dbDelta($sql_empresas);
     dbDelta($sql_inspecciones);
     dbDelta($sql_cursos);
+    dbDelta($sql_pqr);
 }
 ?>

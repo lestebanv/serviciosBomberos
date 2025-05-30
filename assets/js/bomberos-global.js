@@ -3,6 +3,7 @@ jQuery(document).ready(function ($) {
     window.BomberosPlugin = window.BomberosPlugin || {};
     // Función para manejar mensajes de respuesta AJAX
     BomberosPlugin.manejarMensajeRespuestaAjax = function (response, fallbackMessage = '') {
+        const $cuerpo = $('#bomberos-cuerpo');
         const $mensaje = $('#bomberos-mensaje');
         $mensaje.removeClass('notice-success notice-error').empty();
 
@@ -13,7 +14,9 @@ jQuery(document).ready(function ($) {
             mensaje = response.data?.mensaje || response.message || 'Operación completada.';
             esError = !response.success;
         }
-
+        if(esError){
+             $cuerpo.html("<div>Seleccione nuevamente del menu</div>");
+        }
         $mensaje.addClass(esError ? 'notice-error' : 'notice-success').html(mensaje);
 
         // Vaciar el contenido del mensaje después de 4 segundos, pero mantener el div visible

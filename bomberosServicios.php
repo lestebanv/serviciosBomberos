@@ -20,11 +20,11 @@ define('MODULOS_BOMBEROS', ['empresas', 'inspecciones', 'cursos', 'inscripciones
 require_once BOMBEROS_PLUGIN_DIR . 'includes/activacion.php';
 require_once BOMBEROS_PLUGIN_DIR . 'includes/desactivacion.php';
 require_once BOMBEROS_PLUGIN_DIR . 'includes/utilidades.php';
-require_once BOMBEROS_PLUGIN_DIR . 'includes/shortcodes.php'; // Nuevo archivo para shortcodes
+require_once BOMBEROS_PLUGIN_DIR . 'includes/shortcodes.php'; 
 
 // Registrar activación y desactivación
-register_activation_hook(__FILE__, 'crear_tablas_plugin_bomberos');
-register_deactivation_hook(__FILE__, 'limpiar_plugin_bomberos');
+register_activation_hook(__FILE__, 'activar_plugin_bomberos');
+register_deactivation_hook(__FILE__, 'desactivar_plugin_bomberos');
 
 
 // Encolar scripts y estilos para la interfaz de administración
@@ -61,8 +61,8 @@ function bomberos_enqueue_scripts($hook)
 
     // Encolar scripts de módulos
     foreach (MODULOS_BOMBEROS as $modulo) {
-        $script_path = BOMBEROS_PLUGIN_DIR . "modulos/{$modulo}/vistas/js/manejadorEventos.js";
-        $script_url = BOMBEROS_PLUGIN_URL . "modulos/{$modulo}/vistas/js/manejadorEventos.js";
+        $script_path = BOMBEROS_PLUGIN_DIR . "modulos/{$modulo}/manejadorEventos.js";
+        $script_url = BOMBEROS_PLUGIN_URL . "modulos/{$modulo}/manejadorEventos.js";
         if (file_exists($script_path)) {
             wp_enqueue_script(
                 "bomberos-{$modulo}-scripts",

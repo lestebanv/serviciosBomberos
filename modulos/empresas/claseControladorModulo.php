@@ -71,7 +71,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
             }
 
             ob_start();
-            include plugin_dir_path(__FILE__) . 'vistas/listadoEmpresas.php';
+            include plugin_dir_path(__FILE__) . 'listadoEmpresas.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Lista de empresas ordenadas alfabeticamente', $html);
         } catch (Exception $e) {
@@ -99,7 +99,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
             }
 
             ob_start();
-            include plugin_dir_path(__FILE__) . 'vistas/formularioEditarEmpresa.php';
+            include plugin_dir_path(__FILE__) . 'formularioEditarEmpresa.php';
             $html = ob_get_clean();
 
             return $this->armarRespuesta('Formulario de edición cargado.', $html);
@@ -180,7 +180,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
     {
         try {
             ob_start();
-            include plugin_dir_path(__FILE__) . 'vistas/formularioCrearEmpresa.php';
+            include plugin_dir_path(__FILE__) . 'formularioCrearEmpresa.php';
             $html = ob_get_clean();
 
             return $this->armarRespuesta('Formulario de creación cargado correctamente', $html);
