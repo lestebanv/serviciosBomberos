@@ -49,7 +49,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $table_name = $wpdb->prefix . 'empresa';
+            $table_name = $wpdb->prefix . 'empresas';
 
             $items_per_page = 4;
             $current_page = isset($request['form_data']['paged']) ? max(1, (int) $request['form_data']['paged']) : 1;
@@ -84,7 +84,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $table_name = $wpdb->prefix . 'empresa';
+            $table_name = $wpdb->prefix . 'empresas';
             $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
             $paged=isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 1;
             if ($id <= 0) {
@@ -113,7 +113,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $tabla = $wpdb->prefix . 'empresa';
+            $tabla = $wpdb->prefix . 'empresas';
             $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
             $paged = isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 0;
             if ($id <= 0) {
@@ -139,7 +139,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
         try {
             global $wpdb;
             $form = $request['form_data'] ?? [];
-            $tabla = $wpdb->prefix . 'empresa';
+            $tabla = $wpdb->prefix . 'empresas';
 
             $id = isset($form['id_empresa']) ? (int) $form['id_empresa'] : 0;
             $datos = [
@@ -194,7 +194,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $tabla = $wpdb->prefix . 'empresa';
+            $tabla = $wpdb->prefix . 'empresas';
             $data = $request['form_data'] ?? [];
 
             $campos_obligatorios = ['nit', 'razon_social', 'direccion', 'barrio', 'representante_legal', 'email'];

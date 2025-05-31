@@ -30,10 +30,10 @@ if (!defined('ABSPATH')) {
                     <td><?php echo esc_html($curso['duracion_horas'] ?? 'N/A'); ?></td>
                     <td><?php echo esc_html($curso['estado']); ?></td>
                     <td>
-                        <button class="button editar-curso" data-id="<?php echo esc_attr($curso['id_curso']); ?>">
+                        <button class="button editar-curso" data-id="<?php echo esc_attr($curso['id_curso']); ?>" data-paged="<?php echo $current_page; ?>">
                             <?php esc_html_e('Editar', 'bomberos-servicios'); ?>
                         </button>
-                        <button class="button delete-curso" data-id="<?php echo esc_attr($curso['id_curso']); ?>">
+                        <button class="button delete-curso" data-id="<?php echo esc_attr($curso['id_curso']); ?>" data-paged="<?php echo $current_page; ?>">
                             <?php esc_html_e('Eliminar', 'bomberos-servicios'); ?>
                         </button>
                     </td>

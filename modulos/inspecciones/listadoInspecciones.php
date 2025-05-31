@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
     <div id="inspeccion-frm-editar"></div>
     <?php barraNavegacion('inspecciones',$total_pages, $current_page); ?>
 
-    <table id="inspeccion-table" class="wp-list-table widefat fixed striped">
+    <table id="inspeccione-table" class="wp-list-table widefat fixed striped">
         <thead>
             <tr>
                 

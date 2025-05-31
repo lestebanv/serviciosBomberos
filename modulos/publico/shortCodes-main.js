@@ -1,7 +1,7 @@
 // shortCodes-main.js
 
 function manejarMensajeRespuestaAjaxPublico(response, fallbackMessage = '') {
-    const $mensaje = jQuery('#bomberos-mensaje-publico');
+    const $mensaje = jQuery('#bomberos-shortcode-mensaje');
     $mensaje.removeClass('notice-success notice-error').empty();
     let mensaje = fallbackMessage;
     let esError = true;

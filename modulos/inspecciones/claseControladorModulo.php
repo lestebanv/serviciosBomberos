@@ -48,8 +48,8 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $tabla_inspecciones = $wpdb->prefix . 'inspeccion';
-            $tabla_empresas = $wpdb->prefix . 'empresa';
+            $tabla_inspecciones = $wpdb->prefix . 'inspecciones';
+            $tabla_empresas = $wpdb->prefix . 'empresas';
 
             $items_per_page = 5;
             $current_page = isset($request['form_data']['paged']) ? max(1, (int) $request['form_data']['paged']) : 1;
@@ -92,7 +92,7 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $tabla_empresas = $wpdb->prefix . 'empresa';
+            $tabla_empresas = $wpdb->prefix . 'empresas';
 
             $empresas = $wpdb->get_results("SELECT id_empresa, razon_social FROM $tabla_empresas ORDER BY razon_social ASC", ARRAY_A);
             if ($empresas === null) {
@@ -114,8 +114,8 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $tabla_inspecciones = $wpdb->prefix . 'inspeccion';
-            $tabla_empresas = $wpdb->prefix . 'empresa';
+            $tabla_inspecciones = $wpdb->prefix . 'inspecciones';
+            $tabla_empresas = $wpdb->prefix . 'empresas';
             $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
             $paged = isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 1;
 
@@ -157,8 +157,8 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
         try {
             global $wpdb;
             $form = $request['form_data'] ?? [];
-            $tabla_inspecciones = $wpdb->prefix . 'inspeccion';
-            $tabla_empresas = $wpdb->prefix . 'empresa';
+            $tabla_inspecciones = $wpdb->prefix . 'inspecciones';
+            $tabla_empresas = $wpdb->prefix . 'empresas';
 
             $campos_obligatorios = ['id_empresa', 'nombre_encargado', 'telefono_encargado', 'fecha_programada'];
             foreach ($campos_obligatorios as $campo) {
@@ -209,8 +209,8 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
         try {
             global $wpdb;
             $form = $request['form_data'] ?? [];
-            $tabla_inspecciones = $wpdb->prefix . 'inspeccion';
-            $tabla_empresas = $wpdb->prefix . 'empresa';
+            $tabla_inspecciones = $wpdb->prefix . 'inspecciones';
+            $tabla_empresas = $wpdb->prefix . 'empresas';
 
             $campos_obligatorios = ['id_inspeccion', 'nombre_encargado', 'telefono_encargado', 'fecha_programada', 'estado'];
             foreach ($campos_obligatorios as $campo) {
@@ -266,7 +266,7 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $tabla_inspecciones = $wpdb->prefix . 'inspeccion';
+            $tabla_inspecciones = $wpdb->prefix . 'inspecciones';
             $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
             $current_page = isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 1;
             if ($id <= 0) {

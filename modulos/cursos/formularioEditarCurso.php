@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
     <hr>
     <form id="form-editar-curso" method="post" class="bomberos-form">
         <input type="hidden" name="id_curso" value="<?php echo esc_attr($curso['id_curso']); ?>">
+        <input type="hidden" name="paged" value="<?php echo esc_attr($paged); ?>">
         <table class="form-table">
             <tr class="form-field form-required">
                 <th scope="row">

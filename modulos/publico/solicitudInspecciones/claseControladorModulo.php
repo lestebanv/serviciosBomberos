@@ -58,7 +58,7 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
     {
         try {
             global $wpdb;
-            $tabla_empresas = $wpdb->prefix . 'empresa';
+            $tabla_empresas = $wpdb->prefix . 'empresas';
 
             $form_data = $request['form_data'];
             $nit = $form_data['nit'] ?? '';
@@ -105,8 +105,8 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
     {
         try {
             global $wpdb;
-            $tabla_empresas = $wpdb->prefix . 'empresa';
-            $tabla_inspecciones = $wpdb->prefix . 'inspeccion';
+            $tabla_empresas = $wpdb->prefix . 'empresas';
+            $tabla_inspecciones = $wpdb->prefix . 'inspecciones';
 
             $campos_obligatorios = ['nit', 'razon_social', 'direccion', 'barrio', 'representante_legal', 'email', 'nombre_encargado', 'telefono_encargado'];
             foreach ($campos_obligatorios as $campo) {
@@ -170,8 +170,8 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
     {
         try {
             global $wpdb;
-            $tabla_empresas = $wpdb->prefix . 'empresa';
-            $tabla_inspecciones = $wpdb->prefix . 'inspeccion';
+            $tabla_empresas = $wpdb->prefix . 'empresas';
+            $tabla_inspecciones = $wpdb->prefix . 'inspecciones';
 
             $campos_obligatorios = ['id_empresa', 'representante_legal', 'email', 'nombre_encargado', 'telefono_encargado'];
             foreach ($campos_obligatorios as $campo) {

@@ -32,7 +32,7 @@ function bomberos_manejar_shortcode($atts) {
     ob_start();
     ?>
     <div class="bomberos-contenedor-shortcode">
-        <div id='bomberos-shortcode-mensaje'>
+        <div id='bomberos-shortcode-mensaje' style="height: 20px; border: 1px solid #ccc">
             <?php
                echo $respuesta['mensaje'];
             ?>

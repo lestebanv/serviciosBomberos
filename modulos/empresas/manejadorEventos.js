@@ -9,11 +9,11 @@ jQuery(document).ready(function ($) {
     // Eliminar empresa
     $(document).on('click', '.delete-empresa', function (e) {
         e.preventDefault();
-        const id = $(this).data('id');
         if (!confirm('¿Estás seguro de eliminar esta empresa?')) {
             return;
         }
-        const formData = 'id=' + encodeURIComponent(id);
+        var formData = 'id=' + encodeURIComponent($(this).data('id'));
+        formData = formData + '&paged=' + encodeURIComponent($(this).data('paged'));
         BomberosPlugin.enviarPeticionAjax('empresas', 'eliminar_empresa', formData);
     });
 

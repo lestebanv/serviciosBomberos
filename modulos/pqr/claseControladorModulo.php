@@ -46,7 +46,7 @@ class ControladorPQR extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $table = $wpdb->prefix . 'pqr';
+            $table = $wpdb->prefix . 'pqrs';
             $items_per_page = 5;
             $current_page = $request['form_data']['paged'] ?? 1;
             $offset = ($current_page - 1) * $items_per_page;
@@ -83,7 +83,7 @@ class ControladorPQR extends ClaseControladorBaseBomberos
         try {
             global $wpdb;
             $id = (int) ($request['form_data']['id'] ?? 0);
-            $tabla = $wpdb->prefix . 'pqr';
+            $tabla = $wpdb->prefix . 'pqrs';
             $paged = (int) ($request['form_data']['paged'] ?? 1);
             if ($id <= 0) {
                 $this->lanzarExcepcion("ID no válido para responder.");
@@ -108,7 +108,7 @@ class ControladorPQR extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $tabla = $wpdb->prefix . 'pqr';
+            $tabla = $wpdb->prefix . 'pqrs';
             $form = $request['form_data'] ?? [];
 
             $id = (int) ($form['id'] ?? 0);
@@ -137,7 +137,7 @@ class ControladorPQR extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $tabla = $wpdb->prefix . 'pqr';
+            $tabla = $wpdb->prefix . 'pqrs';
             $id = (int) ($request['form_data']['id'] ?? 0);
 
             if ($id <= 0) {

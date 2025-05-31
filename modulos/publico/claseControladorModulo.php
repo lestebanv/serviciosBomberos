@@ -42,7 +42,7 @@ class ControladorBomberosPublico extends ClaseControladorBaseBomberos {
 
             $controlador_file = plugin_dir_path(__FILE__) . $nombreShortCode . "/claseControladorModulo.php";
             if (!file_exists($controlador_file)) {
-                return $this->armarRespuesta("Controlador no encontrado: {$controlador_file}");
+                return $this->armarRespuesta(" Archivo del Controlador no encontrado: {$controlador_file}");
             }
 
             require_once $controlador_file;

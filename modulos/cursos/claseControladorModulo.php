@@ -150,8 +150,8 @@ class ControladorCursos extends ClaseControladorBaseBomberos
     public function formularioEdicion($request)
     {
         try {
-            $id = isset($request['form_Data']['id']) ? (int) $request['form_Data']['id'] : 0;
-            $paged = isset($request['form_Data']['paged']) ? (int) $request['form_Data']['paged'] : 1;
+            $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
+            $paged = isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 1;
             global $wpdb;
             $tabla_cursos = $wpdb->prefix . 'cursos';
             if ($id <= 0) {
@@ -233,7 +233,8 @@ class ControladorCursos extends ClaseControladorBaseBomberos
         try {
             global $wpdb;
             $tabla = $wpdb->prefix . 'cursos';
-            $id = isset($request['id']) ? (int) $request['id'] : 0;
+           
+            $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
 
             if ($id <= 0) {
                 $this->enviarLog("ID de curso no válido", ['id' => $id]);

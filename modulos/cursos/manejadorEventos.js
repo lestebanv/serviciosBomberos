@@ -15,7 +15,6 @@ jQuery(document).ready(function($) {
 
    // solicitar formulario de edicion de cursos
     $(document).on('click', '.editar-curso', function() {
-        const id = $(this).data('id');
         var formData = 'id=' + encodeURIComponent($(this).data('id'));
         formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
         BomberosPlugin.enviarPeticionAjax('cursos', 'editar_curso',formData);

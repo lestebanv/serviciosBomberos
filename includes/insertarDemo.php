@@ -1,11 +1,14 @@
 <?php
 
-function insertar_datos_demo() {
+function insertar_datos_demo()
+{
     global $wpdb;
-    $empresa_table     = $wpdb->prefix . 'empresa';
-    $inspeccion_table  = $wpdb->prefix . 'inspeccion';
-    $cursos_table      = $wpdb->prefix . 'cursos';
-    
+    $empresa_table = $wpdb->prefix . 'empresas';
+    $inspecciones_table = $wpdb->prefix . 'inspecciones';
+    $cursos_table = $wpdb->prefix . 'cursos';
+    $pqrs_table = $wpdb->prefix . 'pqrs';
+    $inscripciones_table= $wpdb->prefix . 'inscripciones';
+
     // Insertar empresas
     $wpdb->query("
         INSERT INTO $empresa_table (nit, razon_social, direccion, barrio, representante_legal, email) VALUES
@@ -13,12 +16,17 @@ function insertar_datos_demo() {
         ('800654321-2', 'Distribuidora Luna Ltda.', 'Carrera 12 # 67-89', 'Laureles', 'María López Restrepo', 'maria.lopez@distribuidora-luna.com'),
         ('901234567-3', 'Tecnologías Avanzadas S.A.', 'Avenida 33 # 15-20', 'El Poblado', 'Carlos Ramírez Díaz', 'carlos.ramirez@tecnologias-avanzadas.com'),
         ('700987654-4', 'Comercializadora Estrella', 'Calle 10 # 50-30', 'Manrique', 'Ana María Torres', 'ana.torres@comercializadora-estrella.com'),
-        ('850456789-5', 'Industrias Metálicas Beta', 'Carrera 25 # 8-15', 'Belén', 'Luis Fernando Castro', 'luis.castro@industrias-beta.com')
+        ('850456789-5', 'Industrias Metálicas Beta', 'Carrera 25 # 8-15', 'Belén', 'Luis Fernando Castro', 'luis.castro@industrias-beta.com'),
+        ('900123456-6', 'Constructora Sol S.A.S.', 'Calle 45 # 23-10', 'Centro', 'Juan Pérez Gómez', 'juan.perez@constructora-sol.com'),
+        ('800654321-7', 'Distribuidora Luna Ltda.', 'Carrera 12 # 67-89', 'Laureles', 'María López Restrepo', 'maria.lopez@distribuidora-luna.com'),
+        ('901234567-9', 'Tecnologías Avanzadas S.A.', 'Avenida 33 # 15-20', 'El Poblado', 'Carlos Ramírez Díaz', 'carlos.ramirez@tecnologias-avanzadas.com'),
+        ('700907654-4', 'Comercializadora Estrella', 'Calle 10 # 50-30', 'Manrique', 'Ana María Torres', 'ana.torres@comercializadora-estrella.com'),
+        ('850450789-5', 'Industrias Metálicas Beta', 'Carrera 25 # 8-15', 'Belén', 'Luis Fernando Castro', 'luis.castro@industrias-beta.com')
     ");
 
     // Insertar inspecciones (usamos IDs 1 a 5 porque son consecutivos tras la inserción)
     $wpdb->query("
-        INSERT INTO $inspeccion_table (id_empresa, fecha_registro, fecha_programada, fecha_expedicion, estado, nombre_encargado, telefono_encargado) VALUES
+        INSERT INTO $inspecciones_table (id_empresa, fecha_registro, fecha_programada, fecha_expedicion, estado, nombre_encargado, telefono_encargado) VALUES
         (1, '2025-05-24 09:00:00', '2025-06-01', NULL, 'Registrada', 'Pedro Gómez', '3001234567'),
         (1, '2025-05-24 10:00:00', '2025-06-15', '2025-06-16', 'Cerrada', 'Sofía Martínez', '3009876543'),
         (2, '2025-05-24 11:00:00', '2025-06-02', NULL, 'En Proceso', 'Andrés Salazar', '3012345678'),
@@ -33,34 +41,58 @@ function insertar_datos_demo() {
 
     // Insertar cursos
     $wpdb->query("
-        INSERT INTO $cursos_table (nombre_curso, descripcion, fecha_inicio, duracion_horas, instructor, lugar, capacidad_maxima, estado) VALUES
-        ('Prevención de Incendios', 'Técnicas para identificar y mitigar riesgos de incendios en entornos residenciales y comerciales.', '2025-06-01', 24, 'Juan Morales', 'Estación de Bomberos Central', 20, 'planificado'),
-        ('Primeros Auxilios Avanzados', 'Capacitación en técnicas de primeros auxilios para emergencias médicas en el campo.', '2025-06-10', 16, 'María López', 'Sala de Entrenamiento 1', 15, 'planificado'),
-        ('Manejo de Equipos de Rescate', 'Uso y mantenimiento de herramientas de rescate hidráulico y mecánico.', '2025-06-15', 32, 'Carlos Vargas', 'Patio de Maniobras', 12, 'en_curso'),
-        ('Respuesta a Materiales Peligrosos', 'Protocolos para manejar derrames y exposiciones a sustancias peligrosas.', '2025-07-01', 40, 'Ana Ramírez', 'Centro de Simulación', 10, 'planificado'),
-        ('Técnicas de Extinción de Incendios', 'Entrenamiento en métodos de extinción para diferentes tipos de fuegos.', '2025-07-10', 48, 'Luis Fernández', 'Torre de Entrenamiento', 18, 'en_curso'),
-        ('Rescate en Alturas', 'Técnicas de rescate en estructuras elevadas y espacios confinados.', '2025-08-01', 36, 'Sofía Torres', 'Polígono de Entrenamiento', 8, 'planificado'),
-        ('Manejo de Vehículos de Emergencia', 'Conducción segura y eficiente de vehículos de bomberos en situaciones críticas.', '2025-08-15', 20, 'Pedro Gómez', 'Pista de Conducción', 10, 'planificado'),
-        ('Gestión de Emergencias Masivas', 'Coordinación de respuestas ante desastres naturales y emergencias masivas.', '2025-09-01', 64, 'Elena Díaz', 'Aula de Capacitación', 25, 'finalizado'),
-        ('Mantenimiento de Equipos SCBA', 'Uso y mantenimiento de equipos de respiración autónoma.', '2025-09-10', 16, 'Miguel Ángel', 'Taller de Equipos', 15, 'planificado'),
-        ('Entrenamiento en Incendios Forestales', 'Estrategias para combatir incendios en entornos naturales.', '2025-10-01', 56, 'Clara Sánchez', 'Campo de Entrenamiento Externo', 12, 'cancelado')
+        INSERT INTO $cursos_table  (nombre_curso, descripcion, fecha_inicio, duracion_horas, instructor, lugar, capacidad_maxima, estado) VALUES
+        ('Curso de primeros auxilios', 'Curso básico de primeros auxilios.', '2025-06-01', 8, 'Juan Pérez', 'Estación de Bomberos Central', 30, 'Planificado'),
+        ('Técnicas de rescate en altura', 'Entrenamiento intensivo en técnicas de rescate vertical.', '2025-06-05', 12, 'María Gómez', 'Estación de Bomberos Norte', 20, 'Planificado'),
+        ('Manejo de materiales peligrosos', 'Identificación y tratamiento de materiales peligrosos.', '2025-06-10', 10, 'Carlos Ruiz', 'Estación de Bomberos Sur', 25, 'Planificado'),
+        ('Uso avanzado de extintores', 'Técnicas de uso avanzado en fuego controlado.', '2025-06-12', 6, 'Lucía Martínez', 'Estación de Bomberos Este', 15, 'En_curso'),
+        ('Evacuación en incendios', 'Protocolos de evacuación para situaciones de incendio.', '2025-06-15', 9, 'Diego Torres', 'Estación de Bomberos Central', 40, 'Planificado'),
+        ('RCP y desfibrilación', 'Reanimación cardiopulmonar y uso de desfibrilador.', '2025-06-18', 7, 'Ana Ramírez', 'Estación de Bomberos Norte', 30, 'Planificado'),
+        ('Taller de comunicación en crisis', 'Mejorar la comunicación en emergencias.', '2025-06-20', 5, 'Pedro Salinas', 'Estación de Bomberos Sur', 20, 'Planificado'),
+        ('Simulacro de emergencia', 'Simulacro completo con evaluación.', '2025-06-22', 6, 'Laura Contreras', 'Estación de Bomberos Este', 25, 'Planificado'),
+        ('Uso de mangueras de alta presión', 'Capacitación práctica con equipo real.', '2025-06-25', 4, 'Miguel Herrera', 'Estación de Bomberos Central', 18, 'En_curso'),
+        ('Rescate acuático', 'Técnicas de rescate en ríos y piscinas.', '2025-06-28', 10, 'Valeria Núñez', 'Estación de Bomberos Norte', 12, 'Planificado');    
     ");
 
-    $pqr_table      = $wpdb->prefix . 'pqr';
     $wpdb->query("
-                INSERT INTO $pqr_table (nombre, telefono, email, tipo_solicitud, contenido, respuesta, estado_solicitud, fecha_registro)
-                VALUES
-                ('Juan Pérez', '3001234567', 'juan.perez@example.com', 'Petición', 'Solicito información sobre los horarios de atención.', NULL, 'Pendiente', NOW()),
-                ('María Gómez', '3102345678', 'maria.gomez@example.com', 'Queja', 'El servicio recibido fue deficiente y poco profesional.', NULL, 'Pendiente', NOW()),
-                ('Carlos Rodríguez', '3113456789', 'carlos.rodriguez@example.com', 'Reclamo', 'Mi factura presenta un valor erróneo. Solicito revisión.', NULL, 'Pendiente', NOW()),
-                ('Ana Martínez', '3124567890', 'ana.martinez@example.com', 'Petición', '¿Pueden indicarme cómo solicitar un certificado?', NULL, 'Pendiente', NOW()),
-                ('Luis Herrera', '3135678901', 'luis.herrera@example.com', 'Queja', 'No responden los correos enviados desde hace una semana.', NULL, 'Pendiente', NOW()),
-                ('Paula Díaz', '3146789012', 'paula.diaz@example.com', 'Reclamo', 'No se respetaron los términos del contrato.', 'Hemos revisado su caso y procederemos a corregir la situación.', 'Resuelto', NOW() - INTERVAL 2 DAY),
-                ('Jorge Ruiz', '3157890123', 'jorge.ruiz@example.com', 'Petición', 'Solicito una copia del reglamento interno.', 'El reglamento ha sido enviado a su correo.', 'Resuelto', NOW() - INTERVAL 5 DAY),
-                ('Camila Torres', '3168901234', 'camila.torres@example.com', 'Queja', 'El personal de atención al cliente fue grosero.', NULL, 'Pendiente', NOW()),
-                ('Ricardo Mendoza', '3179012345', 'ricardo.mendoza@example.com', 'Reclamo', 'No me han hecho la devolución prometida.', NULL, 'Pendiente', NOW()),
-                ('Laura Castillo', '3180123456', 'laura.castillo@example.com', 'Petición', 'Quisiera conocer los requisitos para afiliarme.', NULL, 'Pendiente', NOW()) 
-                ");
+        INSERT INTO $inscripciones_table 
+        (id_curso, nombre_asistente, email_asistente, telefono_asistente, estado_inscripcion, notas)
+        VALUES
+        (1, 'Luis Mendoza', 'luis.mendoza@example.com', '3001112233', 'confirmada', 'Asistente puntual'),
+        (2, 'Sandra López', 'sandra.lopez@example.com', '3002223344', 'pendiente', NULL),
+        (3, 'Andrés Pérez', 'andres.perez@example.com', '3003334455', 'confirmada', 'Requiere material adicional'),
+        (4, 'Marcela Torres', 'marcela.torres@example.com', '3004445566', 'cancelada', 'No podrá asistir'),
+        (5, 'Raúl García', 'raul.garcia@example.com', '3005556677', 'confirmada', NULL),
+        (6, 'Natalia Sánchez', 'natalia.sanchez@example.com', '3006667788', 'confirmada', NULL),
+        (7, 'Diego Vargas', 'diego.vargas@example.com', '3007778899', 'pendiente', NULL),
+        (8, 'Paola Romero', 'paola.romero@example.com', '3008889900', 'confirmada', 'Vegetariana'),
+        (9, 'Esteban Cruz', 'esteban.cruz@example.com', '3009990011', 'confirmada', NULL),
+        (10, 'Diana Castro', 'diana.castro@example.com', '3010001122', 'confirmada', NULL),
+        (1, 'José Rojas', 'jose.rojas@example.com', '3011112233', 'confirmada', NULL),
+        (2, 'Laura Morales', 'laura.morales@example.com', '3012223344', 'pendiente', NULL),
+        (3, 'Camilo Ayala', 'camilo.ayala@example.com', '3013334455', 'confirmada', NULL),
+        (4, 'Lucía Peña', 'lucia.pena@example.com', '3014445566', 'confirmada', NULL),
+        (5, 'Julián Herrera', 'julian.herrera@example.com', '3015556677', 'cancelada', 'Por enfermedad'),
+        (6, 'Tatiana Gómez', 'tatiana.gomez@example.com', '3016667788', 'confirmada', NULL),
+        (7, 'Cristian Beltrán', 'cristian.beltran@example.com', '3017778899', 'pendiente', NULL),
+        (8, 'Vanessa Díaz', 'vanessa.diaz@example.com', '3018889900', 'confirmada', NULL),
+        (9, 'Felipe Acosta', 'felipe.acosta@example.com', '3019990011', 'confirmada', NULL),
+        (10, 'Carolina Mejía', 'carolina.mejia@example.com', '3020001122', 'confirmada', NULL);
+        ");
+    $wpdb->query("
+        INSERT INTO $pqrs_table (nombre, telefono, email, tipo_solicitud, contenido, respuesta, estado_solicitud, fecha_registro)
+        VALUES
+        ('Juan Pérez', '3001234567', 'juan.perez@example.com', 'Petición', 'Solicito información sobre los horarios de atención.', NULL, 'Pendiente', NOW()),
+        ('María Gómez', '3102345678', 'maria.gomez@example.com', 'Queja', 'El servicio recibido fue deficiente y poco profesional.', NULL, 'Pendiente', NOW()),
+        ('Carlos Rodríguez', '3113456789', 'carlos.rodriguez@example.com', 'Reclamo', 'Mi factura presenta un valor erróneo. Solicito revisión.', NULL, 'Pendiente', NOW()),
+        ('Ana Martínez', '3124567890', 'ana.martinez@example.com', 'Petición', '¿Pueden indicarme cómo solicitar un certificado?', NULL, 'Pendiente', NOW()),
+        ('Luis Herrera', '3135678901', 'luis.herrera@example.com', 'Queja', 'No responden los correos enviados desde hace una semana.', NULL, 'Pendiente', NOW()),
+        ('Paula Díaz', '3146789012', 'paula.diaz@example.com', 'Reclamo', 'No se respetaron los términos del contrato.', 'Hemos revisado su caso y procederemos a corregir la situación.', 'Resuelto', NOW() - INTERVAL 2 DAY),
+        ('Jorge Ruiz', '3157890123', 'jorge.ruiz@example.com', 'Petición', 'Solicito una copia del reglamento interno.', 'El reglamento ha sido enviado a su correo.', 'Resuelto', NOW() - INTERVAL 5 DAY),
+        ('Camila Torres', '3168901234', 'camila.torres@example.com', 'Queja', 'El personal de atención al cliente fue grosero.', NULL, 'Pendiente', NOW()),
+        ('Ricardo Mendoza', '3179012345', 'ricardo.mendoza@example.com', 'Reclamo', 'No me han hecho la devolución prometida.', NULL, 'Pendiente', NOW()),
+        ('Laura Castillo', '3180123456', 'laura.castillo@example.com', 'Petición', 'Quisiera conocer los requisitos para afiliarme.', NULL, 'Pendiente', NOW()) 
+        ");
 
 
     echo "Tablas recreadas e información cargada correctamente.";
