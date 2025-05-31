@@ -44,8 +44,9 @@ jQuery(document).ready(function($) {
         BomberosPlugin.enviarPeticionAjax('cursos', 'actualizar_curso', formData);
     });
 
-    $(document).on('click', '.cancelar-edicion-curso', function() {
+    $(document).on('click', '.cancelar-edicion-curso', function(e) {
         e.preventDefault();
+        var formData= 'paged=' + encodeURIComponent($(this).data('paged'));
         BomberosPlugin.enviarPeticionAjax('cursos', 'pagina_inicial', formData);
     });
 
@@ -56,8 +57,9 @@ jQuery(document).ready(function($) {
         BomberosPlugin.enviarPeticionAjax('cursos', 'registrar_curso', formData);
     });
    //cancelar creacion de cursos
-    $(document).on('click', '.cancelar-creacion-curso', function() {
+    $(document).on('click', '.cancelar-creacion-curso', function(e) {
         e.preventDefault();
+        var formData= 'paged=' + encodeURIComponent($(this).data('paged'));
         BomberosPlugin.enviarPeticionAjax('cursos', 'pagina_inicial', formData);
     });
 });

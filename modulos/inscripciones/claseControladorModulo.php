@@ -155,9 +155,7 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
             // $paged viene de $form_data_original, que son los datos enviados por el botón "Editar"
             $paged = $form_data_original['paged'] ?? 1;
 
-            // Opcional: si quisieras permitir cambiar el curso, necesitarías cargar todos los cursos.
-            // $todos_los_cursos = $wpdb->get_results("SELECT id_curso, nombre_curso FROM $tabla_cursos ORDER BY nombre_curso ASC", ARRAY_A);
-
+            $estados_posibles = ['Registrada', 'Pendiente', 'Cerrada'];
             ob_start();
             // Pasar $inscripcion, $paged (y $todos_los_cursos si fuera necesario) a la vista
             include_once BOMBEROS_PLUGIN_DIR . 'modulos/inscripciones/formularioEditarInscripcionAdmin.php';
@@ -184,16 +182,7 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
                 $this->lanzarExcepcion('ID de inscripción no válido para actualizar.');
             }
 
-            // Validar estado
-            $estados_permitidos = ['confirmada', 'pendiente', 'cancelada'];
-            if (!in_array($form_data_edicion['estado_inscripcion'], $estados_permitidos)) {
-                $this->lanzarExcepcion('Estado de inscripción no válido.');
-            }
-
             $datos_a_actualizar = [
-                // 'nombre_asistente' => $form_data_edicion['nombre_asistente'], // No se permite editar
-                // 'email_asistente' => $form_data_edicion['email_asistente'], // No se permite editar
-                // 'id_curso' => $form_data_edicion['id_curso'], // Si se permitiera cambiar
                 'telefono_asistente' => $form_data_edicion['telefono_asistente'] ?? null,
                 'estado_inscripcion' => $form_data_edicion['estado_inscripcion'],
                 'notas' => $form_data_edicion['notas'] ?? null,
@@ -203,9 +192,6 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
             // $datos_a_actualizar = array_filter($datos_a_actualizar, function($value) { return $value !== null; });
 
             $formatos_datos = [
-                // '%s', // nombre_asistente
-                // '%s', // email_asistente
-                // '%d', // id_curso
                 '%s', // telefono_asistente
                 '%s', // estado_inscripcion
                 '%s', // notas

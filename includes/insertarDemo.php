@@ -58,26 +58,26 @@ function insertar_datos_demo()
         INSERT INTO $inscripciones_table 
         (id_curso, nombre_asistente, email_asistente, telefono_asistente, estado_inscripcion, notas)
         VALUES
-        (1, 'Luis Mendoza', 'luis.mendoza@example.com', '3001112233', 'confirmada', 'Asistente puntual'),
-        (2, 'Sandra López', 'sandra.lopez@example.com', '3002223344', 'pendiente', NULL),
-        (3, 'Andrés Pérez', 'andres.perez@example.com', '3003334455', 'confirmada', 'Requiere material adicional'),
-        (4, 'Marcela Torres', 'marcela.torres@example.com', '3004445566', 'cancelada', 'No podrá asistir'),
-        (5, 'Raúl García', 'raul.garcia@example.com', '3005556677', 'confirmada', NULL),
-        (6, 'Natalia Sánchez', 'natalia.sanchez@example.com', '3006667788', 'confirmada', NULL),
-        (7, 'Diego Vargas', 'diego.vargas@example.com', '3007778899', 'pendiente', NULL),
-        (8, 'Paola Romero', 'paola.romero@example.com', '3008889900', 'confirmada', 'Vegetariana'),
-        (9, 'Esteban Cruz', 'esteban.cruz@example.com', '3009990011', 'confirmada', NULL),
-        (10, 'Diana Castro', 'diana.castro@example.com', '3010001122', 'confirmada', NULL),
-        (1, 'José Rojas', 'jose.rojas@example.com', '3011112233', 'confirmada', NULL),
-        (2, 'Laura Morales', 'laura.morales@example.com', '3012223344', 'pendiente', NULL),
-        (3, 'Camilo Ayala', 'camilo.ayala@example.com', '3013334455', 'confirmada', NULL),
-        (4, 'Lucía Peña', 'lucia.pena@example.com', '3014445566', 'confirmada', NULL),
-        (5, 'Julián Herrera', 'julian.herrera@example.com', '3015556677', 'cancelada', 'Por enfermedad'),
-        (6, 'Tatiana Gómez', 'tatiana.gomez@example.com', '3016667788', 'confirmada', NULL),
-        (7, 'Cristian Beltrán', 'cristian.beltran@example.com', '3017778899', 'pendiente', NULL),
-        (8, 'Vanessa Díaz', 'vanessa.diaz@example.com', '3018889900', 'confirmada', NULL),
-        (9, 'Felipe Acosta', 'felipe.acosta@example.com', '3019990011', 'confirmada', NULL),
-        (10, 'Carolina Mejía', 'carolina.mejia@example.com', '3020001122', 'confirmada', NULL);
+        (1, 'Luis Mendoza', 'luis.mendoza@example.com', '3001112233', 'Registrada', 'Asistente puntual'),
+        (2, 'Sandra López', 'sandra.lopez@example.com', '3002223344', 'Pendiente', NULL),
+        (3, 'Andrés Pérez', 'andres.perez@example.com', '3003334455', 'Cerrada', 'Requiere material adicional'),
+        (4, 'Marcela Torres', 'marcela.torres@example.com', '3004445566', 'Cerrada', 'No podrá asistir'),
+        (5, 'Raúl García', 'raul.garcia@example.com', '3005556677', 'Pendiente', NULL),
+        (6, 'Natalia Sánchez', 'natalia.sanchez@example.com', '3006667788', 'Registrada', NULL),
+        (7, 'Diego Vargas', 'diego.vargas@example.com', '3007778899', 'Pendiente', NULL),
+        (8, 'Paola Romero', 'paola.romero@example.com', '3008889900', 'Registrada', 'Vegetariana'),
+        (9, 'Esteban Cruz', 'esteban.cruz@example.com', '3009990011', 'Registrada', NULL),
+        (10, 'Diana Castro', 'diana.castro@example.com', '3010001122', 'Pendiente', NULL),
+        (1, 'José Rojas', 'jose.rojas@example.com', '3011112233', 'Pendiente', NULL),
+        (2, 'Laura Morales', 'laura.morales@example.com', '3012223344', 'Pendiente', NULL),
+        (3, 'Camilo Ayala', 'camilo.ayala@example.com', '3013334455', 'Registrada', NULL),
+        (4, 'Lucía Peña', 'lucia.pena@example.com', '3014445566', 'Rgistrada', NULL),
+        (5, 'Julián Herrera', 'julian.herrera@example.com', '3015556677', 'Cerrada', 'Por enfermedad'),
+        (6, 'Tatiana Gómez', 'tatiana.gomez@example.com', '3016667788', 'Pendiente', NULL),
+        (7, 'Cristian Beltrán', 'cristian.beltran@example.com', '3017778899', 'Pendiente', NULL),
+        (8, 'Vanessa Díaz', 'vanessa.diaz@example.com', '3018889900', 'Cerrada', NULL),
+        (9, 'Felipe Acosta', 'felipe.acosta@example.com', '3019990011', 'Cerrada', NULL),
+        (10, 'Carolina Mejía', 'carolina.mejia@example.com', '3020001122', 'Pendiente', NULL);
         ");
     $wpdb->query("
         INSERT INTO $pqrs_table (nombre, telefono, email, tipo_solicitud, contenido, respuesta, estado_solicitud, fecha_registro)

@@ -1,10 +1,5 @@
 <?php
-// modulos/inscripciones/vistas/formularioEditarInscripcionAdmin.php
 if (!defined('ABSPATH')) exit;
-
-
-// Para el select de estado, definimos los posibles valores
-$estados_posibles = ['confirmada', 'pendiente', 'cancelada'];
 ?>
 <div class="wrap" id="inscripcion-frm-editar-admin">
     <h3><?php esc_html_e('Editar Inscripción', 'bomberos-servicios'); ?></h3>
@@ -19,7 +14,7 @@ $estados_posibles = ['confirmada', 'pendiente', 'cancelada'];
 
     <form id="form-editar-inscripcion-admin" method="post" class="bomberos-form">
         <input type="hidden" name="id_inscripcion" value="<?php echo esc_attr($inscripcion['id_inscripcion']); ?>">
-        <input type="hidden" name="paged" value="<?php echo esc_attr($paged); ?>"> {/* Para volver a la página correcta de la lista */}
+        <input type="hidden" name="paged" value="<?php echo esc_attr($paged); ?>"> 
 
         <table class="form-table">
             <tbody>
@@ -63,7 +58,7 @@ $estados_posibles = ['confirmada', 'pendiente', 'cancelada'];
 
                 <tr class="form-field">
                     <th scope="row">
-                        <label for="telefono_asistente"><?php esc_html_e('Teléfono del Asistente', 'bomberos-servicios'); ?></label>
+                        <label for="telefono_asistente">Telefono de contacto</label>
                     </th>
                     <td>
                         <input type="text" name="telefono_asistente" id="telefono_asistente" class="regular-text" value="<?php echo esc_attr($inscripcion['telefono_asistente'] ?? ''); ?>">
@@ -72,7 +67,7 @@ $estados_posibles = ['confirmada', 'pendiente', 'cancelada'];
                 
                 <tr class="form-field">
                     <th scope="row">
-                        <label for="notas"><?php esc_html_e('Notas Adicionales', 'bomberos-servicios'); ?></label>
+                        <label for="notas">Observaciones o Notas adicionales</label>
                     </th>
                     <td>
                         <textarea name="notas" id="notas" class="regular-text" rows="5"><?php echo esc_textarea($inscripcion['notas'] ?? ''); ?></textarea>
@@ -83,7 +78,7 @@ $estados_posibles = ['confirmada', 'pendiente', 'cancelada'];
         </table>
 
         <p class="submit">
-            <button type="submit" class="button button-primary"><?php esc_html_e('Guardar Cambios', 'bomberos-servicios'); ?></button>
+            <button type="submit" class="button button-primary">Guardar Cambios</button>
             <button type="button" class="button button-secondary cancelar-edicion-inscripcion-admin" data-paged="<?php echo esc_attr($paged); ?>"><?php esc_html_e('Cancelar', 'bomberos-servicios'); ?></button>
         </p>
     </form>

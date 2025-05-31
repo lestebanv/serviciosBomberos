@@ -40,6 +40,12 @@ jQuery(document).ready(function ($) {
         const formData = 'paged=' + encodeURIComponent(pagina);
         BomberosPlugin.enviarPeticionAjax('empresas', 'pagina_inicial', formData);
     });
+        // boton de cancelar edicion
+    $(document).on('click', '.cancelar-creacion-empresa', function (e) {
+        e.preventDefault();
+        const formData = 'paged=' + encodeURIComponent(1);
+        BomberosPlugin.enviarPeticionAjax('empresas', 'pagina_inicial', formData);
+    });
 
     // Enviar formulario de edición para actualizar los datos de la empresa
     $(document).on('submit', '#form-editar-empresa', function (e) {

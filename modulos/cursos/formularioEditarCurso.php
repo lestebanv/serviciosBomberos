@@ -81,8 +81,8 @@ if (!defined('ABSPATH')) {
             </tr>
         </table>
         <p class="submit">
-            <button type="submit" class="button button-primary"><?php esc_html_e('Guardar Cambios', 'bomberos-servicios'); ?></button>
-            <button type="button" class="button button-secondary cancelar-edicion-curso"><?php esc_html_e('Cancelar', 'bomberos-servicios'); ?></button>
+            <button type="submit" class="button button-primary" >Guardar Cambios</button>
+            <button type="button" class="button button-secondary cancelar-edicion-curso" data-paged="<?php echo esc_attr($paged); ?>">Cancelar</button>
         </p>
         <div id="mensaje-editar-curso" class="notice" style="display: none;"></div>
     </form>

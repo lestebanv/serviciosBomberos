@@ -66,8 +66,8 @@ if (!defined('ABSPATH')) {
             </tr>
         </table>
         <p class="submit">
-            <button type="submit" class="button button-primary"><?php esc_html_e('Crear Curso', 'bomberos-servicios'); ?></button>
-            <button type="button" class="button button-secondary cancelar-creacion-curso"><?php esc_html_e('Cancelar', 'bomberos-servicios'); ?></button>
+            <button type="submit" class="button button-primary">Registrar Curso</button>
+            <button type="button" class="button button-secondary cancelar-creacion-curso">Cancelar</button>
         </p>
         <div id="mensaje-crear-curso" class="notice" style="display: none;"></div>
     </form>

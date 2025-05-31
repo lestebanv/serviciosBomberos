@@ -85,7 +85,7 @@ function crear_tablas_plugin_bomberos()
             telefono varchar(20) NOT NULL,
             email varchar(100) NOT NULL,
             tipo_solicitud varchar(50) NOT NULL,
-            estado_solicitud ENUM('Registrada', 'En Proceso', 'Cerrada') NOT NULL DEFAULT 'Registrada',
+            estado_solicitud ENUM('Registrada', 'Pendiente', 'Cerrada') NOT NULL DEFAULT 'Registrada',
             fecha_registro datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
             contenido text NOT NULL,
             ip_address varchar(45) NOT NULL,
