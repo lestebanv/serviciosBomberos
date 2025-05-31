@@ -120,18 +120,78 @@ BOMBEROSSERVICIOS/
 
 la base de datos esta asi organizada
 
-+-------------------+       +---------------------+       +---------------+
-|      EMPRESA      |       |     INSPECCIÓN      |       |     CURSO     |
-+-------------------+       +---------------------+       +---------------+
-| PK: id_empresa    |------>| PK: id_inspeccion   |       | PK: id_curso  |
-|     nit           |       |     fecha_registro  |       | nombre_curso  |
-|     razon_social  |   1..n|     fecha_programada|       | descripcion   |
-|     direccion     |       |     fecha_expedicion|       | fecha_inicio  |
-|     barrio        |       |     estado          |       | duracion_horas|
-|     rep_legal     |       |     nombre_encargado|       | instructor    |
-|     email         |       |     telefono_encarg |       | lugar         |
-+-------------------+       | FK: id_empresa      |       | capacidad_max |
-                            +---------------------+       | estado        |
-                                                          | fecha_registro|
-                                                          | fecha_actualiz|
-                                                          +---------------+
+
++------------------+
+|     EMPRESAS     |
++------------------+
+| id_empresa (PK)  |
+| nit              |
+| razon_social     |
+| direccion        |
+| barrio           |
+| representante_legal |
+| email            |
++------------------+
+         ▲
+         │ (FK)
+         │
++---------------------+
+|    INSPECCIONES     |
++---------------------+
+| id_inspeccion (PK)  |
+| fecha_registro      |
+| fecha_programada    |
+| fecha_expedicion    |
+| estado              |
+| nombre_encargado    |
+| telefono_encargado  |
+| id_empresa (FK)     |
++---------------------+
+
++------------------+
+|      CURSOS      |
++------------------+
+| id_curso (PK)    |
+| nombre_curso     |
+| descripcion      |
+| fecha_inicio     |
+| duracion_horas   |
+| instructor       |
+| lugar            |
+| capacidad_maxima |
+| estado           |
+| fecha_registro   |
+| fecha_actualizacion |
++------------------+
+         ▲
+         │ (FK)
+         │
++----------------------------+
+|   INSCRIPCIONES_CURSOS     |
++----------------------------+
+| id_inscripcion (PK)       |
+| id_curso (FK)             |
+| nombre_asistente          |
+| email_asistente           |
+| telefono_asistente        |
+| fecha_inscripcion         |
+| estado_inscripcion        |
+| notas                     |
++----------------------------+
+
++---------------------------+
+|           PQRS           |
++---------------------------+
+| id (PK)                  |
+| nombre                   |
+| telefono                 |
+| email                    |
+| tipo_solicitud           |
+| estado_solicitud         |
+| fecha_registro           |
+| contenido                |
+| ip_address               |
+| respuesta                |
+| fecha_respuesta          |
++---------------------------+
+
