@@ -8,48 +8,42 @@ if (!defined('ABSPATH')) exit;
 
     <?php if (function_exists('barraNavegacion')) barraNavegacion('inscripciones_admin', $total_pages, $current_page); ?>
 
-    <table class="wp-list-table widefat fixed striped">
+    <table class="wp-list-table widefat striped">
         <thead>
             <tr>
-                <th><?php esc_html_e('Curso', 'bomberos-servicios'); ?></th>
-                <th><?php esc_html_e('Asistente', 'bomberos-servicios'); ?></th>
-                <th><?php esc_html_e('Email', 'bomberos-servicios'); ?></th>
-                <th><?php esc_html_e('Fecha Inscripción', 'bomberos-servicios'); ?></th>
-                <th><?php esc_html_e('Estado', 'bomberos-servicios'); ?></th>
-                <th><?php esc_html_e('Acciones', 'bomberos-servicios'); ?></th>
+                <th>Curso</th>
+                <th>Asistente</th>
+                <th>Observaciones</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($lista_inscripciones)): ?>
                 <tr>
-                    <td colspan="6"><?php esc_html_e('No hay inscripciones registradas.', 'bomberos-servicios'); ?></td>
+                    <td colspan="4">No hay inscripciones registradas</td>
                 </tr>
             <?php else: ?>
                 <?php foreach ($lista_inscripciones as $inscripcion): ?>
-                    <?php
-                        // Generar la clase CSS para el estado
-                        $clase_estado = 'estado-inscripcion-badge ' . strtolower(esc_attr($inscripcion['estado_inscripcion']));
-                    ?>
                     <tr id="inscripcion-row-<?php echo esc_attr($inscripcion['id_inscripcion']); ?>">
                         <td><?php echo esc_html($inscripcion['nombre_curso']); ?></td>
-                        <td><?php echo esc_html($inscripcion['nombre_asistente']); ?></td>
-                        <td><?php echo esc_html($inscripcion['email_asistente']); ?></td>
-                        <td><?php echo esc_html(date_i18n(get_option('date_format') . ' H:i', strtotime($inscripcion['fecha_inscripcion']))); ?></td>
-                        <td>
-                            <span class="<?php echo $clase_estado; ?>">
-                                <?php echo esc_html(ucfirst(str_replace('_', ' ', $inscripcion['estado_inscripcion']))); ?>
-                            </span>
+                        
+                        <td><strong><?php echo esc_html($inscripcion['estado_inscripcion']); ?></strong><br>    
+                            <?php echo esc_html($inscripcion['nombre_asistente']); ?><br>
+                            <?php echo esc_html($inscripcion['email_asistente']); ?><hr>
+                            Fecha Inscripcion: <?php echo esc_html(date_i18n(get_option('date_format') . ' H:i', strtotime($inscripcion['fecha_inscripcion']))); ?>
                         </td>
+
+                        <td><?php echo esc_html($inscripcion['notas']); ?></td>
                         <td>
                             <button class="button editar-inscripcion-admin" 
                                     data-id="<?php echo esc_attr($inscripcion['id_inscripcion']); ?>"
                                     data-paged="<?php echo esc_attr($current_page); ?>">
-                                <?php esc_html_e('Editar', 'bomberos-servicios'); ?>
+                                Editar
                             </button>
                             <button class="button delete-inscripcion-admin" 
                                     data-id="<?php echo esc_attr($inscripcion['id_inscripcion']); ?>"
                                     data-paged="<?php echo esc_attr($current_page); ?>">
-                                <?php esc_html_e('Eliminar', 'bomberos-servicios'); ?>
+                                Eliminar
                             </button>
                         </td>
                     </tr>

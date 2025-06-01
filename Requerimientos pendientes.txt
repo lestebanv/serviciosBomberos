@@ -1,0 +1,21 @@
+- En Empresas
+   cuando se edita una empresa listar las inspecciones que ha solicitado en orden de mas antigua a mas mas nueva... sin editar inspecciones solo visualizar
+
+- Inspecciones
+  un boton tipo reporte que permita ver las inspecciones proximas a vencerce
+  en el listado ordenar por estado descententemente y luego por fecha de registro
+  el boton de cancelar no retorna a la pagina donde esta el registro editado
+
+- cursos
+  Definir claramente los estados del cursos
+  quitar la validacion cuando se esta registrando de que la fecha programada tiene que ser superior a la fecha actual
+  preguntar sobre el criterio de ordenamiento de los cursos
+  en editar cursos presentar un listado de los inscritos actualmente inscritos en el curso sin posibilidad de edicion
+
+- inscripciones 
+  ordenar por curso y luego por estado de registro 
+  
+- Generales
+  - agragar a todas las plantillas  <?php if (!defined('ABSPATH'))   exit; ?>
+  - unificar nombrado de variables o metodos camelCase
+  - buscar forma de unificar los nombres de los id de etiquetas html para manejo de eventos

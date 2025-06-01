@@ -13,7 +13,6 @@
                 <th>NIT / Razón Social</th>
                 <th>Ubicación</th>
                 <th>Representante Legal</th>
-                <th>Email</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -28,8 +27,8 @@
                         <?php echo esc_html($empresa['direccion']); ?><br>
                         Barrio: <?php echo esc_html($empresa['barrio']); ?>
                     </td>
-                    <td><?php echo esc_html($empresa['representante_legal']); ?></td>
-                    <td><?php echo esc_html($empresa['email']); ?></td>
+                    <td><?php echo esc_html($empresa['representante_legal']); ?><br>
+                        <?php echo esc_html($empresa['email']); ?></td>
                     <td>
                         <button class="button editar-empresa"
                             data-id="<?php echo esc_attr($empresa['id_empresa']);?>" data-paged="<?php echo $current_page; ?>">Editar</button>
