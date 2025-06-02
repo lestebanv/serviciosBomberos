@@ -1,95 +1,90 @@
 
 <?php
-class ControladorPQR extends ClaseControladorBaseBomberos
-{
-    protected $sanitization_rules = [
-        'id' => 'int',
-        'paged' => 'int',
-        'form_data' => [
-            'id' => 'int',
-            'email' => 'email',
-        ],
+class ControladorPQR extends ClaseControladorBaseBomberos{
+    protected $tablaPqrs;
+    protected $reglasSanitizacion = [
+        'form_data' => 
+            [
+                'id' => 'int',
+            ],
     ];
 
-    public function ejecutarFuncionalidad($request)
+    public function __construct()
+    {
+        parent::__construct();
+        global $wpdb;
+        $this->tablaPqrs = $wpdb->prefix . 'pqrs';
+    }
+
+    public function ejecutarFuncionalidad($peticion)
     {
         try {
-            $sanitized_request = bomberos_sanitize_input($request, $this->sanitization_rules);
-            $funcionalidad = $request['funcionalidad'] ?? '';
-
-            if (empty($funcionalidad)) {
-                $this->enviarLog("Funcionalidad no especificada", $request);
-                $this->lanzarExcepcion("Funcionalidad no especificada.");
-            }
+            $peticionLimpia = $this->sanitizarRequest($peticion, $this->reglasSanitizacion);
+            $funcionalidad = $peticionLimpia['funcionalidad'] ?? '';
+            $datos=$peticionLimpia['form_data'];
 
             switch ($funcionalidad) {
                 case 'inicial':
                 case 'pagina_inicial':
-                    return $this->listarPQR($sanitized_request);
+                    return $this->listarPQR($datos);
                 case 'editar_pqr':
-                    return $this->formularioEdicion($sanitized_request);
+                    return $this->formularioEdicion($datos);
                 case 'actualizar_pqr':
-                    return $this->actualizarPQR($sanitized_request);
+                    return $this->actualizarPQR($datos);
                 case 'eliminar_pqr':
-                    return $this->eliminarPQR($sanitized_request);
+                    return $this->eliminarPQR($datos);
                 default:
-                    $this->enviarLog("Funcionalidad desconocida", ['funcionalidad' => $funcionalidad]);
                     $this->lanzarExcepcion("Funcionalidad '$funcionalidad' no reconocida.");
             }
         } catch (Exception $e) {
-            $this->enviarLog("Error en ejecutarFuncionalidad: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error en ejecutar Funcionalidad de pqrs " . $e->getMessage(), $datos);
         }
     }
 
-    public function listarPQR($request)
+    public function listarPQR($datos)
     {
         try {
             global $wpdb;
-            $table = $wpdb->prefix . 'pqrs';
-            $items_per_page = 5;
-            $current_page = $request['form_data']['paged'] ?? 1;
-            $offset = ($current_page - 1) * $items_per_page;
+            $elementosPorPagina = 5;
+            $actualpagina= $datos['actualpagina'] ?? 1;
+            $offset = ($actualpagina- 1) * $elementosPorPagina;
 
-            $total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
+            $total = $wpdb->get_var("SELECT COUNT(*) FROM {$this->tablaPqrs}");
             if ($total === null) {
                 $this->lanzarExcepcion("No se pudo obtener el total de PQR.");
             }
 
-            $total_pages = ceil($total / $items_per_page);
-
-            $lista_pqr = $wpdb->get_results($wpdb->prepare(
-                "SELECT * FROM $table ORDER BY fecha_registro DESC LIMIT %d OFFSET %d",
-                $items_per_page, $offset
-            ), ARRAY_A);
-
-            if ($lista_pqr === null) {
+            $totalpaginas = ceil($total / $elementosPorPagina);
+            $sqlPqrs=$wpdb->prepare(
+                "SELECT * FROM {$this->tablaPqrs} ORDER BY fecha_registro DESC LIMIT %d OFFSET %d",
+                $elementosPorPagina, $offset
+            );
+            $listaPqrs = $wpdb->get_results($sqlPqrs, ARRAY_A);
+            if ($listaPqrs === null) {
                 $this->lanzarExcepcion("No se pudo obtener la lista de PQR.");
             }
 
             ob_start();
             include plugin_dir_path(__FILE__) . 'listadoPqr.php';
             $html = ob_get_clean();
-            return $this->armarRespuesta('Listado de PQR cargado', $html, ['total_pages' => $total_pages]);
+            return $this->armarRespuesta('Listado de PQR cargado', $html);
         } catch (Exception $e) {
-            $this->enviarLog("Error en listarPQR: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error en listarPQR: ",$e, $datos);
         }
     }
 
  
-    public function formularioEdicion($request)
+    public function formularioEdicion($datos)
     {
         try {
             global $wpdb;
-            $id = (int) ($request['form_data']['id'] ?? 0);
-            $tabla = $wpdb->prefix . 'pqrs';
-            $paged = (int) ($request['form_data']['paged'] ?? 1);
+            $id = (int) ($datos['id'] ?? 0);
+            $actualpagina = (int) ($datos['actualpagina'] ?? 1);
             if ($id <= 0) {
-                $this->lanzarExcepcion("ID no válido para responder.");
+                $this->lanzarExcepcion("ID de Pqr no válido para responder.");
             }
-
-            $pqr = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tabla WHERE id = %d", $id), ARRAY_A);
+            $sqlPqr=$wpdb->prepare("SELECT * FROM {$this->tablaPqrs} WHERE id = %d", $id);
+            $pqr = $wpdb->get_row($sqlPqr, ARRAY_A);
             if (!$pqr) {
                 $this->lanzarExcepcion("PQR no encontrada.");
             }
@@ -104,55 +99,43 @@ class ControladorPQR extends ClaseControladorBaseBomberos
         }
     }
 
-    public function actualizarPQR($request)
+    public function actualizarPQR($datos)
     {
         try {
             global $wpdb;
-            $tabla = $wpdb->prefix . 'pqrs';
-            $form = $request['form_data'] ?? [];
-
-            $id = (int) ($form['id'] ?? 0);
-            $respuesta = $form['respuesta'] ?? '';
-            $estado =  $form['estado_solicitud']??'Registrada';
-
-
-            $actualizado = $wpdb->update($tabla, [
-                'respuesta' => $respuesta,
-                'estado_solicitud' => $estado,
+            $id = (int) ($datos['id'] ?? 0);
+            $datosActualizar=[
+                'respuesta' => $datos['respuesta'],
+                'estado_solicitud' => $datos['estado_solicitud'],
                 'fecha_respuesta' => current_time('mysql'),
-            ], ['id' => $id]);
-
+            ];
+            $actualizado = $wpdb->update($this->tablaPqrs, $datosActualizar,['id' => $id]);
             if ($actualizado === false) {
                 $this->lanzarExcepcion("Error al guardar la respuesta.");
             }
-
-            return $this->listarPQR($request);
+            return $this->listarPQR($datos);
         } catch (Exception $e) {
-            $this->enviarLog("Error en responderPQR: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error en actualizar PQRS",$e,$datos);
         }
     }
 
-    public function eliminarPQR($request)
+    public function eliminarPQR($datos)
     {
         try {
             global $wpdb;
-            $tabla = $wpdb->prefix . 'pqrs';
-            $id = (int) ($request['form_data']['id'] ?? 0);
+            $id = (int) ($datos['id'] ?? 0);
 
             if ($id <= 0) {
-                $this->lanzarExcepcion("ID no válido para eliminar.");
+                $this->lanzarExcepcion("ID no válido para eliminar pqr.");
             }
-
-            $resultado = $wpdb->delete($tabla, ['id' => $id]);
+            $resultado = $wpdb->delete($this->tablaPqrs, ['id' => $id]);
             if ($resultado === false) {
                 $this->lanzarExcepcion("No se pudo eliminar la PQR.");
             }
 
-            return $this->listarPQR($request);
+            return $this->listarPQR($datos);
         } catch (Exception $e) {
-            $this->enviarLog("Error en eliminarPQR: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error en eliminarPQR: ", $e, $datos);
         }
     }
 }

@@ -1,12 +1,12 @@
 jQuery(document).ready(function ($) {
  /*
        var formData = 'id=' + encodeURIComponent($(this).data('id'));
-       formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
+       formData= formData +'&actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
        BomberosPlugin.enviarPeticionAjax('inspecciones', 'funcionalidad', formData);
  */   
     $(document).on('click', '.editar-inspeccion', function () {
         var formData = 'id=' + encodeURIComponent($(this).data('id'));
-        formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
+        formData= formData +'&actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('inspecciones', 'editar_inspeccion', formData);
     });
     $(document).on('click', '.eliminar-inspeccion', function () {
@@ -14,7 +14,7 @@ jQuery(document).ready(function ($) {
             return;
         }
         var formData = 'id=' + encodeURIComponent($(this).data('id'));
-        formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
+        formData= formData +'&actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('inspecciones', 'eliminar_inspeccion', formData);
     });
 
@@ -27,14 +27,14 @@ jQuery(document).ready(function ($) {
     // Paginación del listado de empresas
     $(document).on('click', '.paginacion-inspecciones', function(e) {
         e.preventDefault();
-        var formData= 'paged=' + encodeURIComponent($(this).data('paged'));
+        var formData= 'actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('inspecciones', 'pagina_inicial', formData);  
     });
 
       // boton cancelar edicion
     $(document).on('click', '.cancelar-edicion-inspeccion', function (e) {
         e.preventDefault();
-        const formData = 'paged=' + encodeURIComponent($(this).data('paged'));
+        const formData = 'actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('inspecciones', 'pagina_inicial', formData);
     });
 });

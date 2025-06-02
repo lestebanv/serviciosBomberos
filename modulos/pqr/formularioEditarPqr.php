@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
     <hr>
     <form id="form-editar-pqr" method="post">
         <input type="hidden" name="id" value="<?php echo esc_attr($pqr['id']); ?>">
-        <input type="hidden" name="paged" value="<?php echo esc_attr($paged); ?>">
+        <input type="hidden" name="actualpagina" value="<?php echo esc_attr($actualpagina); ?>">
 
         <table class="form-table">
             <tr class="form-field">
@@ -40,10 +40,7 @@ if (!defined('ABSPATH')) {
 
         <p class="submit">
             <button type="submit" class="button button-primary">Guardar Cambios</button>
-            <button type="button" class="button cancelar-edicion-pqr" data-paged="<?php echo esc_attr($paged); ?>">Cancelar</button>
+            <button type="button" class="button cancelar-edicion-pqr" data-actualpagina="<?php echo esc_attr($actualpagina); ?>">Cancelar</button>
         </p>
-
-        <div id="mensaje-editar-pqr" class="notice" style="display: none;"></div>
     </form>
-    <hr>
 </div>

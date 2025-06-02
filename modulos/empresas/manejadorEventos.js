@@ -13,7 +13,7 @@ jQuery(document).ready(function ($) {
             return;
         }
         var formData = 'id=' + encodeURIComponent($(this).data('id'));
-        formData = formData + '&paged=' + encodeURIComponent($(this).data('paged'));
+        formData = formData + '&actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('empresas', 'eliminar_empresa', formData);
     });
 
@@ -21,29 +21,27 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.editar-empresa', function (e) {
         e.preventDefault();
         var formData = 'id=' + encodeURIComponent($(this).data('id'));
-        formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
+        formData= formData +'&actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('empresas', 'editar_empresa', formData);
     });
 
     // Paginación del listado de empresas
     $(document).on('click', '.paginacion-empresas', function (e) {
         e.preventDefault();
-        const pagina = $(this).data('paged');
-        const formData = 'paged=' + encodeURIComponent(pagina);
+        const formData = 'actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('empresas', 'pagina_inicial', formData);
     });
     
      // boton de cancelar edicion
     $(document).on('click', '.cancelar-edicion-empresa', function (e) {
         e.preventDefault();
-        const pagina = $(this).data('paged');
-        const formData = 'paged=' + encodeURIComponent(pagina);
+        const formData = 'actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('empresas', 'pagina_inicial', formData);
     });
         // boton de cancelar edicion
     $(document).on('click', '.cancelar-creacion-empresa', function (e) {
         e.preventDefault();
-        const formData = 'paged=' + encodeURIComponent(1);
+        const formData = 'actualpagina=' + encodeURIComponent(1);
         BomberosPlugin.enviarPeticionAjax('empresas', 'pagina_inicial', formData);
     });
 
@@ -51,7 +49,6 @@ jQuery(document).ready(function ($) {
     $(document).on('submit', '#form-editar-empresa', function (e) {
         e.preventDefault();
         const formData = $(this).serialize();
-        alert(formData);
         BomberosPlugin.enviarPeticionAjax('empresas', 'actualizar_empresa', formData);
     });
 

@@ -33,7 +33,7 @@
 
         <p class="submit">
             <button type="submit" class="button button-primary">Guardar Empresa</button>   
-            <button type="button" class="button button-secondary cancelar-creacion-empresa">Cancelar</button>        
+            <button type="button" class="button button-secondary cancelar-creacion-empresa" data-paginaactual="">Cancelar</button>        
         </p>
     </form>
     <hr>

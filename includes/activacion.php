@@ -60,9 +60,6 @@ function crear_tablas_plugin_bomberos()
                     PRIMARY KEY (id_curso)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
         
-
-
-  // ---- NUEVO SQL PARA LA TABLA DE INSCRIPCIONES ----
     $sql_inscripciones_cursos = "CREATE TABLE IF NOT EXISTS $tabla_inscripciones_cursos (
         id_inscripcion BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
         id_curso BIGINT(20) UNSIGNED NOT NULL,
@@ -70,14 +67,14 @@ function crear_tablas_plugin_bomberos()
         email_asistente VARCHAR(100) NOT NULL,
         telefono_asistente VARCHAR(20) DEFAULT NULL,
         fecha_inscripcion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        estado_inscripcion ENUM('Registrada', 'Aprobada') NOT NULL DEFAULT 'Registrada',
+        estado_inscripcion ENUM('Registrada', 'Pendiente','Cerrada') NOT NULL DEFAULT 'Registrada',
         notas TEXT DEFAULT NULL,
         PRIMARY KEY (id_inscripcion),
         FOREIGN KEY (id_curso) REFERENCES $tabla_cursos(id_curso) ON DELETE CASCADE,
         INDEX idx_email_asistente (email_asistente),
         INDEX idx_id_curso (id_curso)
     ) $charset_collate;";
-    // ---- FIN NUEVO SQL ----    
+   
 
         $sql_pqrs = "CREATE TABLE $tabla_pqrs (
             id mediumint(9) NOT NULL AUTO_INCREMENT,

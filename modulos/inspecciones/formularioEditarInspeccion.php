@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 
     <form id="form-editar-inspeccion" method="post">
         <input type="hidden" name="id_inspeccion" value="<?php echo esc_attr($inspeccion['id_inspeccion']); ?>">
-        <input type="hidden" name="paged" value="<?php echo esc_attr($paged); ?>">
+        <input type="hidden" name="actualpagina" value="<?php echo esc_attr($actualpagina); ?>">
         <h2>Detalles de la empresa:</h2>
         <strong>NIT: </strong> <?php echo esc_html($inspeccion['nit']); ?><br>
         <strong>Dirección: </strong><?php echo esc_html($inspeccion['direccion']); ?><br>
@@ -63,9 +63,8 @@ if (!defined('ABSPATH')) {
         </table>
 
         <p class="submit">
-            <input type="submit" class="button button-primary" value="<?php esc_attr_e('Guardar Cambios', 'bomberos-servicios'); ?>">
-            <input type="button" class="button button-secondary cancelar-edicion-inspeccion" data-paged="<?php esc_attr($paged); ?>" value="Cancelar">
+            <input type="submit" class="button button-primary" value="Guardar Cambios">
+            <input type="button" class="button button-secondary cancelar-edicion-inspeccion" data-actualpagina="<?php echo esc_attr($actualpagina); ?>" value="Cancelar">
         </p>
-        <div id="mensaje-editar-inspeccion" class="notice hidden"></div>
     </form>
 </div>

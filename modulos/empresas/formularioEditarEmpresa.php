@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
     <hr>
     <form id="form-editar-empresa" method="post" class="bomberos-form">
         <input type="hidden" name="id_empresa" value="<?php echo esc_attr($empresa['id_empresa']); ?>">
-        <input type="hidden" name="paged" value="<?php echo esc_attr($paged); ?>">
+        <input type="hidden" name="actualpagina" value="<?php echo esc_attr($actualpagina); ?>">
         <table class="form-table">
             <tr class="form-field form-required">
                 <th scope="row">
@@ -55,9 +55,41 @@ if (!defined('ABSPATH')) {
         </table>
         <p class="submit">
             <button type="submit" class="button button-primary"><?php esc_html_e('Guardar Cambios', 'bomberos-servicios'); ?></button>
-            <button type="button" class="button button-secondary cancelar-edicion-empresa"  data-paged="<?php echo esc_attr($paged); ?>">Cancelar</button>
+            <button type="button" class="button button-secondary cancelar-edicion-empresa"  data-actualpagina="<?php echo esc_attr($actualpagina); ?>">Cancelar</button>
         </p>
         <div id="mensaje-editar-empresa" class="notice" style="display: none;"></div>
     </form>
-    <hr>
+    <?php if (!$listaInspecciones):?>
+           <hr> Aun no hay Inspecciones registradas para esta empresas <hr>
+    <?php else:?>
+    <hr> Inspecciones Solicitadas por esta empresa<hr>
+    <table class="wp-list-table widefat striped">
+    <thead>
+        <tr>
+            <th scope="col">No</th>
+            <th scope="col">Persona Encargada</th>
+            <th scope="col">Fecha Registrada</th>
+            <th scope="col">Fecha Programada</th>
+            <th scope="col">Fecha Expedicion certificación</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+            $i=1;
+            foreach ($listaInspecciones as $inspeccion):
+        ?>
+        <tr>
+            <td><?php echo esc_html($i); ?></td>
+            <td><?php echo esc_html($inspeccion['nombre_encargado']); ?><br>
+                <?php echo esc_html($inspeccion['telefono_encargado']); ?>
+            </td>
+            <td><?php echo esc_html($inspeccion['fecha_registro']); ?></td>
+            <td><?php echo esc_html($inspeccion['fecha_programada']); ?></td>
+            <td><?php echo esc_html($inspeccion['fecha_expedicion']); ?></td>
+        </tr>
+        <?php $i=$i+1;
+              endforeach; ?>
+    </tbody>
+</table>
+<?php endif;?>
 </div>

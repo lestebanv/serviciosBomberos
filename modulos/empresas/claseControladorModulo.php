@@ -1,237 +1,236 @@
 <?php
 class ControladorEmpresas extends ClaseControladorBaseBomberos
 {
-    protected $sanitization_rules = [
-        'id' => 'int',
-        'paged' => 'int',
+    protected $tablaEmpresas;
+    protected $tablaInspecciones;
+
+    protected $reglasSanitizacion = [
         'form_data' => [
             'id_empresa' => 'int',
             'email' => 'email',
         ],
     ];
 
-    public function ejecutarFuncionalidad($request)
+    public function __construct()
+    {
+        parent::__construct();
+        global $wpdb;
+        $this->tablaEmpresas = $wpdb->prefix . 'empresas';
+        $this->tablaInspecciones = $wpdb->prefix . 'inspecciones';
+    }
+
+    public function ejecutarFuncionalidad($solicitud)
     {
         try {
-            $sanitized_request = bomberos_sanitize_input($request, $this->sanitization_rules);
-            $funcionalidad = isset($request['funcionalidad']) ? $request['funcionalidad'] : '';
-
+            $solicitudSanitizada = $this->sanitizarRequest($solicitud, $this->reglasSanitizacion);
+            $funcionalidad = $solicitudSanitizada['funcionalidad'] ?? '';
+            $datos = $solicitudSanitizada['form_data'] ?? [];
             if (empty($funcionalidad)) {
-                $this->enviarLog("Funcionalidad no especificada en la solicitud", $request);
                 $this->lanzarExcepcion("Funcionalidad no especificada.");
             }
-
+            
             switch ($funcionalidad) {
                 case 'inicial':
                 case 'pagina_inicial':
-                    return $this->listarEmpresas($sanitized_request);
+                    return $this->listarEmpresas($datos);
                 case 'editar_empresa':
-                    return $this->formularioEdicion($sanitized_request);
+                    return $this->formularioEdicion($datos);
                 case 'actualizar_empresa':
-                    return $this->actualizarEmpresa($sanitized_request);
+                    return $this->actualizarEmpresa($datos);
                 case 'form_crear':
-                    return $this->formularioCreacion($sanitized_request);
+                    return $this->formularioCreacion($datos);
                 case 'registrar_empresa':
-                    return $this->insertarEmpresa($sanitized_request);
+                    return $this->insertarEmpresa($datos);
                 case 'eliminar_empresa':
-                    return $this->eliminarEmpresa($sanitized_request);
+                    return $this->eliminarEmpresa($datos);
                 default:
-                    $this->enviarLog("Funcionalidad no encontrada", ['funcionalidad' => $funcionalidad]);
-                    $this->lanzarExcepcion("Funcionalidad '" . esc_html($funcionalidad) . "' no encontrada en el módulo.");
+                    $this->lanzarExcepcion("Funcionalidad '" . esc_html($funcionalidad) . "' no encontrada.");
             }
         } catch (Exception $e) {
-            $this->enviarLog("Error en ejecutarFuncionalidad: " . $e->getMessage(), $request);
-            throw $e; // Relanzar para que el manejador AJAX lo capture
+            $this->$this->manejarExcepcion("Error en listarEmpresas: ", $e, $solicitud);
+            throw $e;
         }
     }
 
-    public function listarEmpresas($request)
+    public function listarEmpresas($datos)
     {
         try {
             global $wpdb;
-            $table_name = $wpdb->prefix . 'empresas';
+            $itemsPorPagina = 4;
+            
+            $actualpagina = isset($datos['actualpagina']) ? max(1, (int) $datos['actualpagina']) : 1;
+            $offset = ($actualpagina - 1) * $itemsPorPagina;
 
-            $items_per_page = 4;
-            $current_page = isset($request['form_data']['paged']) ? max(1, (int) $request['form_data']['paged']) : 1;
-            $offset = ($current_page - 1) * $items_per_page;
-
-            $total_registros = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
-            if ($total_registros === null) {
-                $this->enviarLog("Error al contar registros en $table_name", [], $wpdb->last_error);
+            $totalRegistros = $wpdb->get_var("SELECT COUNT(*) FROM {$this->tablaEmpresas}");
+            if ($totalRegistros === null) {
                 $this->lanzarExcepcion("Error al obtener el total de registros.");
             }
 
-            $total_pages = ceil($total_registros / $items_per_page);
+            $totalpaginas = ceil($totalRegistros / $itemsPorPagina);
 
-            $sql = $wpdb->prepare("SELECT * FROM $table_name ORDER BY UPPER(razon_social) ASC LIMIT %d OFFSET %d", $items_per_page, $offset);
-            $lista_empresas = $wpdb->get_results($sql, ARRAY_A);
-            if ($lista_empresas === null) {
-                $this->enviarLog("Error al obtener lista de empresas", [], $wpdb->last_error);
+            $strSqlEmpresas = $wpdb->prepare(
+                "SELECT * FROM {$this->tablaEmpresas} ORDER BY UPPER(razon_social) ASC LIMIT %d OFFSET %d",
+                $itemsPorPagina,
+                $offset
+            );
+            $listaEmpresas = $wpdb->get_results($strSqlEmpresas, ARRAY_A);
+
+            if ($listaEmpresas === null) {
                 $this->lanzarExcepcion("Error al cargar la lista de empresas.");
             }
 
             ob_start();
             include plugin_dir_path(__FILE__) . 'listadoEmpresas.php';
             $html = ob_get_clean();
-            return $this->armarRespuesta('Lista de empresas ordenadas alfabeticamente', $html);
+            return $this->armarRespuesta('Lista de empresas', $html);
         } catch (Exception $e) {
-            $this->enviarLog("Error en listarEmpresas: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error en listarEmpresas: ", $e, $datos);
         }
     }
 
-    public function formularioEdicion($request)
+    public function formularioEdicion($datos)
     {
         try {
             global $wpdb;
-            $table_name = $wpdb->prefix . 'empresas';
-            $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
-            $paged=isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 1;
-            if ($id <= 0) {
-                $this->enviarLog("ID inválido para edición", ['id' => $id]);
-                $this->lanzarExcepcion('ID inválido para edición.');
+
+            $idEmpresa = (int) ($datos['id'] ?? 0);
+            $actualpagina=$datos['actualpagina'];
+            if ($idEmpresa <= 0) {
+                $this->lanzarExcepcion("ID inválido de empresa ");
             }
 
-            $empresa = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id_empresa = %d", $id), ARRAY_A);
+            $strSqlEmpresa = $wpdb->prepare(
+                "SELECT * FROM {$this->tablaEmpresas} WHERE id_empresa = %d",
+                $idEmpresa
+            );
+            $empresa = $wpdb->get_row($strSqlEmpresa, ARRAY_A);
+
             if (!$empresa) {
-                $this->enviarLog("Empresa no encontrada", ['id' => $id]);
-                $this->lanzarExcepcion('Empresa no encontrada.');
+                $this->lanzarExcepcion("Empresa no encontrada:".$idEmpresa);
             }
+
+            $strSqlInspecciones = $wpdb->prepare(
+                "SELECT * FROM {$this->tablaInspecciones} WHERE id_empresa = %d",
+                $idEmpresa
+            );
+            $listaInspecciones = $wpdb->get_results($strSqlInspecciones, ARRAY_A);
 
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioEditarEmpresa.php';
             $html = ob_get_clean();
 
-            return $this->armarRespuesta('Formulario de edición cargado.', $html);
+            return $this->armarRespuesta('Formulario de edición cargado', $html);
         } catch (Exception $e) {
-            $this->enviarLog("Error en formularioEdicion: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error enviado el formulario de edicion de empresas ", $e, $datos);
         }
     }
 
-    public function eliminarEmpresa($request)
+    public function eliminarEmpresa($datos)
     {
         try {
             global $wpdb;
-            $tabla = $wpdb->prefix . 'empresas';
-            $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
-            $paged = isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 0;
-            if ($id <= 0) {
-                $this->enviarLog("ID de empresa no válido", ['id' => $id]);
-                $this->lanzarExcepcion('ID de empresa no válido.');
+            $idEmpresa = (int) ($datos['id'] ?? 0);
+            if ($idEmpresa <= 0) {
+                $this->lanzarExcepcion("ID de empresa no válido:".$idEmpresa);
             }
 
-            $resultado = $wpdb->delete($tabla, ['id_empresa' => $id]);
+            $resultado = $wpdb->delete($this->tablaEmpresas, ['id_empresa' => $idEmpresa]);
             if ($resultado === false) {
-                $this->enviarLog("Error al eliminar empresa", ['id' => $id], $wpdb->last_error);
-                $this->lanzarExcepcion('Error al eliminar la empresa.');
+                $this->lanzarExcepcion("Error al eliminar la empresa por id".$idEmpresa);
             }
 
-            return $this->listarEmpresas($request);
+            return $this->listarEmpresas($datos);
         } catch (Exception $e) {
-            $this->enviarLog("Error en eliminarEmpresa: " . $e->getMessage(), $request);
+             $this->manejarExcepcion("Error Eliminando empresa ", $e, $datos);
             throw $e;
         }
     }
 
-    public function actualizarEmpresa($request)
+    public function actualizarEmpresa($datos)
     {
         try {
             global $wpdb;
-            $form = $request['form_data'] ?? [];
-            $tabla = $wpdb->prefix . 'empresas';
-
-            $id = isset($form['id_empresa']) ? (int) $form['id_empresa'] : 0;
-            $datos = [
-                'razon_social' => $form['razon_social'] ?? '',
-                'direccion' => $form['direccion'] ?? '',
-                'barrio' => $form['barrio'] ?? '',
-                'representante_legal' => $form['representante_legal'] ?? '',
-                'email' => $form['email'] ?? '',
+            $idEmpresa = (int) ($datos['id_empresa'] ?? 0);
+            $actualpagina=$datos['actualpagina'];
+            $datosEmpresa = [
+                'razon_social' => $datos['razon_social'] ?? '',
+                'direccion' => $datos['direccion'] ?? '',
+                'barrio' => $datos['barrio'] ?? '',
+                'representante_legal' => $datos['representante_legal'] ?? '',
+                'email' => $datos['email'] ?? '',
             ];
 
-            $campos_obligatorios = ['razon_social', 'direccion', 'barrio', 'representante_legal', 'email'];
-            foreach ($campos_obligatorios as $campo) {
-                if (empty($datos[$campo])) {
-                    $this->enviarLog("Campo obligatorio faltante", ['campo' => $campo]);
+            foreach ($datosEmpresa as $campo => $valor) {
+                if (empty($valor)) {
                     $this->lanzarExcepcion("El campo '$campo' es obligatorio.");
                 }
             }
 
-            if ($id <= 0) {
-                $this->enviarLog("ID de empresa no válido", ['id_empresa' => $id]);
-                $this->lanzarExcepcion('ID de empresa no válido.');
+            if ($idEmpresa <= 0) {
+                $this->lanzarExcepcion("ID de empresa no válido.");
             }
 
-            $actualizado = $wpdb->update($tabla, $datos, ['id_empresa' => $id]);
-            if ($actualizado === false) {
-                $this->enviarLog("Error al actualizar empresa", ['id_empresa' => $id], $wpdb->last_error);
-                $this->lanzarExcepcion('No se pudo actualizar la empresa.');
+            $resultado = $wpdb->update($this->tablaEmpresas, $datosEmpresa, ['id_empresa' => $idEmpresa]);
+            if ($resultado === false) {
+                $this->lanzarExcepcion("No se pudo actualizar la empresa.");
             }
-
-            return $this->listarEmpresas($request);
+            $this->enviarLog("desde actualizar empresa",$datos);
+            return $this->listarEmpresas($datos);
         } catch (Exception $e) {
-            $this->enviarLog("Error en actualizarEmpresa: " . $e->getMessage(), $request);
+            $this->manejarExcepcion("Error en actualizar Empresa: ",e, $datos);
             throw $e;
         }
     }
 
-    public function formularioCreacion($request)
+    public function formularioCreacion($datos)
     {
         try {
+            $actualpagina=$datos['actualpagina'];
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioCrearEmpresa.php';
             $html = ob_get_clean();
-
-            return $this->armarRespuesta('Formulario de creación cargado correctamente', $html);
+            return $this->armarRespuesta("Formulario de creación cargado", $html);
         } catch (Exception $e) {
-            $this->enviarLog("Error en formularioCreacion: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error enviando formulario para crear Empresa: ",e, $datos);
         }
     }
 
-    public function insertarEmpresa($request)
+    public function insertarEmpresa($datos)
     {
         try {
             global $wpdb;
-            $tabla = $wpdb->prefix . 'empresas';
-            $data = $request['form_data'] ?? [];
+            $camposObligatorios = ['nit', 'razon_social', 'direccion', 'barrio', 'representante_legal', 'email'];
 
-            $campos_obligatorios = ['nit', 'razon_social', 'direccion', 'barrio', 'representante_legal', 'email'];
-            foreach ($campos_obligatorios as $campo) {
-                if (empty($data[$campo])) {
-                    $this->enviarLog("Campo obligatorio faltante", ['campo' => $campo]);
-                    $this->lanzarExcepcion("El campo '$campo' es obligatorio.");
+            foreach ($camposObligatorios as $campo) {
+                if (empty($datos[$campo])) {
+                    $this->lanzarExcepcion("El campo '$campo' es obligatorio en insertar empresa.");
                 }
             }
 
-            $existe = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tabla WHERE nit = %s", $data['nit']));
+            $existe = $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM {$this->tablaEmpresas} WHERE nit = %s",
+                $datos['nit']
+            ));
             if ($existe > 0) {
-                $this->enviarLog("NIT ya registrado", ['nit' => $data['nit']]);
-                $this->lanzarExcepcion("Ya existe una empresa registrada con el NIT: {$data['nit']}");
+                $this->lanzarExcepcion("Ya existe una empresa registrada con el NIT: {$datos['nit']}");
             }
 
-            $insertado = $wpdb->insert(
-                $tabla,
-                [
-                    'nit' => $data['nit'],
-                    'razon_social' => $data['razon_social'],
-                    'direccion' => $data['direccion'],
-                    'barrio' => $data['barrio'],
-                    'representante_legal' => $data['representante_legal'],
-                    'email' => $data['email'],
-                ]
-            );
+            $resultado = $wpdb->insert($this->tablaEmpresas, [
+                'nit' => $datos['nit'],
+                'razon_social' => $datos['razon_social'],
+                'direccion' => $datos['direccion'],
+                'barrio' => $datos['barrio'],
+                'representante_legal' => $datos['representante_legal'],
+                'email' => $datos['email'],
+            ]);
 
-            if ($insertado === false) {
-                $this->enviarLog("Error al insertar empresa", $data, $wpdb->last_error);
-                $this->lanzarExcepcion('Ocurrió un error al guardar: ' . esc_html($wpdb->last_error));
+            if ($resultado === false) {
+                $this->lanzarExcepcion("Error al guardar: " . esc_html($wpdb->last_error));
             }
 
-            return $this->listarEmpresas($request);
+            return $this->listarEmpresas($datos);
         } catch (Exception $e) {
-            $this->enviarLog("Error en insertarEmpresa: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error insertando en  Empresas ",e, $datos);
         }
     }
 }

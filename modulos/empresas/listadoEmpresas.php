@@ -5,7 +5,7 @@
     <div style="margin-bottom: 1em;">
         <button class="button button-primary" id="btn-agregar-empresa">Agregar nueva empresa</button>
     </div>
-    <?php barraNavegacion('empresas',$total_pages, $current_page); ?>
+    <?php barraNavegacion('empresas',$totalpaginas, $actualpagina); ?>
 
     <table id="empresa-table" class="wp-list-table widefat striped">
         <thead>
@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($lista_empresas as $empresa): ?>
+            <?php foreach ($listaEmpresas as $empresa): ?>
                 <tr id="empresa-row-<?php echo esc_attr($empresa['id_empresa']); ?>">
                     <td>
                         <?php echo esc_html($empresa['razon_social']); ?><br>
@@ -31,14 +31,14 @@
                         <?php echo esc_html($empresa['email']); ?></td>
                     <td>
                         <button class="button editar-empresa"
-                            data-id="<?php echo esc_attr($empresa['id_empresa']);?>" data-paged="<?php echo $current_page; ?>">Editar</button>
+                            data-id="<?php echo esc_attr($empresa['id_empresa']);?>" data-actualpagina="<?php echo $actualpagina; ?>">Editar</button>
                         <button class="button delete-empresa"
-                            data-id="<?php echo esc_attr($empresa['id_empresa']); ?>" data-paged="<?php echo $current_page; ?>">Eliminar</button>
+                            data-id="<?php echo esc_attr($empresa['id_empresa']); ?>" data-actualpagina="<?php echo $actualpagina; ?>">Eliminar</button>
                     </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 
-    <?php barraNavegacion('empresas',$total_pages, $current_page, 'right'); ?>
+    <?php barraNavegacion('empresas',$totalpaginas, $actualpagina, 'right'); ?>
 </div>

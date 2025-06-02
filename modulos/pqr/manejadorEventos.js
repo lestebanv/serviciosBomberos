@@ -8,7 +8,7 @@ jQuery(document).ready(function ($) {
             return;
         }
         var formData = 'id=' + encodeURIComponent(id);
-        formData = formData+ '&paged=' + encodeURIComponent($(this).data('paged'));
+        formData = formData+ '&actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('pqr', 'eliminar_pqr', formData);
     });
 
@@ -16,23 +16,21 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.editar-pqr', function (e) {
         e.preventDefault();
         var formData = 'id=' + encodeURIComponent($(this).data('id'));
-        formData= formData +'&paged=' + encodeURIComponent($(this).data('paged'));
+        formData= formData +'&actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('pqr', 'editar_pqr', formData);
     });
 
     // Paginación del listado de pqr
     $(document).on('click', '.paginacion-pqr', function (e) {
         e.preventDefault();
-        const pagina = $(this).data('paged');
-        const formData = 'paged=' + encodeURIComponent(pagina);
+        const formData = 'actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('pqr', 'pagina_inicial', formData);
     });
     
      // boton de cancelar edicion
     $(document).on('click', '.cancelar-edicion-pqr', function (e) {
-        e.preventDefault();
-        const pagina = $(this).data('paged');
-        const formData = 'paged=' + encodeURIComponent(pagina);
+        e.preventDefault();;
+        const formData = 'actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('pqr', 'pagina_inicial', formData);
     });
 

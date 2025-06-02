@@ -1,7 +1,7 @@
 <div class="wrap" id="cuerpo-listado-pqr">
     <div id="pqr-frm-responder"></div>
 
-     <?php barraNavegacion('pqr', $total_pages, $current_page); ?>
+     <?php barraNavegacion('pqr', $totalpaginas, $actualpagina); ?>
 
     <table id="pqr-table" class="wp-list-table widefat  striped">
         <thead>
@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($lista_pqr as $pqr): ?>
+            <?php foreach ($listaPqrs as $pqr): ?>
                 <tr id="pqr-row-<?php echo esc_attr($pqr['id']); ?>">
                     <td><?php echo esc_html($pqr['fecha_registro']); ?></td>
                     <td>
@@ -30,15 +30,15 @@
                     <td>
                             <button class="button editar-pqr"
                                 data-id="<?php echo esc_attr($pqr['id']); ?>"
-                                data-paged="<?php echo esc_attr($current_page); ?>">Editar</button>
+                                data-actualpagina="<?php echo esc_attr($actualpagina); ?>">Editar</button>
                         <button class="button delete-pqr"
                             data-id="<?php echo esc_attr($pqr['id']); ?>"
-                            data-paged="<?php echo esc_attr($current_page); ?>">Eliminar</button>
+                            data-actualpagina="<?php echo esc_attr($actualpagina); ?>">Eliminar</button>
                     </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 
-    <?php barraNavegacion('pqr', $total_pages, $current_page, 'right'); ?>
+    <?php barraNavegacion('pqr', $totalpaginas, $actualpagina, 'right'); ?>
 </div>

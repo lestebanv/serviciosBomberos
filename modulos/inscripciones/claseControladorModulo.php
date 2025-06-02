@@ -1,222 +1,191 @@
 <?php
-// modulos/inscripciones/claseControladorModulo.php
 if (!defined('ABSPATH')) {
     exit;
 }
 
 class ControladorInscripciones extends ClaseControladorBaseBomberos
 {
-    protected $sanitization_rules = [
-        'id' => 'int',
-        'paged' => 'int',
+    private $tablaInscripciones;
+    private $tablaCursos;
+
+    protected $reglasSanitizacion = [
         'form_data' => [
             'id_inscripcion' => 'int',
             'id_curso' => 'int',
-            'nombre_asistente' => 'text', 
-            'email_asistente' => 'email', 
-            'telefono_asistente' => 'text',
-            'estado_inscripcion' => 'text',
+            'email_asistente' => 'email',
             'notas' => 'textarea',
-            'paged' => 'int'
+            'actualpagina' => 'int'
         ],
     ];
 
-    public function ejecutarFuncionalidad($request)
+    public function __construct()
+    {
+        parent::__construct();
+        global $wpdb;
+        $this->tablaInscripciones = $wpdb->prefix . 'inscripciones';
+        $this->tablaCursos = $wpdb->prefix . 'cursos';
+    }
+
+    public function ejecutarFuncionalidad($peticion)
     {
         try {
-            $sanitized_request = bomberos_sanitize_input($request, $this->sanitization_rules);
-            $form_data = $sanitized_request['form_data'] ?? [];
-            $funcionalidad = $sanitized_request['funcionalidad'] ?? ($form_data['funcionalidad'] ?? 'inicial');
+            $peticionLimpia = $this->sanitizarRequest($peticion, $this->reglasSanitizacion);
+            $funcionalidad = $peticionLimpia['funcionalidad'] ?? ($peticionLimpia['funcionalidad'] ?? 'inicial');
+            $datos = $peticionLimpia['form_data'] ?? [];
 
-            if (empty($funcionalidad)) {
-                $this->lanzarExcepcion("Funcionalidad no especificada en Inscripciones (admin).");
+            if (!$funcionalidad) {
+                $this->lanzarExcepcion("Funcionalidad no especificada en Inscripciones.");
             }
 
-            switch ($funcionalidad) {
+    switch ($funcionalidad) {
                 case 'inicial':
                 case 'pagina_inicial':
-                    return $this->listarInscripcionesAdmin($form_data, $sanitized_request);
-                
-                case 'eliminar_inscripcion_admin':
-                    $id_inscripcion_eliminar = $form_data['id'] ?? 0;
-                    return $this->eliminarInscripcionAdmin($id_inscripcion_eliminar, $form_data, $sanitized_request);
-
-                case 'form_editar_inscripcion_admin': 
-                    $id_inscripcion_editar = $form_data['id'] ?? 0; 
-                    return $this->formularioEditarInscripcionAdmin($id_inscripcion_editar, $form_data, $sanitized_request);
-                
-                case 'actualizar_inscripcion_admin': 
-                    return $this->actualizarInscripcionAdmin($form_data, $sanitized_request); // $form_data tiene los datos del formulario de edición
-
+                    return $this->listarInscripciones($datos);
+                case 'eliminar_inscripcion':
+                    return $this->eliminarInscripcion($datos);
+                case 'form_editar_inscripcion':
+                    return $this->formularioEditarInscripcion($datos);
+                case 'actualizar_inscripcion': 
+                    return $this->actualizarInscripcion($datos);
                 default:
-                    $this->enviarLog("Funcionalidad admin no encontrada en Inscripciones", ['funcionalidad' => $funcionalidad]);
                     $this->lanzarExcepcion("Funcionalidad no encontrada: " . esc_html($funcionalidad));
-            }
+        }
+
         } catch (Exception $e) {
-            $this->enviarLog("Error en ControladorInscripciones::ejecutarFuncionalidad: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error en ejecutar Funcionalidad de inscripciones", $datos, $e->getMessage());
         }
     }
 
-    public function listarInscripcionesAdmin($form_data, $request_original_sanitized)
+    private function listarInscripciones($datos)
     {
-        
         try {
             global $wpdb;
-            $tabla_inscripciones = $wpdb->prefix . 'inscripciones';
-            $tabla_cursos = $wpdb->prefix . 'cursos';
+            $elementosPorPagina = 5;
+            $actualpagina = max(1, (int)($datos['actualpagina'] ?? 1));
+            $offset = ($actualpagina - 1) * $elementosPorPagina;
+            $sqlContarInscripciones = "SELECT COUNT(*) FROM {$this->tablaInscripciones}";
+            $totalRegistros = $wpdb->get_var($sqlContarInscripciones);
+            $totalpaginas = ceil($totalRegistros / $elementosPorPagina);
 
-            $items_per_page = 10;
-            $current_page = isset($form_data['paged']) ? max(1, (int)$form_data['paged']) : 1;
-            $offset = ($current_page - 1) * $items_per_page;
-
-            $total_registros = $wpdb->get_var("SELECT COUNT(*) FROM $tabla_inscripciones");
-            if ($total_registros === null) {
-                $this->enviarLog("Error al contar registros en $tabla_inscripciones", [], $wpdb->last_error);
-                $this->lanzarExcepcion("Error al obtener el total de inscripciones.");
+            if ($totalRegistros === null) {
+                $this->lanzarExcepcion("Error al contar inscripciones.");
             }
-            $total_pages = ceil($total_registros / $items_per_page);
 
-            $sql = $wpdb->prepare(
-                "SELECT i.*, c.nombre_curso 
-                 FROM $tabla_inscripciones i
-                 JOIN $tabla_cursos c ON i.id_curso = c.id_curso
-                 ORDER BY i.fecha_inscripcion DESC 
+            $sqlListarInscripciones = $wpdb->prepare(
+                "SELECT i.*, c.nombre_curso
+                 FROM {$this->tablaInscripciones} i
+                 JOIN {$this->tablaCursos} c ON i.id_curso = c.id_curso
+                 ORDER BY i.fecha_inscripcion DESC
                  LIMIT %d OFFSET %d",
-                $items_per_page,
+                $elementosPorPagina,
                 $offset
             );
-            $lista_inscripciones = $wpdb->get_results($sql, ARRAY_A);
 
-            if ($lista_inscripciones === null && $total_registros > 0) {
-                $this->enviarLog("Error al obtener lista de inscripciones", [], $wpdb->last_error);
-                $this->lanzarExcepcion("Error al cargar la lista de inscripciones.");
+            $listaInscripciones = $wpdb->get_results($sqlListarInscripciones, ARRAY_A);
+
+            if ($listaInscripciones === null && $totalInscripciones > 0) {
+                $this->lanzarExcepcion("Error al obtener inscripciones.");
             }
 
             ob_start();
-            include_once BOMBEROS_PLUGIN_DIR . 'modulos/inscripciones/listadoInscripcionesAdmin.php';
+            include plugin_dir_path(__FILE__) . 'listadoInscripciones.php';
             $html = ob_get_clean();
-            return $this->armarRespuesta('Lista de inscripciones cargada.', $html);
+            return $this->armarRespuesta("Lista cargada correctamente", $html);
         } catch (Exception $e) {
-            $this->enviarLog("Error en listarInscripcionesAdmin: " . $e->getMessage(), $form_data);
-            throw $e;
+           $this->manejarExcepcion("Error en ejecutar Funcionalidad de inscripciones", $datos, $e->getMessage());
         }
     }
 
-    public function eliminarInscripcionAdmin($id_inscripcion, $form_data_original, $request_original_sanitized)
+    private function eliminarInscripcion($datos)
     {
-        // ... (código de eliminarInscripcionAdmin sin cambios, como lo tenías) ...
         try {
             global $wpdb;
-            if ($id_inscripcion <= 0) {
-                $this->lanzarExcepcion('ID de inscripción no válido para eliminar.');
+            $idInscripcion=$datos['id'];
+            if ($idInscripcion <= 0) {
+                $this->lanzarExcepcion("ID de inscripción no válido.");
             }
-            $tabla_inscripciones = $wpdb->prefix . 'inscripciones';
-            $resultado = $wpdb->delete($tabla_inscripciones, ['id_inscripcion' => $id_inscripcion], ['%d']);
+
+            $sqlEliminarInscripcion = $wpdb->prepare(
+                "DELETE FROM {$this->tablaInscripciones} WHERE id_inscripcion = %d",
+                $idInscripcion
+            );
+
+            $resultado = $wpdb->query($sqlEliminarInscripcion);
 
             if ($resultado === false) {
-                $this->enviarLog("Error al eliminar inscripción ID: $id_inscripcion", [], $wpdb->last_error);
-                $this->lanzarExcepcion('Error al eliminar la inscripción: ' . esc_html($wpdb->last_error));
+                $this->lanzarExcepcion("Error al eliminar la inscripción.");
             }
-            return $this->listarInscripcionesAdmin($form_data_original, $request_original_sanitized);
+            return $this->listarInscripciones($datos);
         } catch (Exception $e) {
-            $this->enviarLog("Error en eliminarInscripcionAdmin: " . $e->getMessage(), ['id_inscripcion' => $id_inscripcion]);
-            throw $e;
+             $this->manejarExcepcion("Error en ejecutar Funcionalidad de eliminar inscripciones", $datos, $e->getMessage());
         }
     }
 
-    public function formularioEditarInscripcionAdmin($id_inscripcion, $form_data_original, $request_original_sanitized)
+    private function formularioEditarInscripcion($datos)
     {
         try {
             global $wpdb;
-            if ($id_inscripcion <= 0) {
-                $this->lanzarExcepcion('ID de inscripción no válido para editar.');
+            $idInscripcion=$datos['id'];
+            $actualpagina=$datos["actualpagina"];
+            if ($idInscripcion <= 0) {
+                $this->lanzarExcepcion("ID de inscripción no válido.");
             }
-
-            $tabla_inscripciones = $wpdb->prefix . 'inscripciones';
-            $tabla_cursos = $wpdb->prefix . 'cursos';
-
-            // Obtener datos de la inscripción y el nombre del curso asociado
-            $inscripcion = $wpdb->get_row(
-                $wpdb->prepare(
-                    "SELECT i.*, c.nombre_curso 
-                     FROM $tabla_inscripciones i
-                     JOIN $tabla_cursos c ON i.id_curso = c.id_curso
-                     WHERE i.id_inscripcion = %d",
-                    $id_inscripcion
-                ), ARRAY_A
+            $sqlObtenerInscripcion = $wpdb->prepare(
+                "SELECT i.*, c.nombre_curso
+                 FROM {$this->tablaInscripciones} i
+                 JOIN {$this->tablaCursos} c ON i.id_curso = c.id_curso
+                 WHERE i.id_inscripcion = %d",
+                $idInscripcion
             );
+            $inscripcion = $wpdb->get_row($sqlObtenerInscripcion, ARRAY_A);
 
             if (!$inscripcion) {
-                $this->enviarLog("Inscripción no encontrada para editar. ID: $id_inscripcion");
-                $this->lanzarExcepcion('Inscripción no encontrada.');
+                $this->lanzarExcepcion("Inscripción no encontrada.");
             }
-
-            // $paged viene de $form_data_original, que son los datos enviados por el botón "Editar"
-            $paged = $form_data_original['paged'] ?? 1;
-
-            $estados_posibles = ['Registrada', 'Pendiente', 'Cerrada'];
+            $estadosPosibles=["Registrada","Pendiente","Cerrada"];
             ob_start();
-            // Pasar $inscripcion, $paged (y $todos_los_cursos si fuera necesario) a la vista
-            include_once BOMBEROS_PLUGIN_DIR . 'modulos/inscripciones/formularioEditarInscripcionAdmin.php';
+            include plugin_dir_path(__FILE__) .'formularioEditarInscripcion.php';
             $html = ob_get_clean();
-            return $this->armarRespuesta('Formulario de edición de inscripción cargado.', $html);
 
+            return $this->armarRespuesta("Formulario cargado correctamente", $html);
         } catch (Exception $e) {
-            $this->enviarLog("Error en formularioEditarInscripcionAdmin: " . $e->getMessage(), ['id_inscripcion' => $id_inscripcion]);
-            throw $e;
+            $this->manejarExcepcion("Error en ejecutar Funcionalidad de enviar formulario de inscripciones", $datos, $e->getMessage());
         }
     }
 
-    public function actualizarInscripcionAdmin($form_data_edicion, $request_original_sanitized)
+    private function actualizarInscripcion($datos)
     {
         try {
             global $wpdb;
-            $tabla_inscripciones = $wpdb->prefix . 'inscripciones';
+            $idInscripcion = $datos['id_inscripcion'] ?? 0;
 
-            // $form_data_edicion ya está sanitizado por la regla general en ejecutarFuncionalidad
-            // y parseado si vino como string.
-            $id_inscripcion = $form_data_edicion['id_inscripcion'] ?? 0;
-
-            if ($id_inscripcion <= 0) {
-                $this->lanzarExcepcion('ID de inscripción no válido para actualizar.');
+            if ($idInscripcion <= 0) {
+                $this->lanzarExcepcion("ID de inscripción no válido.");
             }
 
-            $datos_a_actualizar = [
-                'telefono_asistente' => $form_data_edicion['telefono_asistente'] ?? null,
-                'estado_inscripcion' => $form_data_edicion['estado_inscripcion'],
-                'notas' => $form_data_edicion['notas'] ?? null,
+            $datosActualizados = [
+                'email_asistente' =>$datos['email_asistente'],
+                'telefono_asistente' => $datos['telefono_asistente'] ?? null,
+                'estado_inscripcion' => $datos['estado_inscripcion'],
+                'notas' => $datos['notas'] ?? null,
             ];
 
-            // Quitar campos nulos si no se quieren actualizar a NULL explícitamente
-            // $datos_a_actualizar = array_filter($datos_a_actualizar, function($value) { return $value !== null; });
+            $formatos = ['%s', '%s', '%s'];
 
-            $formatos_datos = [
-                '%s', // telefono_asistente
-                '%s', // estado_inscripcion
-                '%s', // notas
-            ];
-            
             $resultado = $wpdb->update(
-                $tabla_inscripciones,
-                $datos_a_actualizar,
-                ['id_inscripcion' => $id_inscripcion], // WHERE
-                $formatos_datos, // Formato de los datos a actualizar
-                ['%d'] // Formato del WHERE
+                $this->tablaInscripciones,
+                $datosActualizados,
+                ['id_inscripcion' => $idInscripcion],
+                $formatos,
+                ['%d']
             );
 
             if ($resultado === false) {
-                $this->enviarLog("Error al actualizar inscripción ID: $id_inscripcion", $datos_a_actualizar, $wpdb->last_error);
-                $this->lanzarExcepcion('Error al actualizar la inscripción: ' . esc_html($wpdb->last_error));
+                $this->lanzarExcepcion("Error al actualizar la inscripción.");
             }
-
-            // $form_data_edicion ya tiene 'paged' del formulario
-            return $this->listarInscripcionesAdmin($form_data_edicion, $request_original_sanitized);
-
+            return $this->listarInscripciones($datos);
         } catch (Exception $e) {
-            $this->enviarLog("Error en actualizarInscripcionAdmin: " . $e->getMessage(), $form_data_edicion);
-            throw $e;
+             $this->manejarExcepcion("Error en ejecutar Funcionalidad de actualizar inscripciones", $datos, $e->getMessage());
         }
     }
 }
-?>

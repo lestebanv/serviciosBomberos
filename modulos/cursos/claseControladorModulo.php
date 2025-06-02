@@ -1,81 +1,83 @@
 <?php
 class ControladorCursos extends ClaseControladorBaseBomberos
 {
-    protected $sanitization_rules = [
-        'id' => 'int',
-        'paged' => 'int',
+    protected $tablaCursos;
+    protected $tablaInscripciones;
+    protected $reglasSanitizacion = [
         'form_data' => [
             'id_curso' => 'int',
             'duracion_horas' => 'int',
             'capacidad_maxima' => 'int',
-            'fecha_inicio' => 'text', // Para fechas, usamos text y validamos manualmente
-            'estado' => 'text', // Para el ENUM
-            // Otros campos como nombre_curso, descripcion, instructor, lugar se sanitizan como texto por defecto
+            'fecha_inicio' => 'text',
+            'estado' => 'text',
         ],
     ];
 
-    public function ejecutarFuncionalidad($request)
+    public function __construct()
+    {
+        parent::__construct();
+        global $wpdb;
+        $this->tablaCursos = $wpdb->prefix . 'cursos';
+        $this->tablaInscripciones = $wpdb->prefix . 'inscripciones';
+    }
+
+    public function ejecutarFuncionalidad($peticion)
     {
         try {
-            $sanitized_request = bomberos_sanitize_input($request, $this->sanitization_rules);
-            $funcionalidad = isset($sanitized_request['funcionalidad']) ? $sanitized_request['funcionalidad'] : '';
-
+            $peticionLimpia = $this->sanitizarRequest($peticion, $this->reglasSanitizacion);
+            $funcionalidad = $peticionLimpia['funcionalidad'] ?? '';
+            $datos=$peticionLimpia['form_data'];
             if (empty($funcionalidad)) {
-                $this->enviarLog("Funcionalidad no especificada en la solicitud", $request);
-                $this->lanzarExcepcion("Funcionalidad no especificada.");
+                $this->lanzarExcepcion("Funcionalidad no especificada en el modulo cursos");
             }
 
             switch ($funcionalidad) {
                 case 'inicial':
                 case 'pagina_inicial':
-                    return $this->listarCursos($sanitized_request);
+                    return $this->listarCursos($datos);
                 case 'form_crear':
-                    return $this->formularioCreacion($sanitized_request);
+                    return $this->formularioCreacion($datos);
                 case 'registrar_curso':
-                    return $this->insertarCurso($sanitized_request);
+                    return $this->insertarCurso($datos);
                 case 'editar_curso':
-                    return $this->formularioEdicion($sanitized_request);
+                    return $this->formularioEdicion($datos);
                 case 'actualizar_curso':
-                    return $this->actualizarCurso($sanitized_request);
+                    return $this->actualizarCurso($datos);
                 case 'eliminar_curso':
-                    return $this->eliminarCurso($sanitized_request);
+                    return $this->eliminarCurso($datos);
                 default:
-                    $this->enviarLog("Funcionalidad no encontrada", ['funcionalidad' => $funcionalidad]);
-                    $this->lanzarExcepcion("Funcionalidad no encontrada: " . esc_html($funcionalidad));
+                    $this->lanzarExcepcion("Funcionalidad no encontrada en el modulo cursos " . esc_html($funcionalidad));
             }
         } catch (Exception $e) {
-            $this->enviarLog("Error en ejecutarFuncionalidad: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error en ejecutarFuncionalidad", $e, $datos);
         }
     }
 
-    public function listarCursos($request)
+    public function listarCursos($datos)
     {
         try {
             global $wpdb;
-            $tabla_cursos = $wpdb->prefix . 'cursos';
 
-            $items_per_page = 5;
-            $current_page = isset($request['form_data']['paged']) ? max(1, (int) $request['form_data']['paged']) : 1;
-            $offset = ($current_page - 1) * $items_per_page;
+            $elementosPorPagina = 5;
+            $actualpagina = isset($datos['actualpagina']) ? max(1, (int) $datos['actualpagina']) : 1;
+            $offset = ($actualpagina - 1) * $elementosPorPagina;
 
-            $total_registros = $wpdb->get_var("SELECT COUNT(*) FROM $tabla_cursos");
-            if ($total_registros === null) {
-                $this->enviarLog("Error al contar registros en $tabla_cursos", [], $wpdb->last_error);
-                $this->lanzarExcepcion("Error al obtener el total de registros.");
+            $totalRegistros = $wpdb->get_var("SELECT COUNT(*) FROM {$this->tablaCursos}");
+            if ($totalRegistros === null) {
+                $this->lanzarExcepcion("Error al obtener el total de registros en curso");
             }
 
-            $total_pages = ceil($total_registros / $items_per_page);
+            $totalpaginas = ceil($totalRegistros / $elementosPorPagina);
 
-            $sql = $wpdb->prepare(
-                "SELECT * FROM $tabla_cursos ORDER BY fecha_inicio DESC LIMIT %d OFFSET %d",
-                $items_per_page,
+            $strSqlCursos = $wpdb->prepare(
+                "SELECT * FROM {$this->tablaCursos} ORDER BY fecha_inicio DESC LIMIT %d OFFSET %d",
+                $elementosPorPagina,
                 $offset
             );
-            $lista_cursos = $wpdb->get_results($sql, ARRAY_A);
-            if ($lista_cursos === null) {
-                $this->enviarLog("Error al obtener lista de cursos", [], $wpdb->last_error);
-                $this->lanzarExcepcion("Error al cargar la lista de cursos.");
+            $listaCursos = $wpdb->get_results($strSqlCursos, ARRAY_A);
+
+            if ($listaCursos === null) {
+                $this->lanzarExcepcion("Error al cargar la lista de cursos".$wpdb->last_error);
             }
 
             ob_start();
@@ -83,12 +85,11 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             $html = ob_get_clean();
             return $this->armarRespuesta('Lista de cursos cargada con éxito', $html);
         } catch (Exception $e) {
-            $this->enviarLog("Error en listarCursos: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error en listarCursos", $e, $datos);
         }
     }
 
-    public function formularioCreacion($request)
+    public function formularioCreacion($datos)
     {
         try {
             ob_start();
@@ -96,161 +97,130 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             $html = ob_get_clean();
             return $this->armarRespuesta('Formulario de creación cargado correctamente', $html);
         } catch (Exception $e) {
-            $this->enviarLog("Error en formularioCreacion: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error en formularioCreacion", $e, $datos);
         }
     }
 
-    public function insertarCurso($request)
+    public function insertarCurso($datos)
     {
         try {
             global $wpdb;
-            $form = $request['form_data'] ?? [];
-            $tabla = $wpdb->prefix . 'cursos';
-
-            $campos_obligatorios = ['nombre_curso', 'fecha_inicio'];
-            foreach ($campos_obligatorios as $campo) {
-                if (empty($form[$campo])) {
-                    $this->enviarLog("Campo obligatorio faltante", ['campo' => $campo]);
-                    $this->lanzarExcepcion("El campo '$campo' es obligatorio.");
+            $camposObligatorios = ['nombre_curso', 'fecha_inicio'];
+            foreach ($camposObligatorios as $campo) {
+                if (empty($datos[$campo])) {
+                    $this->lanzarExcepcion("El campo '$campo' es obligatorio en insertar curso");
                 }
             }
 
-            $fecha_inicio = strtotime($form['fecha_inicio']);
-            $hoy = strtotime(date('Y-m-d')); // Fecha actual: 2025-05-24
-            if ($fecha_inicio < $hoy) {
-                $this->enviarLog("Fecha de inicio inválida", ['fecha_inicio' => $form['fecha_inicio']]);
+            $fechaInicio = strtotime($datos['fecha_inicio']);
+            $fechaHoy = strtotime(date('Y-m-d'));
+            if ($fechaInicio < $fechaHoy) {
                 $this->lanzarExcepcion('La fecha de inicio no puede ser anterior a la fecha actual.');
             }
 
-            $datos = [
-                'nombre_curso' => $form['nombre_curso'],
-                'descripcion' => $form['descripcion'] ?? '',
-                'fecha_inicio' => $form['fecha_inicio'],
-                'duracion_horas' => isset($form['duracion_horas']) ? (int) $form['duracion_horas'] : null,
-                'instructor' => $form['instructor'] ?? '',
-                'lugar' => $form['lugar'] ?? '',
-                'capacidad_maxima' => isset($form['capacidad_maxima']) ? (int) $form['capacidad_maxima'] : null,
-                'estado' => 'planificado', // Estado inicial
+            $datosCurso = [
+                'nombre_curso' => $datos['nombre_curso'],
+                'descripcion' => $datos['descripcion'] ?? '',
+                'fecha_inicio' => $datos['fecha_inicio'],
+                'duracion_horas' => isset($datos['duracion_horas']) ? (int) $datos['duracion_horas'] : null,
+                'instructor' => $datos['instructor'] ?? '',
+                'lugar' => $datos['lugar'] ?? '',
+                'capacidad_maxima' => isset($datos['capacidad_maxima']) ? (int) $datos['capacidad_maxima'] : null,
+                'estado' => 'Planificado',
             ];
 
-            $insertado = $wpdb->insert($tabla, $datos);
-            if ($insertado === false) {
-                $this->enviarLog("Error al insertar curso", $form, $wpdb->last_error);
-                $this->lanzarExcepcion('Error al registrar el curso: ' . esc_html($wpdb->last_error));
+            $resultado = $wpdb->insert($this->tablaCursos, $datosCurso);
+            if ($resultado === false) {
+                $this->lanzarExcepcion("Error al registrar un nuevo curso.");
             }
 
-            return $this->listarCursos($request);
+            return $this->listarCursos($datos);
         } catch (Exception $e) {
-            $this->enviarLog("Error en insertarCurso: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error en insertarCurso", $e, $datos);
         }
     }
 
-    public function formularioEdicion($request)
+    public function formularioEdicion($datos)
     {
         try {
-            $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
-            $paged = isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 1;
             global $wpdb;
-            $tabla_cursos = $wpdb->prefix . 'cursos';
-            if ($id <= 0) {
-                $this->enviarLog("ID inválido para edición", ['id' => $id]);
-                $this->lanzarExcepcion('ID inválido para edición.');
+            $idCurso = isset($datos['id']) ? (int) $datos['id'] : 0;
+            $actualpagina=$datos['actualpagina'];
+            if ($idCurso <= 0) {
+                $this->lanzarExcepcion('ID inválido para edición del curso');
             }
 
-            $curso = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tabla_cursos WHERE id_curso = %d", $id), ARRAY_A);
+            $strSqlCurso = $wpdb->prepare("SELECT * FROM {$this->tablaCursos} WHERE id_curso = %d", $idCurso);
+            $curso = $wpdb->get_row($strSqlCurso, ARRAY_A);
+
             if (!$curso) {
-                $this->enviarLog("Curso no encontrado", ['id' => $id]);
-                $this->lanzarExcepcion('Curso no encontrado.');
+                $this->lanzarExcepcion('Curso no encontrado id '.$idCurso);
             }
-
+            $strSqlInscripciones = $wpdb->prepare("SELECT * FROM {$this->tablaInscripciones} WHERE id_curso = %d", $idCurso);
+            $listaInscripciones = $wpdb->get_results($strSqlInscripciones, ARRAY_A);
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioEditarCurso.php';
             $html = ob_get_clean();
-            return $this->armarRespuesta('Formulario de edición cargado.', $html);
+            return $this->armarRespuesta('Formulario de edición cargado correctamente', $html);
         } catch (Exception $e) {
-            $this->enviarLog("Error en formularioEdicion: " . $e->getMessage(), $request);
-            throw $e;
+            $this->manejarExcepcion("Error en formularioEdicion", $e, $datos);
         }
     }
-
-    public function actualizarCurso($request)
-    {
-        try {
-            global $wpdb;
-            $form = $request['form_data'] ?? [];
-            $tabla = $wpdb->prefix . 'cursos';
-
-            $campos_obligatorios = ['id_curso', 'nombre_curso', 'fecha_inicio'];
-            foreach ($campos_obligatorios as $campo) {
-                if (empty($form[$campo])) {
-                    $this->enviarLog("Campo obligatorio faltante", ['campo' => $campo]);
-                    $this->lanzarExcepcion("El campo '$campo' es obligatorio.");
-                }
-            }
-
-            $id = (int) $form['id_curso'];
-            $curso_existente = $wpdb->get_row($wpdb->prepare("SELECT * FROM $tabla WHERE id_curso = %d", $id), ARRAY_A);
-            if (!$curso_existente) {
-                $this->enviarLog("Curso no encontrado", ['id_curso' => $id]);
-                $this->lanzarExcepcion('Curso no encontrado.');
-            }
-
-            $fecha_inicio = strtotime($form['fecha_inicio']);
-            $hoy = strtotime(date('Y-m-d')); // Fecha actual: 2025-05-24
-            if ($fecha_inicio < $hoy) {
-                $this->enviarLog("Fecha de inicio inválida", ['fecha_inicio' => $form['fecha_inicio']]);
-                $this->lanzarExcepcion('La fecha de inicio no puede ser anterior a la fecha actual.');
-            }
-
-            $datos = [
-                'nombre_curso' => $form['nombre_curso'],
-                'descripcion' => $form['descripcion'] ?? '',
-                'fecha_inicio' => $form['fecha_inicio'],
-                'duracion_horas' => isset($form['duracion_horas']) ? (int) $form['duracion_horas'] : null,
-                'instructor' => $form['instructor'] ?? '',
-                'lugar' => $form['lugar'] ?? '',
-                'capacidad_maxima' => isset($form['capacidad_maxima']) ? (int) $form['capacidad_maxima'] : null,
-                'estado' => $form['estado'] ?? $curso_existente['estado'],
-            ];
-
-            $actualizado = $wpdb->update($tabla, $datos, ['id_curso' => $id]);
-            if ($actualizado === false) {
-                $this->enviarLog("Error al actualizar curso", ['id_curso' => $id], $wpdb->last_error);
-                $this->lanzarExcepcion('Error al actualizar el curso: ' . esc_html($wpdb->last_error));
-            }
-
-            return $this->listarCursos($request);
-        } catch (Exception $e) {
-            $this->enviarLog("Error en actualizarCurso: " . $e->getMessage(), $request);
-            throw $e;
+public function actualizarCurso($datos)
+{
+    try {
+        global $wpdb;
+        $idCurso = isset($datos['id_curso']) ? (int) $datos['id_curso'] : 0;
+        if ($idCurso <= 0) {
+            $this->lanzarExcepcion('ID de curso inválido en actualizacion'.$idCurso);
         }
-    }
 
-    public function eliminarCurso($request)
-    {
-        try {
-            global $wpdb;
-            $tabla = $wpdb->prefix . 'cursos';
-           
-            $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
-
-            if ($id <= 0) {
-                $this->enviarLog("ID de curso no válido", ['id' => $id]);
-                $this->lanzarExcepcion('ID de curso no válido.');
-            }
-
-            $resultado = $wpdb->delete($tabla, ['id_curso' => $id]);
-            if ($resultado === false) {
-                $this->enviarLog("Error al eliminar curso", ['id' => $id], $wpdb->last_error);
-                $this->lanzarExcepcion('Error al eliminar el curso: ' . esc_html($wpdb->last_error));
-            }
-
-            return $this->listarCursos($request);
-        } catch (Exception $e) {
-            $this->enviarLog("Error en eliminarCurso: " . $e->getMessage(), $request);
-            throw $e;
+        if (empty($datos['nombre_curso']) || empty($datos['fecha_inicio'])) {
+            $this->lanzarExcepcion("Los campos 'nombre_curso' y 'fecha_inicio' son obligatorios.",$datos);
         }
+        $datosCurso = [
+            'nombre_curso' => $datos['nombre_curso'],
+            'descripcion' => $datos['descripcion'] ?? '',
+            'fecha_inicio' => $datos['fecha_inicio'],
+            'duracion_horas' => isset($datos['duracion_horas']) ? (int) $datos['duracion_horas'] : null,
+            'instructor' => $datos['instructor'] ?? '',
+            'lugar' => $datos['lugar'] ?? '',
+            'capacidad_maxima' => isset($datos['capacidad_maxima']) ? (int) $datos['capacidad_maxima'] : null,
+            'estado' => $datos['estado'] ?? 'planificado',
+        ];
+
+        $resultado = $wpdb->update(
+            $this->tablaCursos,
+            $datosCurso,
+            ['id_curso' => $idCurso],
+            null,
+            ['%d']
+        );
+
+        if ($resultado === false) {
+            $this->lanzarExcepcion("Error al actualizar el curso".$idCurso);
+        }
+
+        return $this->listarCursos($datos);
+    } catch (Exception $e) {
+        $this->manejarExcepcion("Error en actualizarCurso", $e, $datos);
     }
+}
+public function eliminarCurso($datos)
+{
+    try {
+        global $wpdb;
+        $idCurso = isset($datos['id']) ? (int) $datos['id'] : 0;
+        if ($idCurso <= 0) {
+            $this->lanzarExcepcion('ID de curso inválido en eliminacion');
+        }
+        $resultado = $wpdb->delete($this->tablaCursos, ['id_curso' => $idCurso], ['%d']);
+        if ($resultado === false) {
+            $this->lanzarExcepcion('No se pudo eliminar el curso.');
+        }
+        return $this->listarCursos($datos);
+    } catch (Exception $e) {
+        $this->manejarExcepcion("Error en eliminarCurso", $e, $datos);
+    }
+}
 }
