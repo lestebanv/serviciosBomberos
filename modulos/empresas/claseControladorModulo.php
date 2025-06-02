@@ -1,6 +1,11 @@
 <?php
+if (!defined('ABSPATH'))   exit;
+
 class ControladorEmpresas extends ClaseControladorBaseBomberos
 {
+    protected $tablaEmpresas;
+    protected $tablaInspecciones;
+
     protected $sanitization_rules = [
         'id' => 'int',
         'paged' => 'int',
@@ -9,6 +14,12 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
             'email' => 'email',
         ],
     ];
+
+    public function __construct() {
+        global $wpdb;
+        $this->tablaEmpresas = $wpdb->prefix . 'empresas';
+        $this->tablaInspecciones = $wpdb->prefix . 'inspecciones';
+    }
 
     public function ejecutarFuncionalidad($request)
     {
@@ -49,21 +60,20 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $table_name = $wpdb->prefix . 'empresas';
-
+            
             $items_per_page = 4;
             $current_page = isset($request['form_data']['paged']) ? max(1, (int) $request['form_data']['paged']) : 1;
             $offset = ($current_page - 1) * $items_per_page;
 
-            $total_registros = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+            $total_registros = $wpdb->get_var("SELECT COUNT(*) FROM $this->tablaEmpresas");
             if ($total_registros === null) {
-                $this->enviarLog("Error al contar registros en $table_name", [], $wpdb->last_error);
+                $this->enviarLog("Error al contar registros en $this->tablaEmpresas", [], $wpdb->last_error);
                 $this->lanzarExcepcion("Error al obtener el total de registros.");
             }
 
             $total_pages = ceil($total_registros / $items_per_page);
 
-            $sql = $wpdb->prepare("SELECT * FROM $table_name ORDER BY UPPER(razon_social) ASC LIMIT %d OFFSET %d", $items_per_page, $offset);
+            $sql = $wpdb->prepare("SELECT * FROM $this->tablaEmpresas ORDER BY UPPER(razon_social) ASC LIMIT %d OFFSET %d", $items_per_page, $offset);
             $lista_empresas = $wpdb->get_results($sql, ARRAY_A);
             if ($lista_empresas === null) {
                 $this->enviarLog("Error al obtener lista de empresas", [], $wpdb->last_error);
@@ -84,7 +94,6 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $table_name = $wpdb->prefix . 'empresas';
             $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
             $paged=isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 1;
             if ($id <= 0) {
@@ -92,11 +101,28 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
                 $this->lanzarExcepcion('ID inválido para edición.');
             }
 
-            $empresa = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id_empresa = %d", $id), ARRAY_A);
+            $empresa = $wpdb->get_row($wpdb->prepare("SELECT * FROM $this->tablaEmpresas WHERE id_empresa = %d", $id), ARRAY_A);
             if (!$empresa) {
                 $this->enviarLog("Empresa no encontrada", ['id' => $id]);
                 $this->lanzarExcepcion('Empresa no encontrada.');
             }
+
+            // Obtener inspecciones de la empresa
+            $inspecciones_empresa = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT id_inspeccion, fecha_registro, fecha_programada, estado, nombre_encargado 
+                     FROM $this->tablaInspecciones 
+                     WHERE id_empresa = %d 
+                     ORDER BY fecha_registro ASC", 
+                    $id
+                ), ARRAY_A
+            );
+            if ($inspecciones_empresa === null) {
+                // No es un error fatal, podría no tener inspecciones
+                $inspecciones_empresa = []; 
+                $this->enviarLog("No se encontraron inspecciones o hubo un error al buscarlas para la empresa ID: $id", [], $wpdb->last_error);
+            }
+
 
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioEditarEmpresa.php';
@@ -113,15 +139,13 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $tabla = $wpdb->prefix . 'empresas';
             $id = isset($request['form_data']['id']) ? (int) $request['form_data']['id'] : 0;
-            $paged = isset($request['form_data']['paged']) ? (int) $request['form_data']['paged'] : 0;
             if ($id <= 0) {
                 $this->enviarLog("ID de empresa no válido", ['id' => $id]);
                 $this->lanzarExcepcion('ID de empresa no válido.');
             }
 
-            $resultado = $wpdb->delete($tabla, ['id_empresa' => $id]);
+            $resultado = $wpdb->delete($this->tablaEmpresas, ['id_empresa' => $id]);
             if ($resultado === false) {
                 $this->enviarLog("Error al eliminar empresa", ['id' => $id], $wpdb->last_error);
                 $this->lanzarExcepcion('Error al eliminar la empresa.');
@@ -139,8 +163,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
         try {
             global $wpdb;
             $form = $request['form_data'] ?? [];
-            $tabla = $wpdb->prefix . 'empresas';
-
+            
             $id = isset($form['id_empresa']) ? (int) $form['id_empresa'] : 0;
             $datos = [
                 'razon_social' => $form['razon_social'] ?? '',
@@ -163,7 +186,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
                 $this->lanzarExcepcion('ID de empresa no válido.');
             }
 
-            $actualizado = $wpdb->update($tabla, $datos, ['id_empresa' => $id]);
+            $actualizado = $wpdb->update($this->tablaEmpresas, $datos, ['id_empresa' => $id]);
             if ($actualizado === false) {
                 $this->enviarLog("Error al actualizar empresa", ['id_empresa' => $id], $wpdb->last_error);
                 $this->lanzarExcepcion('No se pudo actualizar la empresa.');
@@ -194,7 +217,6 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $tabla = $wpdb->prefix . 'empresas';
             $data = $request['form_data'] ?? [];
 
             $campos_obligatorios = ['nit', 'razon_social', 'direccion', 'barrio', 'representante_legal', 'email'];
@@ -205,14 +227,14 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
                 }
             }
 
-            $existe = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tabla WHERE nit = %s", $data['nit']));
+            $existe = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $this->tablaEmpresas WHERE nit = %s", $data['nit']));
             if ($existe > 0) {
                 $this->enviarLog("NIT ya registrado", ['nit' => $data['nit']]);
                 $this->lanzarExcepcion("Ya existe una empresa registrada con el NIT: {$data['nit']}");
             }
 
             $insertado = $wpdb->insert(
-                $tabla,
+                $this->tablaEmpresas,
                 [
                     'nit' => $data['nit'],
                     'razon_social' => $data['razon_social'],

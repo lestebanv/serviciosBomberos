@@ -1,4 +1,6 @@
 <?php
+if (!defined('ABSPATH'))   exit;
+
 require_once  plugin_dir_path(__FILE__).'insertarDemo.php';
 function activar_plugin_bomberos(){
     crear_tablas_plugin_bomberos();
@@ -63,6 +65,7 @@ function crear_tablas_plugin_bomberos()
 
 
   // ---- NUEVO SQL PARA LA TABLA DE INSCRIPCIONES ----
+    // CORRECCIÓN: Actualizado el ENUM para estado_inscripcion
     $sql_inscripciones_cursos = "CREATE TABLE IF NOT EXISTS $tabla_inscripciones_cursos (
         id_inscripcion BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
         id_curso BIGINT(20) UNSIGNED NOT NULL,
@@ -70,7 +73,7 @@ function crear_tablas_plugin_bomberos()
         email_asistente VARCHAR(100) NOT NULL,
         telefono_asistente VARCHAR(20) DEFAULT NULL,
         fecha_inscripcion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        estado_inscripcion ENUM('Registrada', 'Aprobada') NOT NULL DEFAULT 'Registrada',
+        estado_inscripcion ENUM('Registrada', 'Aprobada', 'Pendiente', 'Cerrada') NOT NULL DEFAULT 'Registrada', /* <-- CORREGIDO AQUÍ */
         notas TEXT DEFAULT NULL,
         PRIMARY KEY (id_inscripcion),
         FOREIGN KEY (id_curso) REFERENCES $tabla_cursos(id_curso) ON DELETE CASCADE,
@@ -85,7 +88,7 @@ function crear_tablas_plugin_bomberos()
             telefono varchar(20) NOT NULL,
             email varchar(100) NOT NULL,
             tipo_solicitud varchar(50) NOT NULL,
-            estado_solicitud ENUM('Registrada', 'Pendiente', 'Cerrada') NOT NULL DEFAULT 'Registrada',
+            estado_solicitud ENUM('Registrada', 'Pendiente', 'Cerrada', 'En Proceso') NOT NULL DEFAULT 'Registrada', /* CORRECCIÓN: Añadido 'En Proceso' si es necesario, basado en formularioEditarPqr.php */
             fecha_registro datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
             contenido text NOT NULL,
             ip_address varchar(45) NOT NULL,

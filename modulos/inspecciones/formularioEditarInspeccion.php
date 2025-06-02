@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 
     <form id="form-editar-inspeccion" method="post">
         <input type="hidden" name="id_inspeccion" value="<?php echo esc_attr($inspeccion['id_inspeccion']); ?>">
-        <input type="hidden" name="paged" value="<?php echo esc_attr($paged); ?>">
+        <input type="hidden" name="paged" value="<?php echo esc_attr($paged); ?>"> <!-- Este paged se usa para retornar al listado -->
         <h2>Detalles de la empresa:</h2>
         <strong>NIT: </strong> <?php echo esc_html($inspeccion['nit']); ?><br>
         <strong>Dirección: </strong><?php echo esc_html($inspeccion['direccion']); ?><br>
@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) {
                     <label for="fecha_programada">Fecha Programada</label>
                 </th>
                 <td>
-                    <input type="date" name="fecha_programada" id="fecha_programada" value="<?php echo esc_attr($inspeccion['fecha_programada'] ?? ''); ?>">
+                    <input type="date" name="fecha_programada" id="fecha_programada" value="<?php echo esc_attr($inspeccion['fecha_programada'] ? date('Y-m-d', strtotime($inspeccion['fecha_programada'])) : ''); ?>" required aria-required="true">
                 </td>
             </tr>
             <tr class="form-field">
@@ -45,7 +45,7 @@ if (!defined('ABSPATH')) {
                     <label for="fecha_expedicion">Fecha de Certificación</label>
                 </th>
                 <td>
-                    <input type="date" name="fecha_expedicion" id="fecha_expedicion" value="<?php echo esc_attr($inspeccion['fecha_expedicion'] ?? ''); ?>">
+                    <input type="date" name="fecha_expedicion" id="fecha_expedicion" value="<?php echo esc_attr($inspeccion['fecha_expedicion'] ? date('Y-m-d', strtotime($inspeccion['fecha_expedicion'])) : ''); ?>">
                 </td>
             </tr>
             <tr class="form-field form-required">
@@ -64,7 +64,7 @@ if (!defined('ABSPATH')) {
 
         <p class="submit">
             <input type="submit" class="button button-primary" value="<?php esc_attr_e('Guardar Cambios', 'bomberos-servicios'); ?>">
-            <input type="button" class="button button-secondary cancelar-edicion-inspeccion" data-paged="<?php esc_attr($paged); ?>" value="Cancelar">
+            <button type="button" class="button button-secondary cancelar-edicion-inspeccion" data-paged="<?php echo esc_attr($paged); ?>">Cancelar</button>
         </p>
         <div id="mensaje-editar-inspeccion" class="notice hidden"></div>
     </form>

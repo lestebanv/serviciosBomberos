@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -59,5 +58,34 @@ if (!defined('ABSPATH')) {
         </p>
         <div id="mensaje-editar-empresa" class="notice" style="display: none;"></div>
     </form>
+    <hr>
+
+    <?php if (!empty($inspecciones_empresa)): ?>
+        <h3><?php esc_html_e('Inspecciones Solicitadas por esta Empresa', 'bomberos-servicios'); ?></h3>
+        <table class="wp-list-table widefat striped">
+            <thead>
+                <tr>
+                    <th><?php esc_html_e('ID Inspección', 'bomberos-servicios'); ?></th>
+                    <th><?php esc_html_e('Fecha Registro', 'bomberos-servicios'); ?></th>
+                    <th><?php esc_html_e('Fecha Programada', 'bomberos-servicios'); ?></th>
+                    <th><?php esc_html_e('Estado', 'bomberos-servicios'); ?></th>
+                    <th><?php esc_html_e('Encargado', 'bomberos-servicios'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($inspecciones_empresa as $inspeccion): ?>
+                    <tr>
+                        <td><?php echo esc_html($inspeccion['id_inspeccion']); ?></td>
+                        <td><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($inspeccion['fecha_registro']))); ?></td>
+                        <td><?php echo esc_html($inspeccion['fecha_programada'] ? date_i18n(get_option('date_format'), strtotime($inspeccion['fecha_programada'])) : 'N/A'); ?></td>
+                        <td><?php echo esc_html($inspeccion['estado']); ?></td>
+                        <td><?php echo esc_html($inspeccion['nombre_encargado']); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <p><?php esc_html_e('Esta empresa no tiene inspecciones registradas.', 'bomberos-servicios'); ?></p>
+    <?php endif; ?>
     <hr>
 </div>

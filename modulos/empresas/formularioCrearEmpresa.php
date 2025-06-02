@@ -1,3 +1,8 @@
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <div class="wrap">
     <h2>Registrar Nueva Empresa</h2>
 

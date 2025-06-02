@@ -31,7 +31,7 @@ if (!defined('ABSPATH')) {
                     <label for="fecha_inicio"><?php esc_html_e('Fecha de Inicio', 'bomberos-servicios'); ?></label>
                 </th>
                 <td>
-                    <input type="date" name="fecha_inicio" id="fecha_inicio" value="<?php echo esc_attr($curso['fecha_inicio']); ?>" required aria-required="true">
+                    <input type="date" name="fecha_inicio" id="fecha_inicio" value="<?php echo esc_attr(date('Y-m-d', strtotime($curso['fecha_inicio']))); ?>" required aria-required="true">
                 </td>
             </tr>
             <tr class="form-field">
@@ -86,5 +86,32 @@ if (!defined('ABSPATH')) {
         </p>
         <div id="mensaje-editar-curso" class="notice" style="display: none;"></div>
     </form>
+    <hr>
+
+    <?php if (!empty($inscripciones_curso)): ?>
+        <h3><?php esc_html_e('Asistentes Inscritos (Registrados/Aprobados)', 'bomberos-servicios'); ?></h3>
+        <table class="wp-list-table widefat striped">
+            <thead>
+                <tr>
+                    <th><?php esc_html_e('Nombre Asistente', 'bomberos-servicios'); ?></th>
+                    <th><?php esc_html_e('Email', 'bomberos-servicios'); ?></th>
+                    <th><?php esc_html_e('Fecha Inscripción', 'bomberos-servicios'); ?></th>
+                    <th><?php esc_html_e('Estado Inscripción', 'bomberos-servicios'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($inscripciones_curso as $inscripcion): ?>
+                    <tr>
+                        <td><?php echo esc_html($inscripcion['nombre_asistente']); ?></td>
+                        <td><?php echo esc_html($inscripcion['email_asistente']); ?></td>
+                        <td><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($inscripcion['fecha_inscripcion']))); ?></td>
+                        <td><?php echo esc_html(ucfirst(str_replace('_', ' ', $inscripcion['estado_inscripcion']))); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <p><?php esc_html_e('No hay asistentes actualmente inscritos (con estado Registrada o Aprobada) en este curso.', 'bomberos-servicios'); ?></p>
+    <?php endif; ?>
     <hr>
 </div>

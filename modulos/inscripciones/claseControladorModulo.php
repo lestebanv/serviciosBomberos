@@ -1,11 +1,13 @@
 <?php
-// modulos/inscripciones/claseControladorModulo.php
 if (!defined('ABSPATH')) {
     exit;
 }
 
 class ControladorInscripciones extends ClaseControladorBaseBomberos
 {
+    protected $tablaInscripciones;
+    protected $tablaCursos;
+
     protected $sanitization_rules = [
         'id' => 'int',
         'paged' => 'int',
@@ -21,12 +23,19 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
         ],
     ];
 
+    public function __construct() {
+        global $wpdb;
+        $this->tablaInscripciones = $wpdb->prefix . 'inscripciones';
+        $this->tablaCursos = $wpdb->prefix . 'cursos';
+    }
+
     public function ejecutarFuncionalidad($request)
     {
         try {
             $sanitized_request = bomberos_sanitize_input($request, $this->sanitization_rules);
-            $form_data = $sanitized_request['form_data'] ?? [];
+            $form_data = $sanitized_request['form_data'] ?? []; // Asegurarse de que form_data exista
             $funcionalidad = $sanitized_request['funcionalidad'] ?? ($form_data['funcionalidad'] ?? 'inicial');
+
 
             if (empty($funcionalidad)) {
                 $this->lanzarExcepcion("Funcionalidad no especificada en Inscripciones (admin).");
@@ -35,7 +44,7 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
             switch ($funcionalidad) {
                 case 'inicial':
                 case 'pagina_inicial':
-                    return $this->listarInscripcionesAdmin($form_data, $sanitized_request);
+                    return $this->listarInscripcionesAdmin($form_data, $sanitized_request); // $form_data puede tener 'paged'
                 
                 case 'eliminar_inscripcion_admin':
                     $id_inscripcion_eliminar = $form_data['id'] ?? 0;
@@ -46,7 +55,7 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
                     return $this->formularioEditarInscripcionAdmin($id_inscripcion_editar, $form_data, $sanitized_request);
                 
                 case 'actualizar_inscripcion_admin': 
-                    return $this->actualizarInscripcionAdmin($form_data, $sanitized_request); // $form_data tiene los datos del formulario de edición
+                    return $this->actualizarInscripcionAdmin($form_data, $sanitized_request);
 
                 default:
                     $this->enviarLog("Funcionalidad admin no encontrada en Inscripciones", ['funcionalidad' => $funcionalidad]);
@@ -60,28 +69,26 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
 
     public function listarInscripcionesAdmin($form_data, $request_original_sanitized)
     {
-        
         try {
             global $wpdb;
-            $tabla_inscripciones = $wpdb->prefix . 'inscripciones';
-            $tabla_cursos = $wpdb->prefix . 'cursos';
-
+            
             $items_per_page = 10;
             $current_page = isset($form_data['paged']) ? max(1, (int)$form_data['paged']) : 1;
             $offset = ($current_page - 1) * $items_per_page;
 
-            $total_registros = $wpdb->get_var("SELECT COUNT(*) FROM $tabla_inscripciones");
+            $total_registros = $wpdb->get_var("SELECT COUNT(*) FROM $this->tablaInscripciones");
             if ($total_registros === null) {
-                $this->enviarLog("Error al contar registros en $tabla_inscripciones", [], $wpdb->last_error);
+                $this->enviarLog("Error al contar registros en $this->tablaInscripciones", [], $wpdb->last_error);
                 $this->lanzarExcepcion("Error al obtener el total de inscripciones.");
             }
             $total_pages = ceil($total_registros / $items_per_page);
 
+            // Ordenar por nombre de curso ASC, luego por estado de inscripción ASC
             $sql = $wpdb->prepare(
                 "SELECT i.*, c.nombre_curso 
-                 FROM $tabla_inscripciones i
-                 JOIN $tabla_cursos c ON i.id_curso = c.id_curso
-                 ORDER BY i.fecha_inscripcion DESC 
+                 FROM $this->tablaInscripciones i
+                 JOIN $this->tablaCursos c ON i.id_curso = c.id_curso
+                 ORDER BY c.nombre_curso ASC, FIELD(i.estado_inscripcion, 'Registrada', 'Aprobada', 'Pendiente', 'Cerrada') ASC, i.fecha_inscripcion DESC
                  LIMIT %d OFFSET %d",
                 $items_per_page,
                 $offset
@@ -94,7 +101,8 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
             }
 
             ob_start();
-            include_once BOMBEROS_PLUGIN_DIR . 'modulos/inscripciones/listadoInscripcionesAdmin.php';
+            // Asegúrate que la ruta es correcta. Si este archivo está en modulos/inscripciones/, plugin_dir_path(__FILE__) es correcto.
+            include_once plugin_dir_path(__FILE__) . 'listadoInscripcionesAdmin.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Lista de inscripciones cargada.', $html);
         } catch (Exception $e) {
@@ -105,19 +113,19 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
 
     public function eliminarInscripcionAdmin($id_inscripcion, $form_data_original, $request_original_sanitized)
     {
-        // ... (código de eliminarInscripcionAdmin sin cambios, como lo tenías) ...
         try {
             global $wpdb;
             if ($id_inscripcion <= 0) {
                 $this->lanzarExcepcion('ID de inscripción no válido para eliminar.');
             }
-            $tabla_inscripciones = $wpdb->prefix . 'inscripciones';
-            $resultado = $wpdb->delete($tabla_inscripciones, ['id_inscripcion' => $id_inscripcion], ['%d']);
+            $resultado = $wpdb->delete($this->tablaInscripciones, ['id_inscripcion' => $id_inscripcion], ['%d']);
 
             if ($resultado === false) {
                 $this->enviarLog("Error al eliminar inscripción ID: $id_inscripcion", [], $wpdb->last_error);
                 $this->lanzarExcepcion('Error al eliminar la inscripción: ' . esc_html($wpdb->last_error));
             }
+            
+            // $form_data_original ya tiene 'paged' del botón de eliminar
             return $this->listarInscripcionesAdmin($form_data_original, $request_original_sanitized);
         } catch (Exception $e) {
             $this->enviarLog("Error en eliminarInscripcionAdmin: " . $e->getMessage(), ['id_inscripcion' => $id_inscripcion]);
@@ -133,15 +141,12 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
                 $this->lanzarExcepcion('ID de inscripción no válido para editar.');
             }
 
-            $tabla_inscripciones = $wpdb->prefix . 'inscripciones';
-            $tabla_cursos = $wpdb->prefix . 'cursos';
-
             // Obtener datos de la inscripción y el nombre del curso asociado
             $inscripcion = $wpdb->get_row(
                 $wpdb->prepare(
                     "SELECT i.*, c.nombre_curso 
-                     FROM $tabla_inscripciones i
-                     JOIN $tabla_cursos c ON i.id_curso = c.id_curso
+                     FROM $this->tablaInscripciones i
+                     JOIN $this->tablaCursos c ON i.id_curso = c.id_curso
                      WHERE i.id_inscripcion = %d",
                     $id_inscripcion
                 ), ARRAY_A
@@ -152,13 +157,11 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
                 $this->lanzarExcepcion('Inscripción no encontrada.');
             }
 
-            // $paged viene de $form_data_original, que son los datos enviados por el botón "Editar"
             $paged = $form_data_original['paged'] ?? 1;
-
-            $estados_posibles = ['Registrada', 'Pendiente', 'Cerrada'];
+            $estados_posibles = ['Registrada', 'Aprobada', 'Pendiente', 'Cerrada']; // Asegúrate que estos son los estados correctos
+            
             ob_start();
-            // Pasar $inscripcion, $paged (y $todos_los_cursos si fuera necesario) a la vista
-            include_once BOMBEROS_PLUGIN_DIR . 'modulos/inscripciones/formularioEditarInscripcionAdmin.php';
+            include_once plugin_dir_path(__FILE__) . 'formularioEditarInscripcionAdmin.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Formulario de edición de inscripción cargado.', $html);
 
@@ -172,24 +175,25 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
-            $tabla_inscripciones = $wpdb->prefix . 'inscripciones';
-
-            // $form_data_edicion ya está sanitizado por la regla general en ejecutarFuncionalidad
-            // y parseado si vino como string.
+            
             $id_inscripcion = $form_data_edicion['id_inscripcion'] ?? 0;
 
             if ($id_inscripcion <= 0) {
                 $this->lanzarExcepcion('ID de inscripción no válido para actualizar.');
             }
 
+            // Campos que se pueden actualizar desde el admin
             $datos_a_actualizar = [
                 'telefono_asistente' => $form_data_edicion['telefono_asistente'] ?? null,
-                'estado_inscripcion' => $form_data_edicion['estado_inscripcion'],
+                'estado_inscripcion' => $form_data_edicion['estado_inscripcion'], // Este campo es obligatorio en el form
                 'notas' => $form_data_edicion['notas'] ?? null,
             ];
-
-            // Quitar campos nulos si no se quieren actualizar a NULL explícitamente
-            // $datos_a_actualizar = array_filter($datos_a_actualizar, function($value) { return $value !== null; });
+            
+            // Validar estado_inscripcion
+            $estados_validos = ['Registrada', 'Aprobada', 'Pendiente', 'Cerrada'];
+            if (!in_array($datos_a_actualizar['estado_inscripcion'], $estados_validos)) {
+                $this->lanzarExcepcion('Estado de inscripción no válido.');
+            }
 
             $formatos_datos = [
                 '%s', // telefono_asistente
@@ -198,10 +202,10 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
             ];
             
             $resultado = $wpdb->update(
-                $tabla_inscripciones,
+                $this->tablaInscripciones,
                 $datos_a_actualizar,
                 ['id_inscripcion' => $id_inscripcion], // WHERE
-                $formatos_datos, // Formato de los datos a actualizar
+                $formatos_datos, 
                 ['%d'] // Formato del WHERE
             );
 

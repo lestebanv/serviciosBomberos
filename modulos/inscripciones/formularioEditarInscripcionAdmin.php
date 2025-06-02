@@ -1,5 +1,9 @@
 <?php
 if (!defined('ABSPATH')) exit;
+
+// Definir los estados posibles que coincidan con el ENUM de la BD y la lógica del controlador
+$estados_posibles_inscripcion = ['Registrada', 'Aprobada', 'Pendiente', 'Cerrada'];
+
 ?>
 <div class="wrap" id="inscripcion-frm-editar-admin">
     <h3><?php esc_html_e('Editar Inscripción', 'bomberos-servicios'); ?></h3>
@@ -47,7 +51,7 @@ if (!defined('ABSPATH')) exit;
                     </th>
                     <td>
                         <select name="estado_inscripcion" id="estado_inscripcion" required>
-                            <?php foreach ($estados_posibles as $estado_val): ?>
+                            <?php foreach ($estados_posibles_inscripcion as $estado_val): ?>
                                 <option value="<?php echo esc_attr($estado_val); ?>" <?php selected($inscripcion['estado_inscripcion'], $estado_val); ?>>
                                     <?php echo esc_html(ucfirst(str_replace('_', ' ', $estado_val))); ?>
                                 </option>

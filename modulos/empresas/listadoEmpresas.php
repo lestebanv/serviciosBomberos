@@ -1,5 +1,8 @@
-
-
+<?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <div class="wrap" id="cuerpo-listado-empresas">
     <div id="empresa-frm-editar"></div>
     <div style="margin-bottom: 1em;">

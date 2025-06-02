@@ -4,11 +4,11 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <div class="wrap">
-    <h2>Editar  <?php echo esc_attr($pqr['tipo_solicitud']); ?> de <?php echo esc_attr($pqr['nombre']); ?></h2><br>
+    <h2>Editar  <?php echo esc_html($pqr['tipo_solicitud']); ?> de <?php echo esc_attr($pqr['nombre']); ?></h2><br>
         Telefono: <?php echo esc_attr($pqr['telefono']); ?><br>
         Email: <?php echo esc_attr($pqr['email']); ?><br>
         <strong><?php echo esc_attr($pqr['tipo_solicitud']); ?></strong>:<br>
-         <?php echo esc_attr($pqr['contenido']); ?><br>
+         <?php echo nl2br(esc_html($pqr['contenido'])); // Usar nl2br para saltos de línea ?><br>
     <hr>
     <form id="form-editar-pqr" method="post">
         <input type="hidden" name="id" value="<?php echo esc_attr($pqr['id']); ?>">
@@ -22,6 +22,7 @@ if (!defined('ABSPATH')) {
                 <td>
                     <select name="estado_solicitud" id="estado_solicitud">
                         <option value="Registrada" <?php selected($pqr['estado_solicitud'], 'Registrada'); ?>>Registrada</option>
+                        <option value="Pendiente" <?php selected($pqr['estado_solicitud'], 'Pendiente'); ?>>Pendiente</option>
                         <option value="En Proceso" <?php selected($pqr['estado_solicitud'], 'En Proceso'); ?>>En Proceso</option>
                         <option value="Cerrada" <?php selected($pqr['estado_solicitud'], 'Cerrada'); ?>>Cerrada</option>
                     </select>

@@ -1,4 +1,5 @@
 <?php
+if (!defined('ABSPATH'))   exit;
 
 function insertar_datos_demo()
 {
@@ -54,24 +55,26 @@ function insertar_datos_demo()
         ('Rescate acuático', 'Técnicas de rescate en ríos y piscinas.', '2025-06-28', 10, 'Valeria Núñez', 'Estación de Bomberos Norte', 12, 'Planificado');    
     ");
 
+    // CORRECCIÓN: Corregido "Rgistrada" a "Registrada" y se asegura que los estados coincidan con el ENUM.
+    // Se asume que el ENUM será ENUM('Registrada', 'Aprobada', 'Pendiente', 'Cerrada')
     $wpdb->query("
         INSERT INTO $inscripciones_table 
         (id_curso, nombre_asistente, email_asistente, telefono_asistente, estado_inscripcion, notas)
         VALUES
-        (1, 'Luis Mendoza', 'luis.mendoza@example.com', '3001112233', 'Registrada', 'Asistente puntual'),
+        (1, 'Luis Mendoza', 'luis.mendoza@example.com', '3001112233', 'Aprobada', 'Asistente puntual'), /* Cambiado a Aprobada para demo */
         (2, 'Sandra López', 'sandra.lopez@example.com', '3002223344', 'Pendiente', NULL),
         (3, 'Andrés Pérez', 'andres.perez@example.com', '3003334455', 'Cerrada', 'Requiere material adicional'),
         (4, 'Marcela Torres', 'marcela.torres@example.com', '3004445566', 'Cerrada', 'No podrá asistir'),
         (5, 'Raúl García', 'raul.garcia@example.com', '3005556677', 'Pendiente', NULL),
         (6, 'Natalia Sánchez', 'natalia.sanchez@example.com', '3006667788', 'Registrada', NULL),
         (7, 'Diego Vargas', 'diego.vargas@example.com', '3007778899', 'Pendiente', NULL),
-        (8, 'Paola Romero', 'paola.romero@example.com', '3008889900', 'Registrada', 'Vegetariana'),
+        (8, 'Paola Romero', 'paola.romero@example.com', '3008889900', 'Aprobada', 'Vegetariana'), /* Cambiado a Aprobada para demo */
         (9, 'Esteban Cruz', 'esteban.cruz@example.com', '3009990011', 'Registrada', NULL),
         (10, 'Diana Castro', 'diana.castro@example.com', '3010001122', 'Pendiente', NULL),
         (1, 'José Rojas', 'jose.rojas@example.com', '3011112233', 'Pendiente', NULL),
         (2, 'Laura Morales', 'laura.morales@example.com', '3012223344', 'Pendiente', NULL),
         (3, 'Camilo Ayala', 'camilo.ayala@example.com', '3013334455', 'Registrada', NULL),
-        (4, 'Lucía Peña', 'lucia.pena@example.com', '3014445566', 'Rgistrada', NULL),
+        (4, 'Lucía Peña', 'lucia.pena@example.com', '3014445566', 'Registrada', NULL), /* Corregido de 'Rgistrada' */
         (5, 'Julián Herrera', 'julian.herrera@example.com', '3015556677', 'Cerrada', 'Por enfermedad'),
         (6, 'Tatiana Gómez', 'tatiana.gomez@example.com', '3016667788', 'Pendiente', NULL),
         (7, 'Cristian Beltrán', 'cristian.beltran@example.com', '3017778899', 'Pendiente', NULL),
@@ -87,8 +90,8 @@ function insertar_datos_demo()
         ('Carlos Rodríguez', '3113456789', 'carlos.rodriguez@example.com', 'Reclamo', 'Mi factura presenta un valor erróneo. Solicito revisión.', NULL, 'Pendiente', NOW()),
         ('Ana Martínez', '3124567890', 'ana.martinez@example.com', 'Petición', '¿Pueden indicarme cómo solicitar un certificado?', NULL, 'Pendiente', NOW()),
         ('Luis Herrera', '3135678901', 'luis.herrera@example.com', 'Queja', 'No responden los correos enviados desde hace una semana.', NULL, 'Pendiente', NOW()),
-        ('Paula Díaz', '3146789012', 'paula.diaz@example.com', 'Reclamo', 'No se respetaron los términos del contrato.', 'Hemos revisado su caso y procederemos a corregir la situación.', 'Resuelto', NOW() - INTERVAL 2 DAY),
-        ('Jorge Ruiz', '3157890123', 'jorge.ruiz@example.com', 'Petición', 'Solicito una copia del reglamento interno.', 'El reglamento ha sido enviado a su correo.', 'Resuelto', NOW() - INTERVAL 5 DAY),
+        ('Paula Díaz', '3146789012', 'paula.diaz@example.com', 'Reclamo', 'No se respetaron los términos del contrato.', 'Hemos revisado su caso y procederemos a corregir la situación.', 'Cerrada', NOW() - INTERVAL 2 DAY), /* Cambiado a Cerrada para coincidir con ENUM */
+        ('Jorge Ruiz', '3157890123', 'jorge.ruiz@example.com', 'Petición', 'Solicito una copia del reglamento interno.', 'El reglamento ha sido enviado a su correo.', 'Cerrada', NOW() - INTERVAL 5 DAY), /* Cambiado a Cerrada */
         ('Camila Torres', '3168901234', 'camila.torres@example.com', 'Queja', 'El personal de atención al cliente fue grosero.', NULL, 'Pendiente', NOW()),
         ('Ricardo Mendoza', '3179012345', 'ricardo.mendoza@example.com', 'Reclamo', 'No me han hecho la devolución prometida.', NULL, 'Pendiente', NOW()),
         ('Laura Castillo', '3180123456', 'laura.castillo@example.com', 'Petición', 'Quisiera conocer los requisitos para afiliarme.', NULL, 'Pendiente', NOW()) 
