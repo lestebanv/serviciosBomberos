@@ -1,5 +1,3 @@
-
-
 <p> La siguiente <strong> <?php echo esc_html($objpqr['tipo_solicitud']);?> </strong>
  fue registrada con fecha <strong><?php echo esc_html($objpqr['fecha_registro']);?></strong></p>
 <table>

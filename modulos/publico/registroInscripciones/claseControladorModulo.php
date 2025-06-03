@@ -30,7 +30,6 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
         );
         
         $cursos_disponibles = $wpdb->get_results($sql, ARRAY_A);
-
             
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioInscripcionCurso.php';

@@ -2,15 +2,23 @@
 require_once BOMBEROS_PLUGIN_DIR . 'includes/utilidades.php';
 class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControladorBaseBomberos
 {
-        protected $sanitization_rules = [
-            'id' => 'int',
-            'paged' => 'int',
-            'form_data' => [
+    protected $tablaEmpresas;
+    protected $tablaInspecciones;
+    protected $reglasSanitizacion = [
+        'form_data' => [
                 'id_empresa' => 'int',
+                'id_inspeccion' => 'int',
                 'email' => 'email',
-            ],
-        ];
+        ]
+    ];
 
+    public function __construct()
+    {
+        parent::__construct();
+        global $wpdb;
+        $this->tablaCursos = $wpdb->prefix . 'cursos';
+        $this->tablaInscripciones = $wpdb->prefix . 'inscripciones';
+    }
     public function ejecutarShortCode() {
         try {
             ob_start();
@@ -22,30 +30,17 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
         }
     }
 
-    public function ejecutarFuncionalidad($request)
+    public function ejecutarFuncionalidad($peticion)
     {
-
-
-        try {
-
-            $sanitized_request = bomberos_sanitize_input($request, $this->sanitization_rules);
-            $plantilla = isset($request['plantilla']) ? $request['plantilla'] : '';
-
-            if (empty($plantilla)) {
-                $this->enviarLog("La plantilla no especificada en la solicitud", $request);
-                $this->lanzarExcepcion("Plantilla no especificada.");
-            }
-            
+     try{
+            $peticionLimpia = $this->sanitizarRequest($peticion, $this->reglasSanitizacion);
+            $plantilla = $peticionLimpia['plantilla'] ?? '';
+            $datos=$peticionLimpia['form_data'];
             switch ($plantilla) {
-                case 'mostrar_formulario':
-                    ob_start();
-                    include plugin_dir_path(__FILE__) . 'frmBuscarEmpresa.php';
-                    $html = ob_get_clean();
-                    return $this->armarRespuesta('', $html);
                 case 'buscar_empresa':
-                    return $this->enviarFrmEmpresa($sanitized_request);
+                    return $this->enviarFrmEmpresa($datos);
                 case 'registrar_empresa_solicitud':
-                    return $this->registrarSolicitudInspeccion($sanitized_request);
+                    return $this->registrarSolicitudInspeccion($datos);
                 default:
                     return $this->armarRespuesta('Funcionalidad no encontrada: ' . esc_html($plantilla));
             }
@@ -54,22 +49,14 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
         }
     }
 
-    public function enviarFrmEmpresa($request)
+    public function enviarFrmEmpresa($datos)
     {
         try {
             global $wpdb;
-            $tabla_empresas = $wpdb->prefix . 'empresas';
-
-            $form_data = $request['form_data'];
-            $nit = $form_data['nit'] ?? '';
-
-            if (empty($nit)) {
-                return $this->armarRespuesta('El campo NIT es obligatorio.');
-            }
-
-            $strsql = $wpdb->prepare("SELECT * FROM $tabla_empresas WHERE nit = %s", $nit);
+            $nit = $datos['nit'] ?? '';
+            $strsql = $wpdb->prepare("SELECT * FROM {$this->$tablaEmpresas} WHERE nit = %s", $nit);
             $empresa = $wpdb->get_row($strsql, ARRAY_A);
-
+*-** **************************************************
             if ($empresa) {
                 ob_start();
                 include plugin_dir_path(__FILE__) . 'frmRegistrarSoloSolicitud.php';
@@ -105,9 +92,7 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
     {
         try {
             global $wpdb;
-            $tabla_empresas = $wpdb->prefix . 'empresas';
-            $tabla_inspecciones = $wpdb->prefix . 'inspecciones';
-
+        
             $campos_obligatorios = ['nit', 'razon_social', 'direccion', 'barrio', 'representante_legal', 'email', 'nombre_encargado', 'telefono_encargado'];
             foreach ($campos_obligatorios as $campo) {
                 if (empty($form_data[$campo])) {
@@ -115,7 +100,7 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
                 }
             }
 
-            $existe = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tabla_empresas WHERE nit = %s", $form_data['nit']));
+            $existe = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$this->tablaEmpresas} WHERE nit = %s", $form_data['nit']));
             if ($existe > 0) {
                 return $this->armarRespuesta("Ya existe una empresa registrada con el NIT: {$form_data['nit']}", null, false);
             }

@@ -1,11 +1,6 @@
 <div id="pqr-registro-form" class="wrap">
     <h2>Registre aquí su petición, queja, reclamo, felicitación o sugerencia:</h2>
-
-    <div id="pqr-response" class="notice" style="display:none;"></div>
-
     <form id="pqr-form" method="post">
-        <?php wp_nonce_field('pqr_form_action', 'pqr_nonce'); ?>
-
         <table class="form-table">
             <tr>
                 <th scope="row"><label for="pqr-nombre">Nombre</label></th>
