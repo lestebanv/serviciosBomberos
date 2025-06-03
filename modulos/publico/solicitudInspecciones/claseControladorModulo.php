@@ -16,8 +16,8 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
     {
         parent::__construct();
         global $wpdb;
-        $this->tablaCursos = $wpdb->prefix . 'cursos';
-        $this->tablaInscripciones = $wpdb->prefix . 'inscripciones';
+        $this->tablaEmpresas = $wpdb->prefix . 'empresas';
+        $this->tablaInspecciones= $wpdb->prefix . 'inspecciones';
     }
     public function ejecutarShortCode() {
         try {
@@ -25,9 +25,9 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
             include plugin_dir_path(__FILE__) . 'frmBuscarEmpresa.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('', $html);
-        } catch (\Throwable $e) {
-            return $this->armarRespuesta('Error al ejecutar el shortcode: ' . $e->getMessage(), null, false);
-        }
+       } catch (Exception $e) {
+            $this->manejarExcepcion("Error en ejecutar Funcionalidad de pqrs ", $e, $datos);
+       }
     }
 
     public function ejecutarFuncionalidad($peticion)
@@ -44,8 +44,8 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
                 default:
                     return $this->armarRespuesta('Funcionalidad no encontrada: ' . esc_html($plantilla));
             }
-        } catch (\Throwable $e) {
-            return $this->armarRespuesta('Error al ejecutar la funcionalidad: ' . $e->getMessage(), null, false);
+        } catch (Exception $e) {
+            $this->manejarExcepcion("Error en ejecutar Funcionalidad de funcionalidad  " , $e, $datos);
         }
     }
 
@@ -54,9 +54,8 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
         try {
             global $wpdb;
             $nit = $datos['nit'] ?? '';
-            $strsql = $wpdb->prepare("SELECT * FROM {$this->$tablaEmpresas} WHERE nit = %s", $nit);
+            $strsql = $wpdb->prepare("SELECT * FROM {$this->tablaEmpresas} WHERE nit = %s", $nit);
             $empresa = $wpdb->get_row($strsql, ARRAY_A);
-*-** **************************************************
             if ($empresa) {
                 ob_start();
                 include plugin_dir_path(__FILE__) . 'frmRegistrarSoloSolicitud.php';
@@ -69,65 +68,45 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
                 return $this->armarRespuesta('Formulario completo enviado', $html);
             }
         } catch (Exception $e) {
-            return $this->armarRespuesta('Error procesando la solicitud: ' . $e->getMessage(), null, false);
+            $this->manejarExcepcion("Error en ejecutar Funcionalidad de registro inspecciones" , $e, $datos);
         }
     }
 
-    public function registrarSolicitudInspeccion($request)
+    public function registrarSolicitudInspeccion($datos)
     {
         try {
-            $form_data = $request['form_data'] ?? [];
-            $this->enviarLog("se recibio el siguiente formulario",$form_data);
-            if (isset($form_data['id_empresa'])) {
-                return $this->actualizarEmpresaInsertarSolicitud($form_data);
+            if (isset($datos['id_empresa'])) {
+                return $this->actualizarEmpresaInsertarSolicitud($datos);
             } else {
-                return $this->insertarEmpresaInsertarSolicitud($form_data);
+                return $this->insertarEmpresaInsertarSolicitud($datos);
             }
-        } catch (\Throwable $e) {
-            return $this->armarRespuesta('Error al registrar la solicitud: ' . $e->getMessage(), null, false);
+        } catch (Exception $e) {
+            $this->manejarExcepcion("Error en ejecutar resistrar solicitud inspeccion " , $e, $datos);
         }
     }
 
-    public function insertarEmpresaInsertarSolicitud($form_data)
+    public function insertarEmpresaInsertarSolicitud($datos)
     {
         try {
             global $wpdb;
-        
-            $campos_obligatorios = ['nit', 'razon_social', 'direccion', 'barrio', 'representante_legal', 'email', 'nombre_encargado', 'telefono_encargado'];
-            foreach ($campos_obligatorios as $campo) {
-                if (empty($form_data[$campo])) {
-                    return $this->armarRespuesta("El campo '$campo' es obligatorio.", null, false);
-                }
-            }
-
-            $existe = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$this->tablaEmpresas} WHERE nit = %s", $form_data['nit']));
-            if ($existe > 0) {
-                return $this->armarRespuesta("Ya existe una empresa registrada con el NIT: {$form_data['nit']}", null, false);
-            }
-
+            $sqlEmpresa=$wpdb->prepare("SELECT COUNT(*) FROM {$this->tablaEmpresas} WHERE nit = %s", $datos['nit']);
+            $existe = $wpdb->get_var($sqlEmpresa);
             $dataEmpresa = [
-                'nit' => $form_data['nit'],
-                'razon_social' => $form_data['razon_social'],
-                'direccion' => $form_data['direccion'],
-                'barrio' => $form_data['barrio'],
-                'representante_legal' => $form_data['representante_legal'],
-                'email' => $form_data['email'],
+                'nit' => $datos['nit'],
+                'razon_social' => $datos['razon_social'],
+                'direccion' => $datos['direccion'],
+                'barrio' => $datos['barrio'],
+                'representante_legal' => $datos['representante_legal'],
+                'email' => $datos['email'],
             ];
-            $result = $wpdb->insert($tabla_empresas, $dataEmpresa);
-            if ($result === false) {
-                return $this->armarRespuesta('Error al registrar la empresa: ' . esc_html($wpdb->last_error), null, false);
-            }
+            $result = $wpdb->insert($this->tablaEmpresas, $dataEmpresa);
             $id_empresa = $wpdb->insert_id;
-
             $dataInspeccion = [
                 'id_empresa' => $id_empresa,
-                'nombre_encargado' => $form_data['nombre_encargado'],
-                'telefono_encargado' => $form_data['telefono_encargado'],
+                'nombre_encargado' => $datos['nombre_encargado'],
+                'telefono_encargado' => $datos['telefono_encargado'],
             ];
-            $result = $wpdb->insert($tabla_inspecciones, $dataInspeccion);
-            if ($result === false) {
-                return $this->armarRespuesta('Error al registrar la inspección: ' . esc_html($wpdb->last_error), null, false);
-            }
+            $result = $wpdb->insert($this->tablaInspecciones, $dataInspeccion);
             $id_inspeccion = $wpdb->insert_id;
 
             $strSql = $wpdb->prepare("
@@ -136,8 +115,8 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
                     e.representante_legal, e.email,
                     i.id_inspeccion, i.fecha_registro, i.fecha_programada, 
                     i.fecha_expedicion, i.estado, i.nombre_encargado, i.telefono_encargado
-                FROM $tabla_empresas AS e
-                INNER JOIN $tabla_inspecciones AS i 
+                FROM {$this->tablaEmpresas} AS e
+                INNER JOIN {$this->tablaInspecciones} AS i 
                     ON e.id_empresa = i.id_empresa
                 WHERE e.id_empresa = %d AND i.id_inspeccion = %d
             ", $id_empresa, $id_inspeccion);
@@ -146,44 +125,27 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
             include plugin_dir_path(__FILE__) . 'confirmarRegistro.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Empresa y solicitud registradas con éxito', $html);
-        } catch (\Throwable $e) {
-            return $this->armarRespuesta('Error inesperado al registrar empresa y solicitud: ' . $e->getMessage(), null, false);
+        } catch (Exception $e) {
+            $this->manejarExcepcion("Error en ejecutar resistrar solicitud inspeccion " , $e, $datos);
         }
     }
 
-    public function actualizarEmpresaInsertarSolicitud($form_data)
+    public function actualizarEmpresaInsertarSolicitud($datos)
     {
         try {
             global $wpdb;
-            $tabla_empresas = $wpdb->prefix . 'empresas';
-            $tabla_inspecciones = $wpdb->prefix . 'inspecciones';
-
-            $campos_obligatorios = ['id_empresa', 'representante_legal', 'email', 'nombre_encargado', 'telefono_encargado'];
-            foreach ($campos_obligatorios as $campo) {
-                if (empty($form_data[$campo])) {
-                    return $this->armarRespuesta("El campo '$campo' es obligatorio.", null, false);
-                }
-            }
-
-            $id_empresa = (int)$form_data['id_empresa'];
+            $id_empresa = (int)$datos['id_empresa'];
             $dataEmpresa = [
-                'representante_legal' => $form_data['representante_legal'],
-                'email' => $form_data['email'],
+                'representante_legal' => $datos['representante_legal'],
+                'email' => $datos['email'],
             ];
-            $result = $wpdb->update($tabla_empresas, $dataEmpresa, ['id_empresa' => $id_empresa]);
-            if ($result === false) {
-                return $this->armarRespuesta('Error al actualizar la empresa: ' . esc_html($wpdb->last_error), null, false);
-            }
-
+            $result = $wpdb->update($this->tablaEmpresas, $dataEmpresa, ['id_empresa' => $id_empresa]);
             $dataInspeccion = [
                 'id_empresa' => $id_empresa,
-                'nombre_encargado' => $form_data['nombre_encargado'],
-                'telefono_encargado' => $form_data['telefono_encargado'],
+                'nombre_encargado' => $datos['nombre_encargado'],
+                'telefono_encargado' => $datos['telefono_encargado'],
             ];
-            $result = $wpdb->insert($tabla_inspecciones, $dataInspeccion);
-            if ($result === false) {
-                return $this->armarRespuesta('Error al registrar la inspección: ' . esc_html($wpdb->last_error), null, false);
-            }
+            $result = $wpdb->insert($this->tablaInspecciones, $dataInspeccion);
             $id_inspeccion = $wpdb->insert_id;
 
             $strSql = $wpdb->prepare("
@@ -192,8 +154,8 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
                     e.representante_legal, e.email,
                     i.id_inspeccion, i.fecha_registro, i.fecha_programada, 
                     i.fecha_expedicion, i.estado, i.nombre_encargado, i.telefono_encargado
-                FROM $tabla_empresas AS e
-                INNER JOIN $tabla_inspecciones AS i 
+                FROM {$this->tablaEmpresas} AS e
+                INNER JOIN {$this->tablaInspecciones} AS i 
                     ON e.id_empresa = i.id_empresa
                 WHERE e.id_empresa = %d AND i.id_inspeccion = %d
             ", $id_empresa, $id_inspeccion);
@@ -203,8 +165,8 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
             include plugin_dir_path(__FILE__) . 'confirmarRegistro.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Solicitud registrada con éxito', $html);
-        } catch (\Throwable $e) {
-            return $this->armarRespuesta('Error inesperado al actualizar empresa y registrar solicitud: ' . $e->getMessage(), null, false);
+        } catch (Exception $e) {
+            $this->manejarExcepcion("Error en ejecutar resistrar solicitud inspeccion " , $e, $datos);
         }
     }
 }
