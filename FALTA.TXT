@@ -1,0 +1,12 @@
+Requisitos que faltan.
+
+1. En inspecciones falta  un campo para observaciones .
+
+2. en inspecciones enviar un correo de la fecha programada con lo mismo que le aparece al usuario,
+y cuando se programe se le envie la fecha
+
+3. Enviar un correo en cursos para quede informado que ya esta inscrito o que estamos esperando a que
+se llene los cursos.
+
+4.En inspecciones, crear un modulo Bomberos para asignar encargado de atender inspección.
+
