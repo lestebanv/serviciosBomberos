@@ -7,7 +7,10 @@
         <table class="form-table">
             <tr>
                 <th><label for="nit">NIT</label></th>
-                <td><input type="text" id="nit" name="nit" class="regular-text" required></td>
+                <td> <input type="text" id="nit" name="nit" class="regular-text" required
+                        pattern="^\d{9}-\d{1}$"
+                        title="El NIT debe tener 9 dígitos, un guion y un dígito final. Ejemplo: 700987654-4">
+                </td>
             </tr>
             <tr>
                 <th><label for="razon_social">Razón Social</label></th>
