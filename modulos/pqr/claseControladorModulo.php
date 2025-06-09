@@ -44,7 +44,8 @@ class ControladorPQR extends ClaseControladorBaseBomberos{
     public function listarPQR($datos)
     {
         try {
-            $this->logInfo(" esto es una prueba",$datos);
+
+            $this->logInfo("valores unicos de estado de pqr",$this->valoresUnicos($this->tablaPqrs,'estado_solicitud'));
             global $wpdb;
             $elementosPorPagina = 5;
             $actualpagina= $datos['actualpagina'] ?? 1;

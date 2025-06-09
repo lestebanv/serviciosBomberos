@@ -247,6 +247,24 @@ protected function lanzarExcepcion($mensaje)
 
         return $sanitized;
     }
+
+    public function valoresUnicos($nombreTabla,$nombreCampo){
+
+    global $wpdb;
+    $sql= $wpdb->prepare("SHOW COLUMNS FROM $nombreTabla LIKE %s", $nombreCampo);
+
+    $resultado = $wpdb->get_row($sql);
+
+    if ($resultado) {
+        // Extraer los valores del tipo ENUM('Registrada','Pendiente','Cerrada')
+        if (preg_match("/^enum\((.*)\)$/", $resultado->Type, $matches)) {
+            $enum_values = str_getcsv($matches[1], ',', "'");
+            // $enum_values ahora es un array: ['Registrada', 'Pendiente', 'Cerrada']
+        }
+    }
+    return $enum_values;
+
+    }
 }
 
 ?>
