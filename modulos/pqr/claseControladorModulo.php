@@ -37,13 +37,14 @@ class ControladorPQR extends ClaseControladorBaseBomberos{
                     $this->lanzarExcepcion("Funcionalidad '$funcionalidad' no reconocida.");
             }
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar Funcionalidad de pqrs " . $e->getMessage(), $datos);
+            $this->manejarExcepcion($e, $solicitud);
         }
     }
 
     public function listarPQR($datos)
     {
         try {
+            $this->logInfo(" esto es una prueba",$datos);
             global $wpdb;
             $elementosPorPagina = 5;
             $actualpagina= $datos['actualpagina'] ?? 1;
@@ -69,7 +70,7 @@ class ControladorPQR extends ClaseControladorBaseBomberos{
             $html = ob_get_clean();
             return $this->armarRespuesta('Listado de PQR cargado', $html);
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en listarPQR: ",$e, $datos);
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -93,9 +94,8 @@ class ControladorPQR extends ClaseControladorBaseBomberos{
             include plugin_dir_path(__FILE__) . 'formularioEditarPqr.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Formulario de respuesta cargado.', $html);
-        } catch (Exception $e) {
-            $this->enviarLog("Error en formularioRespuesta: " . $e->getMessage(), $request);
-            throw $e;
+       } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -114,8 +114,8 @@ class ControladorPQR extends ClaseControladorBaseBomberos{
                 $this->lanzarExcepcion("Error al guardar la respuesta.");
             }
             return $this->listarPQR($datos);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en actualizar PQRS",$e,$datos);
+       } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -135,7 +135,7 @@ class ControladorPQR extends ClaseControladorBaseBomberos{
 
             return $this->listarPQR($datos);
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en eliminarPQR: ", $e, $datos);
+            $this->manejarExcepcion($e, $datos);
         }
     }
 }

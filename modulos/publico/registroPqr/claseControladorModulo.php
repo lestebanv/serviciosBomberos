@@ -25,7 +25,7 @@ class ControladorBomberosShortCodeRegistroPqr extends ClaseControladorBaseBomber
             $html = ob_get_clean();
             return $this->armarRespuesta('', $html);
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutarFuncionalidad del shortcode pqr", $e, $datos);
+            $this->manejarExcepcion($e);
         }
     }
 
@@ -41,8 +41,8 @@ class ControladorBomberosShortCodeRegistroPqr extends ClaseControladorBaseBomber
                 default:
                     $this->lanzarExcepcion("Plantilla no encontrada en el shortcode prqs " . esc_html($plantilla));
             }
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutarFuncionalidad del shortcode pqr", $e, $datos);
+         } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -75,8 +75,8 @@ class ControladorBomberosShortCodeRegistroPqr extends ClaseControladorBaseBomber
             include plugin_dir_path(__FILE__) . 'confirmarRegistro.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('PQR registrada con éxito', $html);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutarFuncionalidad del shortcode pqr", $e, $datos);
+       } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
     }
 }

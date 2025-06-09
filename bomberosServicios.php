@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 // Definir constantes
 define('BOMBEROS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('BOMBEROS_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('MODULOS_BOMBEROS', ['empresas', 'inspecciones', 'cursos', 'inscripciones','pqr']);
+define('MODULOS_BOMBEROS', ['empresas', 'inspecciones', 'cursos', 'inscripciones','pqr','bomberos']);
 
 // Incluir archivos necesarios
 require_once BOMBEROS_PLUGIN_DIR . 'includes/activacion.php';

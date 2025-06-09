@@ -112,40 +112,12 @@ class Logger
 
 class ClaseControladorBaseBomberos
 {
-    /**
-     * Instancia del logger.
-     *
-     * @var Logger
-     */
     protected $logger;
-
-    /**
-     * Constructor base.
-     * Permite inyectar un logger o crear uno por defecto.
-     */
     public function __construct()
     {
         $this->logger =  new Logger('bomberos');
     }
 
-    /**
-     * Registra un log con un mensaje, un arreglo de contexto opcional y un objeto adicional.
-     *
-     * @param string $mensaje Mensaje descriptivo del log.
-     * @param array $arreglo Arreglo de datos relacionados al evento (ej. request, contexto).
-     * @param mixed|null $obj Objeto o variable adicional a registrar (puede ser error, resultado, etc.).
-     * @return void
-     */
-    public function enviarLog($mensaje, $arreglo = [], $obj = null): void
-    {
-        $contexto = $arreglo;
-
-        if ($obj !== null) {
-            $contexto['objeto'] = $obj;
-        }
-
-        $this->logger->info($mensaje, $contexto);
-    }
 
     /**
      * Log de error.
@@ -203,9 +175,9 @@ class ClaseControladorBaseBomberos
      * @return void
      * @throws Exception
      */
-    public function manejarExcepcion(string $mensajeLog, Exception $e, $contexto = []): void
+    public function manejarExcepcion(Exception $e, $contexto = []): void
     {
-        $this->logError("{$mensajeLog}: " . $e->getMessage(), [
+        $this->logError($e->getMessage(), [
             'archivo' => $e->getFile(),
             'línea'   => $e->getLine(),
             'traza'   => $e->getTraceAsString(),

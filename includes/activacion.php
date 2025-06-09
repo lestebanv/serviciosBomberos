@@ -17,6 +17,7 @@ function crear_tablas_plugin_bomberos()
     $tabla_cursos = $wpdb->prefix . 'cursos';
     $tabla_pqrs = $wpdb->prefix . 'pqrs';
     $tabla_inscripciones_cursos=$wpdb->prefix . 'inscripciones';
+    $tabla_bomberos=$wpdb->prefix . 'bomberos';
 
     // SQL para crear tabla de empresas
     $sql_empresas = "CREATE TABLE $tabla_empresas (
@@ -91,6 +92,27 @@ function crear_tablas_plugin_bomberos()
             PRIMARY KEY (id)
         ) $charset_collate;";
 
+    $sql_bomberos = "CREATE TABLE {$tabla_bomberos} (
+        id_bombero BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+        nombres VARCHAR(100) NOT NULL,
+        apellidos VARCHAR(100) NOT NULL,
+        tipo_documento VARCHAR(10) NOT NULL,
+        numero_documento VARCHAR(20) NOT NULL UNIQUE,
+        fecha_nacimiento DATE,
+        genero VARCHAR(10),
+        direccion VARCHAR(255),
+        telefono VARCHAR(20),
+        email VARCHAR(100),
+        grupo_sanguineo VARCHAR(5),
+        rh VARCHAR(1),
+        rango VARCHAR(50),
+        estado VARCHAR(20) DEFAULT 'activo',
+        fecha_ingreso DATE,
+        observaciones TEXT,
+        PRIMARY KEY (id_bombero)
+    ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+
+
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     // Crear las tablas
     dbDelta($sql_empresas);
@@ -98,5 +120,6 @@ function crear_tablas_plugin_bomberos()
     dbDelta($sql_cursos);
     dbDelta($sql_pqrs);
     dbDelta($sql_inscripciones_cursos);
+    dbDelta($sql_bomberos);
 }
 ?>

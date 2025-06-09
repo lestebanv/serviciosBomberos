@@ -47,8 +47,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
                     $this->lanzarExcepcion("Funcionalidad '" . esc_html($funcionalidad) . "' no encontrada.");
             }
         } catch (Exception $e) {
-            $this->$this->manejarExcepcion("Error en listarEmpresas: ", $e, $solicitud);
-            throw $e;
+            $this->$this->manejarExcepcion($e, $solicitud);
         }
     }
 
@@ -84,7 +83,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
             $html = ob_get_clean();
             return $this->armarRespuesta('Lista de empresas', $html);
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en listarEmpresas: ", $e, $datos);
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -121,7 +120,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
 
             return $this->armarRespuesta('Formulario de edición cargado', $html);
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error enviado el formulario de edicion de empresas ", $e, $datos);
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -141,8 +140,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
 
             return $this->listarEmpresas($datos);
         } catch (Exception $e) {
-             $this->manejarExcepcion("Error Eliminando empresa ", $e, $datos);
-            throw $e;
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -174,11 +172,9 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
             if ($resultado === false) {
                 $this->lanzarExcepcion("No se pudo actualizar la empresa.");
             }
-            $this->enviarLog("desde actualizar empresa",$datos);
             return $this->listarEmpresas($datos);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en actualizar Empresa: ",e, $datos);
-            throw $e;
+       } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -191,7 +187,7 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
             $html = ob_get_clean();
             return $this->armarRespuesta("Formulario de creación cargado", $html);
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error enviando formulario para crear Empresa: ",e, $datos);
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -229,8 +225,8 @@ class ControladorEmpresas extends ClaseControladorBaseBomberos
             }
 
             return $this->listarEmpresas($datos);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error insertando en  Empresas ",e, $datos);
+       } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
     }
 }

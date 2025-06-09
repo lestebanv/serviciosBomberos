@@ -26,7 +26,7 @@ jQuery(document).ready(function ($) {
     };
 
     // Función para agregar indicador de carga
-    BomberosPlugin.toggleLoading = function ($element, isLoading) {
+    BomberosPlugin.cargando = function ($element, isLoading) {
         $element.toggleClass('loading', isLoading);
     };
 
@@ -50,10 +50,10 @@ jQuery(document).ready(function ($) {
                 nonce: bomberosAjax.nonce
             },
             beforeSend: function () {
-                BomberosPlugin.toggleLoading($cuerpo, true);
+                BomberosPlugin.cargando($mensaje, true);
             },
             success: function (response) {
-                BomberosPlugin.toggleLoading($cuerpo, false);
+                BomberosPlugin.cargando($mensaje, false);
                 if (response.success && response.data?.html) {
                     $cuerpo.html(response.data.html);
                 } else if (!response.success) {
@@ -62,7 +62,7 @@ jQuery(document).ready(function ($) {
                 BomberosPlugin.manejarMensajeRespuestaAjax(response);
             },
             error: function (xhr, status, error) {
-                BomberosPlugin.toggleLoading($cuerpo, false);
+                BomberosPlugin.cargando($mensaje, false);
                 $cuerpo.html('');
                 BomberosPlugin.manejarMensajeRespuestaAjax(null, 'Error en la solicitud AJAX: ' + error);
             }

@@ -52,7 +52,7 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
         }
 
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar Funcionalidad de inscripciones", $datos, $e->getMessage());
+            $this->manejarExcepcion($e,$solicitud);
         }
     }
 
@@ -91,8 +91,8 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
             include plugin_dir_path(__FILE__) . 'listadoInscripciones.php';
             $html = ob_get_clean();
             return $this->armarRespuesta("Lista cargada correctamente", $html);
-        } catch (Exception $e) {
-           $this->manejarExcepcion("Error en ejecutar Funcionalidad de inscripciones", $datos, $e->getMessage());
+         } catch (Exception $e) {
+            $this->manejarExcepcion($e,$datos);
         }
     }
 
@@ -117,7 +117,7 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
             }
             return $this->listarInscripciones($datos);
         } catch (Exception $e) {
-             $this->manejarExcepcion("Error en ejecutar Funcionalidad de eliminar inscripciones", $datos, $e->getMessage());
+            $this->manejarExcepcion($e,$datos);
         }
     }
 
@@ -148,8 +148,8 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
             $html = ob_get_clean();
 
             return $this->armarRespuesta("Formulario cargado correctamente", $html);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar Funcionalidad de enviar formulario de inscripciones", $datos, $e->getMessage());
+          } catch (Exception $e) {
+            $this->manejarExcepcion($e,$datos);
         }
     }
 
@@ -184,8 +184,8 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
                 $this->lanzarExcepcion("Error al actualizar la inscripción.");
             }
             return $this->listarInscripciones($datos);
-        } catch (Exception $e) {
-             $this->manejarExcepcion("Error en ejecutar Funcionalidad de actualizar inscripciones", $datos, $e->getMessage());
+         } catch (Exception $e) {
+            $this->manejarExcepcion($e,$datos);
         }
     }
 }

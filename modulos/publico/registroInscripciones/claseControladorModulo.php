@@ -49,7 +49,7 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
             $html = ob_get_clean();
             return $this->armarRespuesta('', $html);
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar Funcionalidad de inscripciones", $datos, $e->getMessage());
+            $this->manejarExcepcion($e);
         }
     }
 
@@ -67,7 +67,7 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
                     return $this->armarRespuesta('Funcionalidad no encontrada: ' . esc_html($plantilla));
             }
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar Funcionalidad de inscripciones", $datos, $e->getMessage());
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -101,8 +101,8 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
             include plugin_dir_path(__FILE__) . 'mensajeRespuestaInscripcion.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('PQR registrada con éxito', $html);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar Funcionalidad de inscripciones", $e,$datos);
+         } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
     }
 }

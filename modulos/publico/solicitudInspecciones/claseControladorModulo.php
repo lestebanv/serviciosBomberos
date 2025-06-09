@@ -25,9 +25,9 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
             include plugin_dir_path(__FILE__) . 'frmBuscarEmpresa.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('', $html);
-       } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar Funcionalidad de pqrs ", $e, $datos);
-       }
+      } catch (Exception $e) {
+            $this->manejarExcepcion($e);
+        }
     }
 
     public function ejecutarFuncionalidad($peticion)
@@ -45,7 +45,7 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
                     return $this->armarRespuesta('Funcionalidad no encontrada: ' . esc_html($plantilla));
             }
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar Funcionalidad de funcionalidad  " , $e, $datos);
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -67,8 +67,8 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
                 $html = ob_get_clean();
                 return $this->armarRespuesta('Formulario completo enviado', $html);
             }
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar Funcionalidad de registro inspecciones" , $e, $datos);
+         } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -80,8 +80,8 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
             } else {
                 return $this->insertarEmpresaInsertarSolicitud($datos);
             }
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar resistrar solicitud inspeccion " , $e, $datos);
+         } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -126,7 +126,7 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
             $html = ob_get_clean();
             return $this->armarRespuesta('Empresa y solicitud registradas con éxito', $html);
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar resistrar solicitud inspeccion " , $e, $datos);
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -165,8 +165,8 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
             include plugin_dir_path(__FILE__) . 'confirmarRegistro.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Solicitud registrada con éxito', $html);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutar resistrar solicitud inspeccion " , $e, $datos);
+         } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
     }
 }

@@ -48,8 +48,8 @@ class ControladorCursos extends ClaseControladorBaseBomberos
                 default:
                     $this->lanzarExcepcion("Funcionalidad no encontrada en el modulo cursos " . esc_html($funcionalidad));
             }
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutarFuncionalidad", $e, $datos);
+       } catch (Exception $e) {
+            $this->manejarExcepcion($e, $solicitud);
         }
     }
 
@@ -84,8 +84,8 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             include plugin_dir_path(__FILE__) . 'listadoCursos.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Lista de cursos cargada con éxito', $html);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en listarCursos", $e, $datos);
+          } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -97,7 +97,7 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             $html = ob_get_clean();
             return $this->armarRespuesta('Formulario de creación cargado correctamente', $html);
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en formularioCreacion", $e, $datos);
+            $this->manejarExcepcion($e, $datos);
         }
     }
 
@@ -135,9 +135,10 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             }
 
             return $this->listarCursos($datos);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en insertarCurso", $e, $datos);
+         } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
+    
     }
 
     public function formularioEdicion($datos)
@@ -162,9 +163,10 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             include plugin_dir_path(__FILE__) . 'formularioEditarCurso.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Formulario de edición cargado correctamente', $html);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en formularioEdicion", $e, $datos);
+         } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
         }
+    
     }
 public function actualizarCurso($datos)
 {
@@ -202,9 +204,9 @@ public function actualizarCurso($datos)
         }
 
         return $this->listarCursos($datos);
-    } catch (Exception $e) {
-        $this->manejarExcepcion("Error en actualizarCurso", $e, $datos);
-    }
+      } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
+        }
 }
 public function eliminarCurso($datos)
 {
@@ -219,8 +221,8 @@ public function eliminarCurso($datos)
             $this->lanzarExcepcion('No se pudo eliminar el curso.');
         }
         return $this->listarCursos($datos);
-    } catch (Exception $e) {
-        $this->manejarExcepcion("Error en eliminarCurso", $e, $datos);
-    }
+     } catch (Exception $e) {
+            $this->manejarExcepcion($e, $datos);
+     }
 }
 }

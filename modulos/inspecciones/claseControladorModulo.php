@@ -28,7 +28,7 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
             $datos = $solicitudSanitizada['form_data'] ?? [];
 
             if (empty($funcionalidad)) {
-                $this->logDebug("Funcionalidad no especificada en la solicitud", $request);
+                $this->lanzarExcepcion("Funcionalidad no especificada en la solicitud");
             }
 
             switch ($funcionalidad) {
@@ -42,11 +42,10 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
                 case 'eliminar_inspeccion':
                     return $this->eliminarInspeccion($datos);
                 default:
-                    $this->enviarLog("Funcionalidad no encontrada", ['funcionalidad' => $funcionalidad]);
                     $this->lanzarExcepcion("Funcionalidad no encontrada: " . esc_html($funcionalidad));
             }
         } catch (Exception $e) {
-            $this->manejarExcepcion("Error en ejecutarFuncionalidad de inspecciones " , $e, $datos);
+            $this->manejarExcepcion( $e, $solicitud);
         }
     }
 
@@ -75,9 +74,8 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
             include plugin_dir_path(__FILE__) . 'listadoInspecciones.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Lista de inspecciones cargada con éxito', $html);
-        } catch (Exception $e) {
-            $this->enviarLog("Error en listarInspecciones: " . $e->getMessage(), $request);
-            throw $e;
+         } catch (Exception $e) {
+            $this->manejarExcepcion( $e, $datos);
         }
     }
 
@@ -100,8 +98,8 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
             include plugin_dir_path(__FILE__) . 'formularioEditarInspeccion.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Formulario de edición cargado.', $html);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("error enviando formulario inspeccion",$e,$datos);
+       } catch (Exception $e) {
+            $this->manejarExcepcion( $e, $datos);
         }
     }
 
@@ -127,8 +125,8 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
             ];
             $actualizado = $wpdb->update($this->tablaInspecciones, $datosActualizar, ['id_inspeccion' => $id_inspeccion]);
             return $this->listarInspecciones($datos);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en actualizarInspeccion ",$e, $datos);
+       } catch (Exception $e) {
+            $this->manejarExcepcion( $e, $datos);
         }
     }
 
@@ -140,8 +138,8 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
             $actualpagina = isset($datos['actualpagina']) ? (int) $datos['actualpagina'] : 1;
             $resultado = $wpdb->delete($this->tablaInspecciones, ['id_inspeccion' => $id]);
             return $this->listarInspecciones($datos);
-        } catch (Exception $e) {
-            $this->manejarExcepcion("Error en eliminarInspeccion: " , $e, $datos);
+       } catch (Exception $e) {
+            $this->manejarExcepcion( $e, $datos);
         }
     }
 }

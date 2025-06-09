@@ -8,6 +8,7 @@ function insertar_datos_demo()
     $cursos_table = $wpdb->prefix . 'cursos';
     $pqrs_table = $wpdb->prefix . 'pqrs';
     $inscripciones_table= $wpdb->prefix . 'inscripciones';
+    $bomberos_table=$wpdb->prefix . 'bomberos';
 
     // Insertar empresas
     $wpdb->query("
@@ -93,6 +94,24 @@ function insertar_datos_demo()
         ('Ricardo Mendoza', '3179012345', 'ricardo.mendoza@example.com', 'Reclamo', 'No me han hecho la devolución prometida.', NULL, 'Pendiente', NOW()),
         ('Laura Castillo', '3180123456', 'laura.castillo@example.com', 'Petición', 'Quisiera conocer los requisitos para afiliarme.', NULL, 'Pendiente', NOW()) 
         ");
+    
+        $wpdb->query("
+           INSERT INTO {$bomberos_table} (
+                nombres, apellidos, tipo_documento, numero_documento, fecha_nacimiento,
+                genero, direccion, telefono, email, grupo_sanguineo, rh, rango,
+                estado, fecha_ingreso, observaciones ) VALUES
+            ('Juan', 'Pérez', 'CC', '100000001', '1990-05-15', 'Masculino', 'Calle 10 #5-30', '3001234567', 'juan.perez@example.com', 'O', '+', 'Bombero', 'activo', '2020-01-10', ''),
+            ('María', 'Gómez', 'CC', '100000002', '1985-03-22', 'Femenino', 'Cra 15 #23-45', '3012345678', 'maria.gomez@example.com', 'A', '+', 'Capitán', 'activo', '2019-06-20', ''),
+            ('Carlos', 'Ramírez', 'TI', '100000003', '1998-11-05', 'Masculino', 'Av 1 #2-33', '3023456789', 'carlos.ramirez@example.com', 'B', '-', 'Teniente', 'activo', '2021-03-18', ''),
+            ('Luisa', 'Fernández', 'CC', '100000004', '1992-07-11', 'Femenino', 'Calle 20 #10-22', '3034567890', 'luisa.fernandez@example.com', 'AB', '+', 'Bombero', 'activo', '2022-08-10', ''),
+            ('Andrés', 'López', 'CE', '100000005', '1980-01-25', 'Masculino', 'Cra 8 #12-55', '3045678901', 'andres.lopez@example.com', 'O', '-', 'Mayor', 'activo', '2018-10-01', ''),
+            ('Diana', 'Martínez', 'CC', '100000006', '1995-04-30', 'Femenino', 'Calle 45 #30-16', '3056789012', 'diana.martinez@example.com', 'A', '+', 'Bombero', 'activo', '2020-04-15', ''),
+            ('Jorge', 'Torres', 'TI', '100000007', '1993-09-19', 'Masculino', 'Av 6 #9-70', '3067890123', 'jorge.torres@example.com', 'B', '+', 'Sargento', 'activo', '2017-12-12', ''),
+            ('Paola', 'Mendoza', 'CC', '100000008', '1996-02-14', 'Femenino', 'Cra 18 #40-18', '3078901234', 'paola.mendoza@example.com', 'AB', '-', 'Teniente', 'activo', '2021-05-05', ''),
+            ('Ricardo', 'Vargas', 'CE', '100000009', '1988-08-08', 'Masculino', 'Calle 50 #25-12', '3089012345', 'ricardo.vargas@example.com', 'O', '+', 'Capitán', 'activo', '2016-09-22', ''),
+            ('Natalia', 'Cárdenas', 'CC', '100000010', '1991-12-03', 'Femenino', 'Cra 22 #15-48', '3090123456', 'natalia.cardenas@example.com', 'A', '-', 'Bombero', 'activo', '2019-11-30', '');
+            ");
+
 
 
     echo "Tablas recreadas e información cargada correctamente.";

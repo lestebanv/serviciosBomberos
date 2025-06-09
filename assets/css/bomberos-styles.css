@@ -38,11 +38,18 @@
 }
 
 #bomberos-mensaje {
-    border: 1px solid #ccc; /* Maintain visible border when empty */
-    box-sizing: border-box; /* Ensure padding doesn’t affect size */
-    display: block; /* Always visible */
-    background-color: #f5f5f5; /* Neutral background when empty */
+    border: 1px solid #ccc; /* Mantener borde visible cuando está vacío */
+    box-sizing: border-box; /* Asegurar que el padding no afecte el tamaño */
+    display: block; /* Siempre visible */
+    background-color: #f5f5f5; /* Fondo neutro cuando está vacío */
+    height: 2.5em; /* Altura fija para una línea de texto con margen */
+    line-height: 1; /* Altura de línea estándar para el texto */
+    padding: 0.5em; /* Margen alrededor del texto */
+    overflow: hidden; /* Recortar texto que se desborda */
+    text-align: left; /* Alinear texto a la izquierda */
+    white-space: nowrap; /* Evitar que el texto se divida en varias líneas */
 }
+
 
 #bomberos-mensaje.notice-success {
     background-color: #dff0d8;
@@ -55,29 +62,51 @@
     border-color: #ebccd1;
     color: #a94442;
 }
-
+/* Clase de contenedor en carga */
 .loading {
-    opacity: 0.5;
-    pointer-events: none;
     position: relative;
+    pointer-events: none;
+    opacity: 0.6;
 }
 
+.loading::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    z-index: 9;
+}
+/* Overlay de carga con texto y animación */
 .loading::after {
-    content: '';
+    content: "Cargando";
     position: absolute;
     top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #0073aa;
-    border-top-color: transparent;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    transform: translate(-50%, -50%);
+    left: 0; /* Align to the left edge */
+    transform: translateY(-50%); /* Center vertically only */
+    font-size: 1rem;
+    color: #333;
+    z-index: 10;
+    padding-left: 10px; /* Optional: add some left padding for spacing */
 }
 
-@keyframes spin {
-    to {
-        transform: translate(-50%, -50%) rotate(360deg);
-    }
+/* Animación de puntos suspensivos */
+.loading::after::after {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    text-align: left;
+    animation: puntosAnimados 1.5s steps(4, end) infinite;
+    overflow: hidden;
+    vertical-align: bottom;
+    margin-left: 0.25em;
+}
+
+/* Keyframes para los puntos */
+@keyframes puntosAnimados {
+    0% { content: ""; }
+    25% { content: ".."; }
+    50% { content: "...."; }
+    75% { content: "......."; }
+    100% { content: ""; }
 }
