@@ -12,16 +12,25 @@ if (!defined('ABSPATH')) {
         <h2>Detalles de la empresa:</h2>
         <strong>NIT: </strong> <?php echo esc_html($inspeccion['nit']); ?><br>
         <strong>Dirección: </strong><?php echo esc_html($inspeccion['direccion']); ?><br>
-        <strong>Barrio: <?php echo esc_html($inspeccion['barrio']); ?></br>
+        <strong>Barrio: </strong><?php echo esc_html($inspeccion['barrio']); ?></br>
 
         <h2>Detalles de la inspección:</h2>
         <table class="form-table">
             <tr class="form-field form-required">
                 <th scope="row">
-                    <label for="nombre_encargado">Nombre del encargado de atender la inspección</label>
+                    <label for="id_bombero_asignado">Nombre del encargado de atender la inspección</label>
                 </th>
                 <td>
-                    <input type="text" name="nombre_encargado" id="nombre_encargado" class="regular-text" value="<?php echo esc_attr($inspeccion['nombre_encargado']); ?>" required aria-required="true">
+                    <select name="id_bombero_asignado" id="id_bombero_asignado" class="regular-text">
+                        <option value="">-- Sin Asignar --</option>
+                        <?php foreach ($listaBomberos as $bombero): ?>
+                            <option value="<?php echo esc_attr($bombero['id_bombero']); ?>" 
+                                    data-telefono="<?php echo esc_attr($bombero['telefono']); ?>"
+                                    <?php selected($inspeccion['id_bombero_asignado'], $bombero['id_bombero']); ?>>
+                                <?php echo esc_html($bombero['apellidos'] . ', ' . $bombero['nombres']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </td>
             </tr>
             <tr class="form-field form-required">
@@ -29,7 +38,7 @@ if (!defined('ABSPATH')) {
                     <label for="telefono_encargado"><?php esc_html_e('Teléfono del Encargado', 'bomberos-servicios'); ?></label>
                 </th>
                 <td>
-                    <input type="text" name="telefono_encargado" id="telefono_encargado" class="regular-text" value="<?php echo esc_attr($inspeccion['telefono_encargado']); ?>" required aria-required="true">
+                    <input type="text" name="telefono_encargado_display" id="telefono_encargado" class="regular-text" value="<?php echo esc_attr($inspeccion['telefono_encargado']); ?>" readonly>
                 </td>
             </tr>
             <tr class="form-field">

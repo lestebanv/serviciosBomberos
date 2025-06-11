@@ -37,4 +37,14 @@ jQuery(document).ready(function ($) {
         const formData = 'actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('inspecciones', 'pagina_inicial', formData);
     });
+
+    // NUEVO: Actualizar el campo de teléfono cuando se cambia el bombero seleccionado
+    $(document).on('change', '#id_bombero_asignado', function() {
+        // Encontrar la opción seleccionada
+        const selectedOption = $(this).find('option:selected');
+        // Obtener el teléfono del atributo data-telefono
+        const telefono = selectedOption.data('telefono');
+        // Actualizar el valor del campo de teléfono
+        $('#telefono_encargado').val(telefono || ''); // Si no hay teléfono, se pone vacío
+    });
 });

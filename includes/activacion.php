@@ -41,8 +41,10 @@ function crear_tablas_plugin_bomberos()
         nombre_encargado VARCHAR(255) NOT NULL,
         telefono_encargado VARCHAR(20) NOT NULL,
         id_empresa INT NOT NULL,
+        id_bombero_asignado BIGINT(20) UNSIGNED DEFAULT NULL,
         PRIMARY KEY (id_inspeccion),
-        FOREIGN KEY (id_empresa) REFERENCES $tabla_empresas(id_empresa) ON DELETE CASCADE
+        FOREIGN KEY (id_empresa) REFERENCES $tabla_empresas(id_empresa) ON DELETE CASCADE,
+        FOREIGN KEY (id_bombero_asignado) REFERENCES {$tabla_bomberos}(id_bombero) ON DELETE SET NULL
     ) $charset_collate;";
 
     
@@ -99,7 +101,7 @@ function crear_tablas_plugin_bomberos()
         tipo_documento VARCHAR(10) NOT NULL,
         numero_documento VARCHAR(20) NOT NULL UNIQUE,
         fecha_nacimiento DATE,
-        genero VARCHAR(10),
+        genero ENUM('Masculino', 'Femenino', 'Otro') NOT NULL,
         direccion VARCHAR(255),
         telefono VARCHAR(20),
         email VARCHAR(100),
@@ -116,10 +118,10 @@ function crear_tablas_plugin_bomberos()
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     // Crear las tablas
     dbDelta($sql_empresas);
+    dbDelta($sql_bomberos); // Mover bomberos antes de inspecciones para la llave foránea
     dbDelta($sql_inspecciones);
     dbDelta($sql_cursos);
     dbDelta($sql_pqrs);
     dbDelta($sql_inscripciones_cursos);
-    dbDelta($sql_bomberos);
 }
 ?>

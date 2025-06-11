@@ -31,8 +31,8 @@ if (!defined('ABSPATH')) {
                 </th>
                   <td>
                     <select name="tipo_documento" id="tipo_documento" class="regular-text" required aria-required="true">
-                        <option value="CC" <?php selected($bombero['tipo_documento'], 'CC'); ?>>Cedula</option>
-                        <option value="CE" <?php selected($bombero['tipo_documento'], 'CE'); ?>>Cedula Extranjera</option>
+                        <option value="CC">Cedula</option>
+                        <option value="CE">Cedula Extranjera</option>
                        
                     </select>
                 </td>
@@ -60,10 +60,10 @@ if (!defined('ABSPATH')) {
                         </th>
                           <td>
                     <select name="genero" id="genero" class="regular-text" required aria-required="true">
-                        <option value="Masculino" <?php selected($bombero['genero'], 'Masculino'); ?>>Masculino</option>
-                        <option value="Femenino" <?php selected($bombero['genero'], 'Femenino'); ?>>Femenino</option>
-                        
-                       
+                        <option value="" disabled selected>Seleccione un género</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                        <option value="Otro">Otro</option>
                     </select>
                 </td>
                     </tr>
@@ -101,11 +101,10 @@ if (!defined('ABSPATH')) {
                         </th>
                         <td>
                     <select name="grupo_sanguineo" id="grupo_sanguineo" class="regular-text" required aria-required="true">
-                        <option value="A" <?php selected($bombero['grupo_sanguineo'], 'A'); ?>>A</option>
-                        <option value="B" <?php selected($bombero['tipo_documento'], 'B'); ?>>B</option>
-                        <option value="AB" <?php selected($bombero['tipo_documento'], 'AB'); ?>>AB</option>
-                        <option value="O" <?php selected($bombero['tipo_documento'], 'O'); ?>>O</option>
-                       
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="AB">AB</option>
+                        <option value="O">O</option>
                     </select>
                 </td>
                     </tr> 
@@ -116,10 +115,8 @@ if (!defined('ABSPATH')) {
                         </th>
                         <td>
                     <select name="rh" id="rh" class="regular-text" required aria-required="true">
-                        <option value="+" <?php selected($bombero['rh'], '+'); ?>>+</option>
-                        <option value="-" <?php selected($bombero['rh'], '-'); ?>>-</option>
-                        
-                       
+                        <option value="+">+</option>
+                        <option value="-">-</option>
                     </select>
                 </td>
                     </tr>  
@@ -131,11 +128,10 @@ if (!defined('ABSPATH')) {
                         </th>
                         <td>
                     <select name="rango" id="rango" class="regular-text" required aria-required="true">
-                        <option value="Comandante_Bomberos" <?php selected($bombero['rango'], 'Comandante_Bomberos'); ?>>Comandante Bomberos</option>
-                        <option value="Subcomandante_Bomberos" <?php selected($bombero['rango'], 'Subcomandante_Bomberos'); ?>>Subcomandante Bomberos</option>
-                        <option value="Capitan_Bomberos" <?php selected($bombero['rango'], 'Capitan_Bomberos'); ?>>Capitán Bomberos</option>
-                        <option value="Teniente_Bomberos" <?php selected($bombero['rango'], 'Teniente_Bomberos'); ?>>Teniente Bomberos</option>
-                       
+                        <option value="Comandante_Bomberos">Comandante Bomberos</option>
+                        <option value="Subcomandante_Bomberos">Subcomandante Bomberos</option>
+                        <option value="Capitan_Bomberos">Capitán Bomberos</option>
+                        <option value="Teniente_Bomberos">Teniente Bomberos</option>
                     </select>
                 </td>
                     </tr>  
@@ -146,12 +142,11 @@ if (!defined('ABSPATH')) {
                         </th>
                          <td>
                     <select name="estado" id="estado" class="regular-text" required aria-required="true">
-                        <option value="soltero" <?php selected($bombero['estado'], 'soltero'); ?>>Soltero</option>
-                        <option value="casado" <?php selected($bombero['estado'], 'casado'); ?>>Casado</option>
-                        <option value="separado" <?php selected($bombero['estado'], 'separado'); ?>>Separado</option>
-                        <option value="divorciado" <?php selected($bombero['estado'], 'divorciado'); ?>>Divorciado</option>
-                        <option value="viudo" <?php selected($bombero['estado'], 'viudo'); ?>>Viudo</option>
-                       
+                        <option value="soltero">Soltero</option>
+                        <option value="casado">Casado</option>
+                        <option value="separado">Separado</option>
+                        <option value="divorciado">Divorciado</option>
+                        <option value="viudo">Viudo</option>
                     </select>
                 </td>
                     </tr>       
@@ -169,7 +164,7 @@ if (!defined('ABSPATH')) {
                             <label for="observaciones" >Observaciones</label>
                         </th>
                         <td>
-                             <textarea name="observaciones" id="observaciones" class="regular-text" rows="5"><?php echo esc_textarea($bombero['observaciones'] ?? ''); ?></textarea>
+                             <textarea name="observaciones" id="observaciones" class="regular-text" rows="5"></textarea>
                         </td>
                     </tr>    
 

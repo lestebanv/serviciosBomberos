@@ -44,11 +44,10 @@ if (!defined('ABSPATH')) {
                             <label for="genero">Genero</label>
                         </th>
                           <td>
-                    <select name="genero" id="genero" class="regular-text" value="<?php echo($bombero['genero']);?>"  required aria-required="true">
+                    <select name="genero" id="genero" class="regular-text" required aria-required="true">
                         <option value="Masculino" <?php selected($bombero['genero'], 'Masculino'); ?>>Masculino</option>
                         <option value="Femenino" <?php selected($bombero['genero'], 'Femenino'); ?>>Femenino</option>
-                        
-                       
+                        <option value="Otro" <?php selected($bombero['genero'], 'Otro'); ?>>Otro</option>
                     </select>
                 </td>
                     </tr>
@@ -85,11 +84,11 @@ if (!defined('ABSPATH')) {
                             <label for="grupo_sanguineo">Grupo Sanguineo</label>
                         </th>
                         <td>
-                    <select name="grupo_sanguineo" id="grupo_sanguineo" class="regular-text"  value="<?php echo($bombero['grupo_sanguineo']);?>" required aria-required="true">
+                    <select name="grupo_sanguineo" id="grupo_sanguineo" class="regular-text" required aria-required="true">
                         <option value="A" <?php selected($bombero['grupo_sanguineo'], 'A'); ?>>A</option>
-                        <option value="B" <?php selected($bombero['tipo_documento'], 'B'); ?>>B</option>
-                        <option value="AB" <?php selected($bombero['tipo_documento'], 'AB'); ?>>AB</option>
-                        <option value="O" <?php selected($bombero['tipo_documento'], 'O'); ?>>O</option>
+                        <option value="B" <?php selected($bombero['grupo_sanguineo'], 'B'); ?>>B</option>
+                        <option value="AB" <?php selected($bombero['grupo_sanguineo'], 'AB'); ?>>AB</option>
+                        <option value="O" <?php selected($bombero['grupo_sanguineo'], 'O'); ?>>O</option>
                        
                     </select>
                 </td>
@@ -100,11 +99,9 @@ if (!defined('ABSPATH')) {
                             <label for="rh">RH</label>
                         </th>
                         <td>
-                    <select name="rh" id="rh" class="regular-text"  value="<?php echo($bombero['rh']);?>" required aria-required="true">
+                    <select name="rh" id="rh" class="regular-text" required aria-required="true">
                         <option value="+" <?php selected($bombero['rh'], '+'); ?>>+</option>
                         <option value="-" <?php selected($bombero['rh'], '-'); ?>>-</option>
-                        
-                       
                     </select>
                 </td>
                     </tr>  
@@ -115,12 +112,11 @@ if (!defined('ABSPATH')) {
                             <label for="rango">Rango</label>
                         </th>
                         <td>
-                    <select name="rango" id="rango" class="regular-text" value="<?php echo($bombero['rango']);?>" required aria-required="true">
+                    <select name="rango" id="rango" class="regular-text" required aria-required="true">
                         <option value="Comandante_Bomberos" <?php selected($bombero['rango'], 'Comandante_Bomberos'); ?>>Comandante Bomberos</option>
                         <option value="Subcomandante_Bomberos" <?php selected($bombero['rango'], 'Subcomandante_Bomberos'); ?>>Subcomandante Bomberos</option>
                         <option value="Capitan_Bomberos" <?php selected($bombero['rango'], 'Capitan_Bomberos'); ?>>Capitán Bomberos</option>
                         <option value="Teniente_Bomberos" <?php selected($bombero['rango'], 'Teniente_Bomberos'); ?>>Teniente Bomberos</option>
-                       
                     </select>
                 </td>
                     </tr>  
@@ -130,13 +126,12 @@ if (!defined('ABSPATH')) {
                             <label for="estado">Estado</label>
                         </th>
                          <td>
-                    <select name="estado" id="estado" class="regular-text" value="<?php echo($bombero['estado']);?>"  required aria-required="true">
+                    <select name="estado" id="estado" class="regular-text" required aria-required="true">
                         <option value="soltero" <?php selected($bombero['estado'], 'soltero'); ?>>Soltero</option>
                         <option value="casado" <?php selected($bombero['estado'], 'casado'); ?>>Casado</option>
                         <option value="separado" <?php selected($bombero['estado'], 'separado'); ?>>Separado</option>
                         <option value="divorciado" <?php selected($bombero['estado'], 'divorciado'); ?>>Divorciado</option>
                         <option value="viudo" <?php selected($bombero['estado'], 'viudo'); ?>>Viudo</option>
-                       
                     </select>
                 </td>
                     </tr>       
@@ -154,7 +149,7 @@ if (!defined('ABSPATH')) {
                             <label for="observaciones" >Observaciones</label>
                         </th>
                         <td>
-                             <textarea name="observaciones" id="observaciones" class="regular-text" value="<?php echo($bombero['observaciones']);?>" rows="5"><?php echo esc_textarea($bombero['observaciones'] ?? ''); ?></textarea>
+                             <textarea name="observaciones" id="observaciones" class="regular-text" rows="5"><?php echo esc_textarea($bombero['observaciones'] ?? ''); ?></textarea>
                         </td>
                     </tr>    
 

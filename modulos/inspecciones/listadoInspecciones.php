@@ -11,7 +11,7 @@ if (!defined('ABSPATH'))   exit;
                 
                 <th>Empresa</th>
                 <th>Estado</th>
-                <th>Persona Encargada</th>
+                <th>Contactos</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -24,12 +24,15 @@ if (!defined('ABSPATH'))   exit;
                     </td>
                     <td><strong><?php echo esc_html($inspeccion['estado']); ?></strong><br>
                         Registro: <?php echo esc_html($inspeccion['fecha_registro']); ?><br>
-                        Programada: <?php echo esc_html($inspeccion['fecha_programada']); ?><br>
-                        Certificación: <?php echo esc_html($inspeccion['fecha_expedicion']); ?>
+                        Programada: <?php echo esc_html($inspeccion['fecha_programada'] ?? 'N/P'); ?><br>
+                        Certificación: <?php echo esc_html($inspeccion['fecha_expedicion'] ?? 'N/A'); ?>
                          
                     </td>
-                    <td><?php echo esc_html($inspeccion['nombre_encargado']); ?><br>
-                         Tel: <?php echo esc_html($inspeccion['telefono_encargado']); ?>
+                    <td>
+                        <strong>Encargado:</strong> <?php echo esc_html($inspeccion['nombre_encargado']); ?><br>
+                         Tel: <?php echo esc_html($inspeccion['telefono_encargado']); ?><br><hr>
+                         <strong>Bombero Asignado:</strong><br>
+                         <?php echo !empty($inspeccion['bombero_nombres']) ? esc_html($inspeccion['bombero_nombres'] . ' ' . $inspeccion['bombero_apellidos']) : '<em>Sin Asignar</em>'; ?>
                     </td>
                     <td>
                         <button class="button editar-inspeccion" data-id="<?php echo esc_attr($inspeccion['id_inspeccion']); ?>" data-actualpagina="<?php echo esc_html($actualpagina); ?>">
