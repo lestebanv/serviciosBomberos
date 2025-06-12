@@ -21,15 +21,15 @@ if (!defined('ABSPATH')) {
                     <label for="nombre_encargado">Nombre del encargado de atender la inspección</label>
                 </th>
                 <td>
-                    <input type="text" name="nombre_encargado" id="nombre_encargado" class="regular-text" value="<?php echo esc_attr($inspeccion['nombre_encargado']); ?>" required aria-required="true">
+                    <input type="text" name="nombre_encargado" id="nombre_encargado" class="regular-text" value="<?php echo esc_attr($inspeccion['nombre_encargado']); ?>" required aria-required="true" >
                 </td>
             </tr>
             <tr class="form-field form-required">
                 <th scope="row">
-                    <label for="telefono_encargado"><?php esc_html_e('Teléfono del Encargado', 'bomberos-servicios'); ?></label>
+                    <label for="telefono_encargado">Teléfono del Encargado xxx</label>
                 </th>
                 <td>
-                    <input type="text" name="telefono_encargado" id="telefono_encargado" class="regular-text" value="<?php echo esc_attr($inspeccion['telefono_encargado']); ?>" required aria-required="true">
+                    <input type="text" name="telefono_encargado" id="telefono_encargado" class="regular-text" value="<?php echo esc_attr($inspeccion['telefono_encargado']); ?>" required aria-required="true" >
                 </td>
             </tr>
             <tr class="form-field">
@@ -38,6 +38,14 @@ if (!defined('ABSPATH')) {
                 </th>
                 <td>
                     <input type="date" name="fecha_programada" id="fecha_programada" value="<?php echo esc_attr($inspeccion['fecha_programada'] ?? ''); ?>">
+                    Inspector:<select name="id_inspector_asignado" id="id_inspector_asignado" class="regular-text">
+                        <option value="">-- Sin Asignar --</option>
+                        <?php foreach ($listaBomberos as $bombero): ?>
+                            <option value="<?php echo esc_attr($bombero['id_bombero']); ?>" <?php selected($inspeccion['id_inspector_asignado'], $bombero['id_bombero']); ?> >
+                                <?php echo esc_html($bombero['apellidos'] . ', ' . $bombero['nombres']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </td>
             </tr>
             <tr class="form-field">
@@ -63,8 +71,10 @@ if (!defined('ABSPATH')) {
         </table>
 
         <p class="submit">
-            <input type="submit" class="button button-primary" value="Guardar Cambios">
+            <input type="submit" class="button button-primary" value="Guardar Cambios" name="btnaccion">
+             <input type="submit" class="button button-primary" value="Programar Inspeccion" name="btnaccion">
             <input type="button" class="button button-secondary cancelar-edicion-inspeccion" data-actualpagina="<?php echo esc_attr($actualpagina); ?>" value="Cancelar">
+              
         </p>
     </form>
 </div>

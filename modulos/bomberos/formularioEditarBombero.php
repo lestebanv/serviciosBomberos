@@ -45,10 +45,12 @@ if (!defined('ABSPATH')) {
                         </th>
                           <td>
                     <select name="genero" id="genero" class="regular-text" value="<?php echo($bombero['genero']);?>"  required aria-required="true">
-                        <option value="Masculino" <?php selected($bombero['genero'], 'Masculino'); ?>>Masculino</option>
-                        <option value="Femenino" <?php selected($bombero['genero'], 'Femenino'); ?>>Femenino</option>
                         
-                       
+                    <?php foreach ($generosValidos as $genero):?>
+                    
+                        <option value="<?php echo $genero;?>" <?php selected($bombero['genero'], $genero); ?>> <?php echo $genero;?> </option>
+                        
+                       <?php endforeach;?>
                     </select>
                 </td>
                     </tr>
@@ -86,28 +88,14 @@ if (!defined('ABSPATH')) {
                         </th>
                         <td>
                     <select name="grupo_sanguineo" id="grupo_sanguineo" class="regular-text"  value="<?php echo($bombero['grupo_sanguineo']);?>" required aria-required="true">
-                        <option value="A" <?php selected($bombero['grupo_sanguineo'], 'A'); ?>>A</option>
-                        <option value="B" <?php selected($bombero['tipo_documento'], 'B'); ?>>B</option>
-                        <option value="AB" <?php selected($bombero['tipo_documento'], 'AB'); ?>>AB</option>
-                        <option value="O" <?php selected($bombero['tipo_documento'], 'O'); ?>>O</option>
-                       
+                        <?php foreach ($tiposSangreValidos as $tipo): ?>
+                             <option value="<?php echo $tipo;?>" <?php selected($bombero['grupo_sanguineo'],$tipo); ?>> <?php echo $tipo;?> </option>
+                        <?php endforeach;?>
                     </select>
                 </td>
                     </tr> 
                     
-                     <tr class="form-field form-required">
-                        <th scope="row">
-                            <label for="rh">RH</label>
-                        </th>
-                        <td>
-                    <select name="rh" id="rh" class="regular-text"  value="<?php echo($bombero['rh']);?>" required aria-required="true">
-                        <option value="+" <?php selected($bombero['rh'], '+'); ?>>+</option>
-                        <option value="-" <?php selected($bombero['rh'], '-'); ?>>-</option>
-                        
-                       
-                    </select>
-                </td>
-                    </tr>  
+                   
 
 
                      <tr class="form-field form-required">
@@ -131,12 +119,10 @@ if (!defined('ABSPATH')) {
                         </th>
                          <td>
                     <select name="estado" id="estado" class="regular-text" value="<?php echo($bombero['estado']);?>"  required aria-required="true">
-                        <option value="soltero" <?php selected($bombero['estado'], 'soltero'); ?>>Soltero</option>
-                        <option value="casado" <?php selected($bombero['estado'], 'casado'); ?>>Casado</option>
-                        <option value="separado" <?php selected($bombero['estado'], 'separado'); ?>>Separado</option>
-                        <option value="divorciado" <?php selected($bombero['estado'], 'divorciado'); ?>>Divorciado</option>
-                        <option value="viudo" <?php selected($bombero['estado'], 'viudo'); ?>>Viudo</option>
-                       
+                        
+                    <?php foreach ($estadosValidos as $estado): ?>
+                        <option value="<?php echo $estado;?>" <?php selected($bombero['estado'], $estado); ?>><?php echo $estado;?></option>
+                     <?php endforeach; ?>  
                     </select>
                 </td>
                     </tr>       

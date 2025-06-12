@@ -112,8 +112,10 @@ class ControladorBomberos extends ClaseControladorBaseBomberos
                 "SELECT * FROM {$this->tablaBomberos} WHERE id_bombero = %d",
                 $idBombero
             );
-            $listaBomberos = $wpdb->get_results($strSqlBombero, ARRAY_A);
-
+            
+            $generosValidos=$this->valoresUnicos($this->tablaBomberos,'genero');
+            $tiposSangreValidos=$this->valoresUnicos($this->tablaBomberos,'grupo_sanguineo');
+            $estadosValidos=$this->valoresUnicos($this->tablaBomberos,'estado');
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioEditarBombero.php';
             $html = ob_get_clean();
@@ -185,7 +187,15 @@ class ControladorBomberos extends ClaseControladorBaseBomberos
     public function formularioCreacion($datos)
     {
         try {
-            $actualpagina=$datos['actualpagina'];
+          //  $actualpagina=$datos['actualpagina'];
+
+           $tipoDocumentoValidos=$this->valoresUnicos($this->tablaBomberos,'tipo_documento');
+        
+           $generosValidos=$this->valoresUnicos($this->tablaBomberos,'genero');
+            $tiposSangreValidos=$this->valoresUnicos($this->tablaBomberos,'grupo_sanguineo');
+            $estadosValidos=$this->valoresUnicos($this->tablaBomberos,'estado');
+           
+
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioCrearBombero.php';
             $html = ob_get_clean();
@@ -200,7 +210,7 @@ class ControladorBomberos extends ClaseControladorBaseBomberos
         try {
             global $wpdb;
             $camposObligatorios = ['nombres', 'apellidos', 'tipo_documento', 'numero_documento', 'fecha_nacimiento'
-            , 'genero','direccion','telefono','email','grupo_sanguineo','rh','rango','estado','fecha_ingreso'];
+            , 'genero','direccion','telefono','email','grupo_sanguineo','rango','estado','fecha_ingreso'];
 
             foreach ($camposObligatorios as $campo) {
                 if (empty($datos[$campo])) {
@@ -226,8 +236,7 @@ class ControladorBomberos extends ClaseControladorBaseBomberos
                 'direccion' => $datos['direccion'],
                 'telefono' => $datos['telefono'],
                 'email' => $datos['email'],
-                'grupo_sanguineo' => $datos['grupo_sanguineo'],
-                'rh' => $datos['rh'],
+                'grupo_sanguineo' => $datos['grupo_sanguineo'],                
                 'rango' => $datos['rango'],
                 'estado' => $datos['estado'],
                 'fecha_ingreso' => $datos['fecha_ingreso'],

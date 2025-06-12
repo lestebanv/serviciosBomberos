@@ -37,4 +37,7 @@ jQuery(document).ready(function ($) {
         const formData = 'actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('inspecciones', 'pagina_inicial', formData);
     });
+
+      
+
 });

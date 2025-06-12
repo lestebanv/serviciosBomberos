@@ -24,7 +24,7 @@
                          <?php echo esc_html($bombero['tipo_documento'].'No. '.$bombero['numero_documento']); ?><br>
                           Genero: <?php echo esc_html($bombero['genero']); ?><br>
                           Fecha de nacimiento:<?php echo esc_html($bombero['fecha_nacimiento']); ?><br>
-                         RH:<strong> <?php echo esc_html(' '.$bombero['grupo_sanguineo'].$bombero['rh']); ?></strong><br>                    
+                         RH:<strong> <?php echo esc_html(' '.$bombero['grupo_sanguineo']); ?></strong><br>                    
                     </td>
                     
                     <td>

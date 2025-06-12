@@ -45,7 +45,7 @@ class ControladorPQR extends ClaseControladorBaseBomberos{
     {
         try {
 
-            $this->logInfo("valores unicos de estado de pqr",$this->valoresUnicos($this->tablaPqrs,'estado_solicitud'));
+            
             global $wpdb;
             $elementosPorPagina = 5;
             $actualpagina= $datos['actualpagina'] ?? 1;
