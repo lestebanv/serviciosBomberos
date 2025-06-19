@@ -109,7 +109,7 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
                 $id
             );
             $inspeccion = $wpdb->get_row($sqlInspeccion, ARRAY_A);
-            
+             $estadoValidos=$this->valoresUnicos($this->tablaInspecciones,'estado');
             // Obtener lista de bomberos activos para el desplegable
             $listaBomberos = $wpdb->get_results(
                 "SELECT id_bombero, nombres, apellidos, telefono FROM {$this->tablaBomberos} WHERE estado = 'activo' ORDER BY apellidos ASC, nombres ASC", 

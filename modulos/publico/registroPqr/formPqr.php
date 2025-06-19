@@ -19,11 +19,9 @@
                 <td>
                     <select id="pqr-tipo_solicitud" name="tipo_solicitud" required>
                         <option value="">Seleccione...</option>
-                        <option value="Peticion">Petición</option>
-                        <option value="Queja">Queja</option>
-                        <option value="Reclamo">Reclamo</option>
-                        <option value="Sugerencia">Sugerencia</option>
-                        <option value="Felicitacion">Felicitación</option>
+                       <?php foreach($tipo_solicitudValidos as $tiposolicitud): ?>
+                        <option value="<?php echo $tiposolicitud?>"><?php echo $tiposolicitud?></option>
+                       <?php endforeach; ?>
                     </select>
                 </td>
             </tr>

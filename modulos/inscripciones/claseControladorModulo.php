@@ -138,7 +138,7 @@ class ControladorInscripciones extends ClaseControladorBaseBomberos
                 $idInscripcion
             );
             $inscripcion = $wpdb->get_row($sqlObtenerInscripcion, ARRAY_A);
-
+            
             if (!$inscripcion) {
                 $this->lanzarExcepcion("Inscripción no encontrada.");
             }

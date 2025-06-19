@@ -72,10 +72,10 @@ if (!defined('ABSPATH')) {
                 </th>
                 <td>
                     <select name="estado" id="estado" class="regular-text" required aria-required="true">
-                        <option value="planificado" <?php selected($curso['estado'], 'planificado'); ?>><?php esc_html_e('Planificado', 'bomberos-servicios'); ?></option>
-                        <option value="en_curso" <?php selected($curso['estado'], 'en_curso'); ?>><?php esc_html_e('En Curso', 'bomberos-servicios'); ?></option>
-                        <option value="finalizado" <?php selected($curso['estado'], 'finalizado'); ?>><?php esc_html_e('Finalizado', 'bomberos-servicios'); ?></option>
-                        <option value="cancelado" <?php selected($curso['estado'], 'cancelado'); ?>><?php esc_html_e('Cancelado', 'bomberos-servicios'); ?></option>
+                       <?php foreach ($estadosValidos as $estado): ?>
+                        <option value="<?php echo $estado;?>" <?php selected($curso['estado'], $estado); ?>><?php echo $estado;?></option>
+                     <?php endforeach; ?> 
+                    
                     </select>
                 </td>
             </tr>

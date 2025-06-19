@@ -90,7 +90,7 @@ class ControladorPQR extends ClaseControladorBaseBomberos{
             if (!$pqr) {
                 $this->lanzarExcepcion("PQR no encontrada.");
             }
-
+            $estado_solicitudValidos=$this->valoresUnicos($this->tablaPqrs,'estado_solicitud');    
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioEditarPqr.php';
             $html = ob_get_clean();

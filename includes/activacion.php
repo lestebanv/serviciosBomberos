@@ -60,7 +60,7 @@ function crear_tablas_plugin_bomberos()
                     instructor VARCHAR(100),
                     lugar VARCHAR(255),
                     capacidad_maxima INT(11),
-                    estado ENUM('Planificado', 'En_curso', 'Finalizado', 'Cancelado') NOT NULL DEFAULT 'planificado',
+                    estado ENUM('Planificado', 'En curso', 'Finalizado', 'Cancelado') NOT NULL DEFAULT 'planificado',
                     fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     fecha_actualizacion DATETIME ON UPDATE CURRENT_TIMESTAMP,
                     PRIMARY KEY (id_curso)
@@ -109,7 +109,7 @@ function crear_tablas_plugin_bomberos()
         telefono VARCHAR(20),
         email VARCHAR(100),
         grupo_sanguineo ENUM('A+', 'AB+', 'B+','O+','A-', 'AB-', 'B-','O-') NOT NULL DEFAULT 'O+', 
-        rango VARCHAR(50),
+        rango ENUM('Comandante','Subcomandante','Capitán','Teniente','Subteniente','Sargento','Cabo')NOT NULL DEFAULT 'Cabo',
         estado  ENUM('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
         fecha_ingreso DATE,
         observaciones TEXT,

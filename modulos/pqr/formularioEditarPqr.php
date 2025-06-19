@@ -21,9 +21,10 @@ if (!defined('ABSPATH')) {
                 </th>
                 <td>
                     <select name="estado_solicitud" id="estado_solicitud">
-                        <option value="Registrada" <?php selected($pqr['estado_solicitud'], 'Registrada'); ?>>Registrada</option>
-                        <option value="En Proceso" <?php selected($pqr['estado_solicitud'], 'En Proceso'); ?>>En Proceso</option>
-                        <option value="Cerrada" <?php selected($pqr['estado_solicitud'], 'Cerrada'); ?>>Cerrada</option>
+                        
+                     <?php foreach ($estado_solicitudValidos as $estado_solicitud): ?>
+                             <option value="<?php echo $estado_solicitud;?>" <?php selected($pqr['estado_solicitud'],$estado_solicitud); ?>> <?php echo $estado_solicitud;?> </option>
+                        <?php endforeach;?>
                     </select>
                 </td>
             </tr>

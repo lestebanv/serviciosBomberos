@@ -20,6 +20,7 @@ class ControladorBomberosShortCodeRegistroPqr extends ClaseControladorBaseBomber
     public function ejecutarShortCode()
     {
         try {
+         $tipo_solicitudValidos=$this->valoresUnicos($this->tablaPqrs,'tipo_solicitud');
             ob_start();
             include plugin_dir_path(__FILE__) . 'formPqr.php';
             $html = ob_get_clean();
@@ -56,7 +57,7 @@ class ControladorBomberosShortCodeRegistroPqr extends ClaseControladorBaseBomber
                     return $this->armarRespuesta("El campo '$campo' es obligatorio.", null, false);
                 }
             }
-
+          
             $datosInsertar = [
                 'nombre'         => $datos['nombre'],
                 'telefono'       => $datos['telefono'],
@@ -71,7 +72,12 @@ class ControladorBomberosShortCodeRegistroPqr extends ClaseControladorBaseBomber
             $id = $wpdb->insert_id;
             $sqlPqr=$wpdb->prepare("SELECT * FROM {$this->tablaPqrs} WHERE id = %d", $id);
             $objpqr = $wpdb->get_row($sqlPqr, ARRAY_A);
-            ob_start();
+           $para=$datosInsertar['email'];
+           $asunto='Hola servicio Bomberos';
+           $cuerpo='Esta es una prueba';
+           $this->enviar_correo_gmail_smtp($para,$asunto,$cuerpo);
+           
+           ob_start();
             include plugin_dir_path(__FILE__) . 'confirmarRegistro.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('PQR registrada con éxito', $html);
@@ -79,4 +85,20 @@ class ControladorBomberosShortCodeRegistroPqr extends ClaseControladorBaseBomber
             $this->manejarExcepcion($e, $datos);
         }
     }
+
+
+
+public function enviar_correo_gmail_smtp($to, $subject, $body) {
+    $headers = ['Content-Type: text/html; charset=UTF-8'];
+    $this->logInfo('enviando correo a:'.$to);
+    $enviado = wp_mail($to, $subject, $body, $headers);
+
+    if ($enviado) {
+        $this->logDebug("Correo enviado correctamente a $to");
+    } else {
+        $this->logDebug("Error al enviar el correo a $to");
+    }
+}
+
+
 }

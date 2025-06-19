@@ -92,10 +92,15 @@ class ControladorCursos extends ClaseControladorBaseBomberos
     public function formularioCreacion($datos)
     {
         try {
+
+           
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioCrearCurso.php';
             $html = ob_get_clean();
             return $this->armarRespuesta('Formulario de creación cargado correctamente', $html);
+
+
+
         } catch (Exception $e) {
             $this->manejarExcepcion($e, $datos);
         }
@@ -159,6 +164,7 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             }
             $strSqlInscripciones = $wpdb->prepare("SELECT * FROM {$this->tablaInscripciones} WHERE id_curso = %d", $idCurso);
             $listaInscripciones = $wpdb->get_results($strSqlInscripciones, ARRAY_A);
+            $estadosValidos=$this->valoresUnicos($this->tablaCursos,'estado');
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioEditarCurso.php';
             $html = ob_get_clean();

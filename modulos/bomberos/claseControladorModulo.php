@@ -115,7 +115,9 @@ class ControladorBomberos extends ClaseControladorBaseBomberos
             
             $generosValidos=$this->valoresUnicos($this->tablaBomberos,'genero');
             $tiposSangreValidos=$this->valoresUnicos($this->tablaBomberos,'grupo_sanguineo');
+            $rangoValidos=$this->valoresUnicos($this->tablaBomberos,'rango');
             $estadosValidos=$this->valoresUnicos($this->tablaBomberos,'estado');
+            
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioEditarBombero.php';
             $html = ob_get_clean();
@@ -194,7 +196,7 @@ class ControladorBomberos extends ClaseControladorBaseBomberos
            $generosValidos=$this->valoresUnicos($this->tablaBomberos,'genero');
             $tiposSangreValidos=$this->valoresUnicos($this->tablaBomberos,'grupo_sanguineo');
             $estadosValidos=$this->valoresUnicos($this->tablaBomberos,'estado');
-           
+            $rangoValidos=$this->valoresUnicos($this->tablaBomberos,'rango');
 
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioCrearBombero.php';

@@ -62,9 +62,9 @@ if (!defined('ABSPATH')) {
                 </th>
                 <td>
                     <select name="estado" id="estado" class="regular-text" required aria-required="true">
-                        <option value="Registrada" <?php selected($inspeccion['estado'], 'Registrada'); ?>><?php esc_html_e('Registrada', 'bomberos-servicios'); ?></option>
-                        <option value="En Proceso" <?php selected($inspeccion['estado'], 'En Proceso'); ?>><?php esc_html_e('En Proceso', 'bomberos-servicios'); ?></option>
-                        <option value="Cerrada" <?php selected($inspeccion['estado'], 'Cerrada'); ?>><?php esc_html_e('Cerrada', 'bomberos-servicios'); ?></option>
+                         <?php foreach ($estadoValidos as $estado): ?>
+                        <option value="<?php echo $estado;?>" <?php selected($inspeccion['estado'], $estado); ?>><?php echo $estado;?></option>
+                     <?php endforeach; ?> 
                     </select>
                 </td>
             </tr>

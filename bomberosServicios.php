@@ -167,3 +167,23 @@ function bomberos_manejar_ajax() {
         ]);
     }
 }
+
+
+add_action('phpmailer_init', 'configurarPHPMailer');
+function configurarPHPMailer($phpmailer) {
+    $phpmailer->isSMTP();
+    $phpmailer->Host       = 'smtp.gmail.com';
+    $phpmailer->SMTPAuth   = true;
+    $phpmailer->Port       = 587;
+    $phpmailer->SMTPSecure = 'tls';
+    $phpmailer->Username   = 'luis.alberto.esteban.villamizar@gmail.com';
+    $phpmailer->Password   = 'avms zwzy ualx dgf';
+    $phpmailer->From       = 'luis.alberto.esteban.villamizar@gmail.com';
+    $phpmailer->FromName   = 'Luis';
+
+    // 🔍 Depuración PHPMailer
+    $phpmailer->SMTPDebug = 2; // 1 = errores y mensajes; 2 = todo
+    $phpmailer->Debugoutput = function($str, $level) {
+        error_log("PHPMailer [nivel $level]: $str");
+    };
+}

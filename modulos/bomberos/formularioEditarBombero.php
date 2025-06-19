@@ -104,10 +104,9 @@ if (!defined('ABSPATH')) {
                         </th>
                         <td>
                     <select name="rango" id="rango" class="regular-text" value="<?php echo($bombero['rango']);?>" required aria-required="true">
-                        <option value="Comandante_Bomberos" <?php selected($bombero['rango'], 'Comandante_Bomberos'); ?>>Comandante Bomberos</option>
-                        <option value="Subcomandante_Bomberos" <?php selected($bombero['rango'], 'Subcomandante_Bomberos'); ?>>Subcomandante Bomberos</option>
-                        <option value="Capitan_Bomberos" <?php selected($bombero['rango'], 'Capitan_Bomberos'); ?>>Capitán Bomberos</option>
-                        <option value="Teniente_Bomberos" <?php selected($bombero['rango'], 'Teniente_Bomberos'); ?>>Teniente Bomberos</option>
+                         <?php foreach ($rangoValidos as $rango): ?>
+                             <option value="<?php echo $rango;?>" <?php selected($bombero['rango'],$rango); ?>> <?php echo $rango;?> </option>
+                        <?php endforeach;?>
                        
                     </select>
                 </td>
