@@ -29,18 +29,13 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
         try {
 
             global $wpdb;
-        
+   
 
-        $sql = $wpdb->prepare(
-            "SELECT c.*, (c.capacidad_maxima - COUNT(i.id_inscripcion)) AS cupos_disponibles
-            FROM {$this->tablaCursos} c
-            LEFT JOIN {$this->tablaInscripciones} i ON c.id_curso = i.id_curso AND i.estado_inscripcion = 'confirmada'
-            WHERE (c.estado = 'planificado' OR c.estado = 'en_curso')
-            AND c.fecha_inicio >= CURDATE() 
-            GROUP BY c.id_curso
-            HAVING cupos_disponibles > 0 OR c.capacidad_maxima IS NULL OR c.capacidad_maxima = 0
-            ORDER BY c.fecha_inicio ASC, c.nombre_curso ASC"
-        );
+           $sql = $wpdb->prepare(
+         "SELECT * from {$this->tablaCursos}"
+);
+
+
         
         $cursosDisponibles = $wpdb->get_results($sql, ARRAY_A);
             

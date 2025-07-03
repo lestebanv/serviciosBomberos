@@ -87,6 +87,7 @@ function bomberos_enqueue_scripts($hook)
 add_action('admin_menu', 'bomberos_registrar_menu');
 function bomberos_registrar_menu()
 {
+    // Menú principal
     add_menu_page(
         'Bomberos Servicios',
         'Bomberos Servicios',
@@ -95,6 +96,16 @@ function bomberos_registrar_menu()
         'bomberos_mostrar_pagina_principal',
         'dashicons-shield',
         6
+    );
+
+    // Submenú PHP Info
+    add_submenu_page(
+        'bomberos-servicios',         // Slug del menú principal
+        'PHP Info',                   // Título de la página
+        'PHP Info',                   // Texto en el submenú
+        'manage_options',             // Capacidad requerida
+        'bomberos-phpinfo',           // Slug del submenú
+        'bomberos_mostrar_phpinfo'    // Función callback que muestra phpinfo()
     );
 }
 
@@ -174,16 +185,31 @@ function configurarPHPMailer($phpmailer) {
     $phpmailer->isSMTP();
     $phpmailer->Host       = 'smtp.gmail.com';
     $phpmailer->SMTPAuth   = true;
-    $phpmailer->Port       = 587;
+    $phpmailer->Port       = 465;
     $phpmailer->SMTPSecure = 'tls';
     $phpmailer->Username   = 'luis.alberto.esteban.villamizar@gmail.com';
     $phpmailer->Password   = 'avms zwzy ualx dgf';
     $phpmailer->From       = 'luis.alberto.esteban.villamizar@gmail.com';
     $phpmailer->FromName   = 'Luis';
+}
 
-    // 🔍 Depuración PHPMailer
-    $phpmailer->SMTPDebug = 2; // 1 = errores y mensajes; 2 = todo
-    $phpmailer->Debugoutput = function($str, $level) {
-        error_log("PHPMailer [nivel $level]: $str");
-    };
+
+
+
+function bomberos_mostrar_phpinfo() {
+    echo "hola";
+    echo class_exists('PHPMailer') ? 'PHPMailer está cargado' : 'PHPMailer NO está cargado';
+    if (!current_user_can('manage_options')) {
+        wp_die('No tienes permisos para acceder a esta página.');
+    }
+
+    echo '<div class="wrap"><h1>PHP Info</h1></div>';
+    ob_start();
+    phpinfo();
+    $phpinfo = ob_get_clean();
+
+    // Sanitizamos para evitar que rompa la admin de WP
+    echo '<div style="background:#fff; padding:10px;">';
+    echo $phpinfo;
+    echo '</div>';
 }

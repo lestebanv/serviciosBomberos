@@ -89,6 +89,8 @@ class ControladorBomberosShortCodeRegistroPqr extends ClaseControladorBaseBomber
 
 
 public function enviar_correo_gmail_smtp($to, $subject, $body) {
+
+
     $headers = ['Content-Type: text/html; charset=UTF-8'];
     $this->logInfo('enviando correo a:'.$to);
     $enviado = wp_mail($to, $subject, $body, $headers);

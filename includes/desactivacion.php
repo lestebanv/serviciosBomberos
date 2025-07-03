@@ -15,7 +15,7 @@ function limpiar_plugin_bomberos(){
     $pqrs_table = $wpdb->prefix . 'pqrs';
     $inscripciones_table = $wpdb->prefix . 'inscripciones';
     $bomberos_table = $wpdb->prefix . 'bomberos';
-    // Eliminar las tablas si existen
+    // Eliminar las tablas si existen 
  
     $wpdb->query("DROP TABLE IF EXISTS $inspecciones_table");
     $wpdb->query("DROP TABLE IF EXISTS $bomberos_table");

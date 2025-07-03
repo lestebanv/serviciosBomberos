@@ -16,7 +16,7 @@ class ControladorBomberos extends ClaseControladorBaseBomberos
     {
         parent::__construct();
         global $wpdb;
-        $this->tablaBomberos = $wpdb->prefix . 'Bomberos';
+        $this->tablaBomberos = $wpdb->prefix . 'bomberos';
     }
 
     public function ejecutarFuncionalidad($solicitud)

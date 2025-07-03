@@ -16,11 +16,8 @@ if (!defined('ABSPATH')) {
                 <option value="">-- Seleccionar Curso --</option>
                 <?php foreach ($cursosDisponibles as $curso): ?>
                     <option value="<?php echo esc_attr($curso['id_curso']); ?>">
-                        <?php 
-                        $cupos_texto = ($curso['capacidad_maxima'] > 0) ? sprintf(esc_html__(' (Cupos restantes: %s)', 'bomberos-servicios'), $curso['cupos_disponibles']) : esc_html__(' (Cupos ilimitados)', 'bomberos-servicios');
-                        echo esc_html($curso['nombre_curso']) . ' - ' . esc_html(date_i18n(get_option('date_format'), strtotime($curso['fecha_inicio']))) . esc_html($cupos_texto); 
-                        ?>
-                    </option>
+                        <?php echo esc_attr($curso['nombre_curso']); ?>
+                      </option>
                 <?php endforeach; ?>
             </select>
         </p>
