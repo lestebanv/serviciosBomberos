@@ -67,15 +67,25 @@ class ControladorBomberosShortCodeRegistroPqr extends ClaseControladorBaseBomber
                 'ip_address'     => $_SERVER['REMOTE_ADDR'],
                 'fecha_registro' => current_time('mysql'),
             ];
-            $this->logDebug("desdel shorcode pqr",$datos);
             $result = $wpdb->insert($this->tablaPqrs, $datosInsertar);
             $id = $wpdb->insert_id;
             $sqlPqr=$wpdb->prepare("SELECT * FROM {$this->tablaPqrs} WHERE id = %d", $id);
             $objpqr = $wpdb->get_row($sqlPqr, ARRAY_A);
-           $para=$datosInsertar['email'];
-           $asunto='Hola servicio Bomberos';
-           $cuerpo='Esta es una prueba';
-           $this->enviar_correo_gmail_smtp($para,$asunto,$cuerpo);
+           // armar el contenido del correo
+            $para=$datosInsertar['email'];
+            $asunto='Registro PQR Bomberos Pamplona';
+            $cuerpo='Su PQR se ha registrado con Fecha:'.$objpqr['fecha_registro'].'<br>';
+            $cuerpo= $cuerpo.'Tipo de Solicitud: '.$objpqr['tipo_solicitud'].'<br>';
+            $cuerpo= $cuerpo.'Solicitante: '.$objpqr['nombre'].'<br>';
+            $cuerpo= $cuerpo.'Email: '.$objpqr['email'].'<br>';
+            $cuerpo= $cuerpo.'Telefono: '.$objpqr['telefono'].'<br>';
+            $cuerpo= $cuerpo.'Contenido: '.$objpqr['contenido'].'<br>';
+            $cuerpo= $cuerpo.'<hr>'.'Estaremos atentos para responder lo mas pronto posible';
+            try{
+              $this->enviarCorreoPorGmail($para,$asunto,$cuerpo);
+            }catch (Exception $e) {
+                $this->logError("Error de conexion al enviar el correo");
+            }
            
            ob_start();
             include plugin_dir_path(__FILE__) . 'confirmarRegistro.php';
@@ -88,19 +98,7 @@ class ControladorBomberosShortCodeRegistroPqr extends ClaseControladorBaseBomber
 
 
 
-public function enviar_correo_gmail_smtp($to, $subject, $body) {
 
-
-    $headers = ['Content-Type: text/html; charset=UTF-8'];
-    $this->logInfo('enviando correo a:'.$to);
-    $enviado = wp_mail($to, $subject, $body, $headers);
-
-    if ($enviado) {
-        $this->logDebug("Correo enviado correctamente a $to");
-    } else {
-        $this->logDebug("Error al enviar el correo a $to");
-    }
-}
 
 
 }

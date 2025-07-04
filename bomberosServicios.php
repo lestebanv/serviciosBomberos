@@ -26,6 +26,22 @@ require_once BOMBEROS_PLUGIN_DIR . 'includes/shortcodes.php';
 register_activation_hook(__FILE__, 'activar_plugin_bomberos');
 register_deactivation_hook(__FILE__, 'desactivar_plugin_bomberos');
 
+add_action('plugins_loaded', function () {
+    add_action('phpmailer_init', 'configurarPHPMailer');
+});
+
+function configurarPHPMailer($phpmailer)
+{
+    $phpmailer->isSMTP();
+    $phpmailer->Host       = 'smtp.gmail.com';
+    $phpmailer->SMTPAuth   = true;
+    $phpmailer->Port       = 587;
+    $phpmailer->SMTPSecure = 'tls';
+    $phpmailer->Username   = 'luis.alberto.esteban.villamizar@gmail.com';
+    $phpmailer->Password   = 'ntvk kbaq bfcp zerj';
+    $phpmailer->From       = 'luis.alberto.esteban.villamizar@gmail.com';
+    $phpmailer->FromName   = 'Luis';
+}
 
 // Encolar scripts y estilos para la interfaz de administración
 add_action('admin_enqueue_scripts', 'bomberos_enqueue_scripts');
@@ -83,31 +99,6 @@ function bomberos_enqueue_scripts($hook)
     );
 }
 
-// Agregar menú en el panel de administración
-add_action('admin_menu', 'bomberos_registrar_menu');
-function bomberos_registrar_menu()
-{
-    // Menú principal
-    add_menu_page(
-        'Bomberos Servicios',
-        'Bomberos Servicios',
-        'manage_options',
-        'bomberos-servicios',
-        'bomberos_mostrar_pagina_principal',
-        'dashicons-shield',
-        6
-    );
-
-    // Submenú PHP Info
-    add_submenu_page(
-        'bomberos-servicios',         // Slug del menú principal
-        'PHP Info',                   // Título de la página
-        'PHP Info',                   // Texto en el submenú
-        'manage_options',             // Capacidad requerida
-        'bomberos-phpinfo',           // Slug del submenú
-        'bomberos_mostrar_phpinfo'    // Función callback que muestra phpinfo()
-    );
-}
 
 // Mostrar la página principal
 function bomberos_mostrar_pagina_principal()
@@ -180,21 +171,32 @@ function bomberos_manejar_ajax() {
 }
 
 
-add_action('phpmailer_init', 'configurarPHPMailer');
-function configurarPHPMailer($phpmailer) {
-    $phpmailer->isSMTP();
-    $phpmailer->Host       = 'smtp.gmail.com';
-    $phpmailer->SMTPAuth   = true;
-    $phpmailer->Port       = 465;
-    $phpmailer->SMTPSecure = 'tls';
-    $phpmailer->Username   = 'luis.alberto.esteban.villamizar@gmail.com';
-    $phpmailer->Password   = 'avms zwzy ualx dgf';
-    $phpmailer->From       = 'luis.alberto.esteban.villamizar@gmail.com';
-    $phpmailer->FromName   = 'Luis';
+// Agregar menú en el panel de administración
+add_action('admin_menu', 'bomberos_registrar_menu');
+function bomberos_registrar_menu()
+{
+    // Menú principal
+    add_menu_page(
+        'Bomberos Servicios',
+        'Bomberos Servicios',
+        'manage_options',
+        'bomberos-servicios',
+        'bomberos_mostrar_pagina_principal',
+        'dashicons-shield',
+        6
+    );
+
+    // Submenú PHP Info
+    add_submenu_page(
+        'bomberos-servicios',         // Slug del menú principal
+        'PHP Info',                   // Título de la página
+        'PHP Info',                   // Texto en el submenú
+        'manage_options',             // Capacidad requerida
+        'bomberos-phpinfo',           // Slug del submenú
+        'bomberos_mostrar_phpinfo'    // Función callback que muestra phpinfo()
+    );
+    
 }
-
-
-
 
 function bomberos_mostrar_phpinfo() {
     echo "hola";
@@ -213,3 +215,4 @@ function bomberos_mostrar_phpinfo() {
     echo $phpinfo;
     echo '</div>';
 }
+

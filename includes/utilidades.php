@@ -258,6 +258,18 @@ protected function lanzarExcepcion($mensaje)
         return $enum_values;
 
     }
+    public function enviarCorreoPorGmail($para, $asunto, $mensaje) {
+      $headers = ['Content-Type: text/html; charset=UTF-8'];
+        
+      if (!is_email($para)) {
+            $this->lanzarExcepcion("Direccion de correo no valida");
+        } else {
+            $enviado = wp_mail($para, $asunto, $mensaje, $headers);
+        }
+       if (!$enviado) {
+           $this->lanzarExcepcion("Problemas de conexcion para enviar el correo a:".$para);
+       };
+    }
 }
 
 ?>
