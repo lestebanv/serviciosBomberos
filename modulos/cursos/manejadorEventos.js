@@ -62,4 +62,21 @@ jQuery(document).ready(function($) {
         var formData= 'actualpagina=' + encodeURIComponent($(this).data('actualpagina'));
         BomberosPlugin.enviarPeticionAjax('cursos', 'pagina_inicial', formData);
     });
+
+    // Enviar el nuevo formulario de correo a participantes
+    $(document).on('submit', '#form-correo-participantes', function(e) {
+        e.preventDefault();
+        
+        // Confirmación antes de enviar
+        if (!confirm('¿Estás seguro de que deseas enviar este correo a los destinatarios seleccionados?')) {
+            return;
+        }
+        
+        const formData = $(this).serialize();
+        // Llamamos a una nueva funcionalidad en el controlador de cursos
+        BomberosPlugin.enviarPeticionAjax('cursos', 'enviar_correo_participantes', formData);
+    });
+
+
+
 });

@@ -45,6 +45,10 @@ class ControladorCursos extends ClaseControladorBaseBomberos
                     return $this->actualizarCurso($datos);
                 case 'eliminar_curso':
                     return $this->eliminarCurso($datos);
+                   
+                 case 'enviar_correo_participantes':
+                return $this->enviarCorreoParticipantes($datos);
+             
                 default:
                     $this->lanzarExcepcion("Funcionalidad no encontrada en el modulo cursos " . esc_html($funcionalidad));
             }
@@ -231,4 +235,71 @@ public function eliminarCurso($datos)
             $this->manejarExcepcion($e, $datos);
      }
 }
+
+
+
+public function enviarCorreoParticipantes($datos)
+{
+    try {
+        global $wpdb;
+
+        // Validar datos recibidos del formulario
+        $idCurso = isset($datos['id_curso']) ? (int)$datos['id_curso'] : 0;
+        $destinatario = isset($datos['destinatario_correo']) ? $datos['destinatario_correo'] : '';
+        $mensaje = isset($datos['mensaje_correo']) ? nl2br(stripslashes($datos['mensaje_correo'])) : ''; // nl2br para mantener saltos de línea
+
+        if ($idCurso <= 0 || empty($destinatario) || empty($mensaje)) {
+            $this->lanzarExcepcion("Faltan datos para enviar el correo (ID de curso, destinatario o mensaje).");
+        }
+
+        // Obtener información del curso para el asunto del correo
+        $curso = $wpdb->get_row($wpdb->prepare("SELECT nombre_curso FROM {$this->tablaCursos} WHERE id_curso = %d", $idCurso));
+        if (!$curso) {
+            $this->lanzarExcepcion("Curso no encontrado.");
+        }
+        $asunto = "Comunicado sobre el curso: " . $curso->nombre_curso;
+        
+        $listaEmails = [];
+        // Determinar a quién enviar el correo
+        if ($destinatario === 'todos') {
+            // Obtener todos los correos de los inscritos a este curso
+            $emails = $wpdb->get_col($wpdb->prepare("SELECT email_asistente FROM {$this->tablaInscripciones} WHERE id_curso = %d", $idCurso));
+            if ($emails) {
+                $listaEmails = $emails;
+            }
+        } else {
+            // Es un solo email, validarlo
+            if (is_email($destinatario)) {
+                $listaEmails[] = $destinatario;
+            }
+        }
+
+        if (empty($listaEmails)) {
+            $this->lanzarExcepcion("No se encontraron destinatarios válidos para enviar el correo.");
+        }
+
+        $enviados = 0;
+        $fallidos = 0;
+        // Enviar el correo a cada destinatario
+        foreach ($listaEmails as $email) {
+            try {
+                $this->enviarCorreoPorGmail($email, $asunto, $mensaje);
+                $enviados++;
+            } catch (Exception $e) {
+                $this->logError("Fallo al enviar correo a participante {$email} del curso {$idCurso}: " . $e->getMessage());
+                $fallidos++;
+            }
+        }
+
+        // Devolver una respuesta JSON con un mensaje de éxito, sin recargar la vista.
+        $mensajeRespuesta = "Proceso finalizado. Correos enviados: {$enviados}. Correos fallidos: {$fallidos}.";
+        // No retornamos una vista HTML, solo un mensaje de estado.
+        return $this->armarRespuesta($mensajeRespuesta, ''); 
+
+    } catch (Exception $e) {
+        $this->manejarExcepcion($e, $datos);
+    }
+}
+
+
 }

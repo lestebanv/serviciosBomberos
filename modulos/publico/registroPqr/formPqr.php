@@ -31,8 +31,8 @@
             </tr>
         </table>
 
-        <p class="submit">
+                <div class="submit-container">
             <button type="submit" class="button button-primary">Enviar</button>
-        </p>
+        </div>
     </form>
 </div>

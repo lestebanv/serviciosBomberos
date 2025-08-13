@@ -110,3 +110,48 @@
     75% { content: "......."; }
     100% { content: ""; }
 }
+
+
+
+
+/* Nuevos estilos para los botones submit */
+
+
+#pqr-registro-form {
+    max-width: 600px; /* Opcional: para que no sea demasiado ancho en pantallas grandes */
+    margin: 0 auto;
+}
+
+/* Estilo para el contenedor del botón de envío */
+#pqr-form .submit-container {
+    padding: 0; /* Eliminamos cualquier padding del contenedor */
+    margin-top: 20px;
+}
+
+/* --- LA SOLUCIÓN AL PROBLEMA DEL BOTÓN --- */
+/* Le damos el estilo directamente al botón */
+#pqr-form .submit-container button.button-primary {
+    width: 100%; /* ¡CLAVE! El botón ocupa todo el ancho disponible. */
+    height: auto; /* La altura se ajustará al contenido y al padding. */
+    
+    padding: 12px 20px; /* Aumenta el área clicable verticalmente. */
+    font-size: 16px;    /* Hace el texto un poco más grande y fácil de leer. */
+    font-weight: bold;
+    text-align: center;
+    
+    background-color: #8a2be2; /* Un color morado similar al de la imagen. ¡Puedes cambiarlo! */
+    color: #ffffff; /* Texto en color blanco. */
+    
+    border: none; /* Quitamos cualquier borde feo del navegador. */
+    border-radius: 4px; /* Bordes ligeramente redondeados. */
+    
+    cursor: pointer; /* Muestra la manito para indicar que es clicable. */
+    
+    /* Importante para que el padding no rompa el diseño */
+    box-sizing: border-box; 
+}
+
+/* Opcional: Efecto al pasar el mouse por encima */
+#pqr-form .submit-container button.button-primary:hover {
+    background-color: #7b24cf; /* Un tono ligeramente más oscuro. */
+}

@@ -86,6 +86,64 @@ if (!defined('ABSPATH')) {
         </p>
     </form>
 
+
+
+
+                       <!--Nuevo -->
+ <div id="seccion-correo-participantes" style="margin-top: 30px; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd;">
+        <hr>
+        <h3>Enviar Correo a los Inscritos</h3>
+        <?php if (empty($listaInscripciones)): ?>
+            <p>Aún no hay inscritos en este curso para enviarles correos.</p>
+        <?php else: ?>
+            <form id="form-correo-participantes" method="post">
+                <!-- Campos ocultos para saber a qué curso y página volver -->
+                <input type="hidden" name="id_curso" value="<?php echo esc_attr($curso['id_curso']); ?>">
+                <input type="hidden" name="actualpagina" value="<?php echo esc_attr($actualpagina); ?>">
+                
+                <table class="form-table">
+                    <tbody>
+                        <tr class="form-field">
+                            <th scope="row">
+                                <label for="destinatario_correo">Enviar a:</label>
+                            </th>
+                            <td>
+                                <select name="destinatario_correo" id="destinatario_correo" required>
+                                    <option value="todos">-- Enviar a Todos los Participantes --</option>
+                                    <?php foreach ($listaInscripciones as $persona): ?>
+                                        <option value="<?php echo esc_attr($persona['email_asistente']); ?>">
+                                            <?php echo esc_html($persona['nombre_asistente'] . ' (' . $persona['email_asistente'] . ')'); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="form-field">
+                            <th scope="row">
+                                <label for="mensaje_correo">Mensaje:</label>
+                            </th>
+                            <td>
+                                <textarea name="mensaje_correo" id="mensaje_correo" rows="6" class="large-text" required placeholder="Escriba aquí el mensaje que desea enviar..."></textarea>
+                                <p class="description">Este mensaje se enviará al correo electrónico de los destinatarios seleccionados.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="submit">
+                    <button type="submit" class="button button-primary">Enviar Correo</button>
+                </p>
+            </form>
+        <?php endif; ?>
+    </div>
+
+
+
+
+
+
+
+
+
     <?php if (!$listaInscripciones):?>
            <hr> Aun no hay Inscritos en este curso <hr>
     <?php else:?>

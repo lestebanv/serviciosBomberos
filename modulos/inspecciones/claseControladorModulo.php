@@ -126,36 +126,22 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
     }
 
    
-    public function actualizarInspeccion($datos)
+        public function actualizarInspeccion($datos)
     {
         try {
             global $wpdb;
             $id_inspeccion = (int) $datos['id_inspeccion'];
             $id_inspector_asignado = !empty($datos['id_inspector_asignado']) ? (int)$datos['id_inspector_asignado'] : null;
 
-
-            if ($id_inspector_asignado) {
-                
-                        $datosActualizar = [
-                            'fecha_programada' => !empty($datos['fecha_programada']) ? $datos['fecha_programada'] : null,
-                            'fecha_expedicion' => !empty($datos['fecha_expedicion']) ? $datos['fecha_expedicion'] : null,
-                            'estado' => $datos['estado'],
-                            'nombre_encargado' => $datos['nombre_encargado'], 
-                            'telefono_encargado' => $datos['nombre_encargado'], 
-                            'id_inspector_asignado' => $id_inspector_asignado
-                       ];
-
-                
-                }else{
-                        $datosActualizar = [
-                            'fecha_programada' => !empty($datos['fecha_programada']) ? $datos['fecha_programada'] : null,
-                            'fecha_expedicion' => !empty($datos['fecha_expedicion']) ? $datos['fecha_expedicion'] : null,
-                            'estado' => $datos['estado'],
-                            'nombre_encargado' => $datos['nombre_encargado'], 
-                            'telefono_encargado' => $datos['nombre_encargado'], 
-                        ];
-
-                }
+            // Datos base para actualizar
+            $datosActualizar = [
+                'fecha_programada' => !empty($datos['fecha_programada']) ? $datos['fecha_programada'] : null,
+                'fecha_expedicion' => !empty($datos['fecha_expedicion']) ? $datos['fecha_expedicion'] : null,
+                'estado' => $datos['estado'],
+                'nombre_encargado' => $datos['nombre_encargado'], 
+                'telefono_encargado' => $datos['telefono_encargado'], // CORRECCIÓN: Usabas nombre_encargado aquí por error.
+                'id_inspector_asignado' => $id_inspector_asignado
+            ];
             
             $actualizado = $wpdb->update($this->tablaInspecciones, $datosActualizar, ['id_inspeccion' => $id_inspeccion]);
             
@@ -163,7 +149,51 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
                  $this->lanzarExcepcion("Error al actualizar la inspección.");
             }
             
+            // Correo
+            // Verificamos si el botón presionado fue 'Programar Inspeccion'
+            if (isset($datos['btnaccion']) && $datos['btnaccion'] === 'Programar Inspeccion') {
+                // Recolectamos toda la información necesaria para el correo en una sola consulta
+                $infoCorreoSql = $wpdb->prepare("
+                    SELECT 
+                        i.fecha_programada, i.nombre_encargado, i.telefono_encargado,
+                        e.razon_social, e.email AS email_empresa, e.representante_legal,
+                        CONCAT(b.nombres, ' ', b.apellidos) AS nombre_inspector,
+                        b.telefono AS telefono_inspector
+                    FROM {$this->tablaInspecciones} i
+                    INNER JOIN {$this->tablaEmpresas} e ON i.id_empresa = e.id_empresa
+                    LEFT JOIN {$this->tablaBomberos} b ON i.id_inspector_asignado = b.id_bombero
+                    WHERE i.id_inspeccion = %d
+                ", $id_inspeccion);
+                $infoCorreo = $wpdb->get_row($infoCorreoSql, ARRAY_A);
 
+                if ($infoCorreo && !empty($infoCorreo['email_empresa'])) {
+                    // Preparamos y enviamos el correo
+                    $para = $infoCorreo['email_empresa'];
+                    $asunto = 'Programación de Visita de Inspección - Bomberos Pamplona';
+
+                    $cuerpo = '<h1>Visita de Inspección Programada</h1>';
+                    $cuerpo .= '<p>Estimado(a) ' . esc_html($infoCorreo['representante_legal']) . ',</p>';
+                    $cuerpo .= '<p>Le informamos que su visita de inspección para la empresa <strong>' . esc_html($infoCorreo['razon_social']) . '</strong> ha sido programada con los siguientes detalles:</p>';
+                    $cuerpo .= '<ul>';
+                    $cuerpo .= '<li><strong>Fecha Programada:</strong> ' . esc_html(date_i18n('l, j \d\e F \d\e Y', strtotime($infoCorreo['fecha_programada']))) . '</li>';
+                    $cuerpo .= '<li><strong>Inspector Asignado:</strong> ' . esc_html($infoCorreo['nombre_inspector'] ?? 'No especificado') . '</li>';
+                    $cuerpo .= '<li><strong>Teléfono del Inspector:</strong> ' . esc_html($infoCorreo['telefono_inspector'] ?? 'N/A') . '</li>';
+                    $cuerpo .= '</ul>';
+                    $cuerpo .= '<p>Por favor, asegúrese de que el señor/a <strong>' . esc_html($infoCorreo['nombre_encargado']) . '</strong> (Tel: ' . esc_html($infoCorreo['telefono_encargado']) . ') esté disponible para atender la visita.</p>';
+                    $cuerpo .= '<p>Gracias por su cooperación.</p>';
+                    $cuerpo .= '<hr><p>Cuerpo de Bomberos Voluntarios de Pamplona</p>';
+
+                    try {
+                        $this->enviarCorreoPorGmail($para, $asunto, $cuerpo);
+                    } catch (Exception $e) {
+                        $this->logError("Fallo al enviar correo de programación de inspección a {$para}: " . $e->getMessage());
+                        
+                    }
+                }
+            }
+          
+
+            // Finalmente, devolvemos la lista actualizada
             return $this->listarInspecciones($datos);
        } catch (Exception $e) {
             $this->manejarExcepcion( $e, $datos);

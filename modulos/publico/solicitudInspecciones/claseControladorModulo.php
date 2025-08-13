@@ -121,6 +121,12 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
                 WHERE e.id_empresa = %d AND i.id_inspeccion = %d
             ", $id_empresa, $id_inspeccion);
             $resultado = $wpdb->get_row($strSql, ARRAY_A);
+
+        //Función de Correo
+        $this->_enviarCorreoConfirmacionInspeccion($resultado);
+       
+
+
             ob_start();
             include plugin_dir_path(__FILE__) . 'confirmarRegistro.php';
             $html = ob_get_clean();
@@ -161,6 +167,11 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
             ", $id_empresa, $id_inspeccion);
             $resultado = $wpdb->get_row($strSql, ARRAY_A);
 
+
+            // Funcion enviar correo.
+        $this->_enviarCorreoConfirmacionInspeccion($resultado);
+        
+
             ob_start();
             include plugin_dir_path(__FILE__) . 'confirmarRegistro.php';
             $html = ob_get_clean();
@@ -169,4 +180,43 @@ class ControladorBomberosShortCodeSolicitudInspecciones extends ClaseControlador
             $this->manejarExcepcion($e, $datos);
         }
     }
+
+
+    private function _enviarCorreoConfirmacionInspeccion($datosCorreo)
+    {
+        // Si no tenemos datos, no hacemos nada.
+        if (empty($datosCorreo) || !is_array($datosCorreo)) {
+            return;
+        }
+
+        // 1. Preparamos los datos del correo
+        $para = $datosCorreo['email'];
+        $asunto = 'Confirmación de Solicitud de Inspección - Bomberos Pamplona';
+
+        // 2. Construimos el cuerpo del correo en HTML
+        $cuerpo = '<h1>Solicitud Registrada Exitosamente</h1>';
+        $cuerpo .= '<p>Estimado(a) ' . esc_html($datosCorreo['representante_legal']) . ',</p>';
+        $cuerpo .= '<p>Hemos recibido su solicitud de inspección para la empresa <strong>' . esc_html($datosCorreo['razon_social']) . '</strong> (NIT: ' . esc_html($datosCorreo['nit']) . ') con los siguientes detalles:</p>';
+        $cuerpo .= '<ul>';
+        $cuerpo .= '<li><strong>Fecha de Registro:</strong> ' . esc_html($datosCorreo['fecha_registro']) . '</li>';
+        $cuerpo .= '<li><strong>Persona de Contacto en Sitio:</strong> ' . esc_html($datosCorreo['nombre_encargado']) . '</li>';
+        $cuerpo .= '<li><strong>Teléfono de Contacto:</strong> ' . esc_html($datosCorreo['telefono_encargado']) . '</li>';
+        $cuerpo .= '</ul>';
+        $cuerpo .= '<p>Nuestro equipo se pondrá en contacto con usted próximamente para coordinar la fecha y hora de la visita.</p>';
+        $cuerpo .= '<p>Gracias por utilizar nuestros servicios.</p>';
+        $cuerpo .= '<hr><p>Cuerpo de Bomberos Voluntarios de Pamplona</p>';
+
+        // 3. Enviamos el correo usando el método de la clase base
+        try {
+            $this->enviarCorreoPorGmail($para, $asunto, $cuerpo);
+        } catch (Exception $e) {
+            // Si falla el correo, lo registramos en el log pero no detenemos el proceso
+            
+            $this->logError("Fallo al enviar correo de confirmación de inspección a {$para}: " . $e->getMessage());
+        }
+    }
+
+
+
+
 }
