@@ -70,11 +70,14 @@ if (!defined('ABSPATH')) {
             </tr>
         </table>
 
-        <p class="submit">
-            <input type="submit" class="button button-primary" value="Guardar Cambios" name="btnaccion">
-             <input type="submit" class="button button-primary" value="Programar Inspeccion" name="btnaccion">
-            <input type="button" class="button button-secondary cancelar-edicion-inspeccion" data-actualpagina="<?php echo esc_attr($actualpagina); ?>" value="Cancelar">
-              
+       <p class="submit">
+           
+            <button type="submit" name="btnaccion" value="Guardar Cambios" class="button">Guardar Cambios</button>
+            
+            <!-- Botón para programar y enviar correo. -->
+            <button type="submit" name="btnaccion" value="Programar Inspeccion" class="button button-primary">Programar e Notificar</button>
+
+            <button type="button" class="button button-secondary cancelar-edicion-inspeccion" data-actualpagina="<?php echo esc_attr($actualpagina); ?>">Cancelar</button>
         </p>
     </form>
 </div>

@@ -125,34 +125,35 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
         }
     }
 
-   
-        public function actualizarInspeccion($datos)
+   public function actualizarInspeccion($datos)
     {
         try {
             global $wpdb;
-            $id_inspeccion = (int) $datos['id_inspeccion'];
+            $id_inspeccion = (int) ($datos['id_inspeccion'] ?? 0);
             $id_inspector_asignado = !empty($datos['id_inspector_asignado']) ? (int)$datos['id_inspector_asignado'] : null;
 
-            // Datos base para actualizar
+            // Datos base para actualizar en la base de datos
             $datosActualizar = [
                 'fecha_programada' => !empty($datos['fecha_programada']) ? $datos['fecha_programada'] : null,
                 'fecha_expedicion' => !empty($datos['fecha_expedicion']) ? $datos['fecha_expedicion'] : null,
                 'estado' => $datos['estado'],
                 'nombre_encargado' => $datos['nombre_encargado'], 
-                'telefono_encargado' => $datos['telefono_encargado'], // CORRECCIÓN: Usabas nombre_encargado aquí por error.
+                'telefono_encargado' => $datos['telefono_encargado'], // Corregido para que tome el valor del teléfono
                 'id_inspector_asignado' => $id_inspector_asignado
             ];
             
             $actualizado = $wpdb->update($this->tablaInspecciones, $datosActualizar, ['id_inspeccion' => $id_inspeccion]);
             
+            // Verificamos si la actualización tuvo un error.
             if ($actualizado === false) {
-                 $this->lanzarExcepcion("Error al actualizar la inspección.");
+                 $this->lanzarExcepcion("Error al actualizar la inspección en la base de datos.");
             }
             
-            // Correo
-            // Verificamos si el botón presionado fue 'Programar Inspeccion'
+            // --- LÓGICA DE CORREO AL PROGRAMAR ---
+            // 1. Verificamos si el botón presionado fue el de "Programar Inspeccion"
             if (isset($datos['btnaccion']) && $datos['btnaccion'] === 'Programar Inspeccion') {
-                // Recolectamos toda la información necesaria para el correo en una sola consulta
+                
+                // 2. Recolectamos toda la información necesaria para el correo
                 $infoCorreoSql = $wpdb->prepare("
                     SELECT 
                         i.fecha_programada, i.nombre_encargado, i.telefono_encargado,
@@ -166,7 +167,8 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
                 ", $id_inspeccion);
                 $infoCorreo = $wpdb->get_row($infoCorreoSql, ARRAY_A);
 
-                if ($infoCorreo && !empty($infoCorreo['email_empresa'])) {
+                // 3. Verificamos que tengamos datos y un email válido antes de intentar enviar
+                if ($infoCorreo && !empty($infoCorreo['email_empresa']) && !empty($infoCorreo['fecha_programada'])) {
                     // Preparamos y enviamos el correo
                     $para = $infoCorreo['email_empresa'];
                     $asunto = 'Programación de Visita de Inspección - Bomberos Pamplona';
@@ -187,11 +189,12 @@ class ControladorInspecciones extends ClaseControladorBaseBomberos
                         $this->enviarCorreoPorGmail($para, $asunto, $cuerpo);
                     } catch (Exception $e) {
                         $this->logError("Fallo al enviar correo de programación de inspección a {$para}: " . $e->getMessage());
-                        
                     }
+                } else {
+                    $this->logWarning("No se envió correo de programación para la inspección {$id_inspeccion} por falta de datos (email de empresa o fecha programada).");
                 }
             }
-          
+            // --- FIN DE LÓGICA DE CORREO ---
 
             // Finalmente, devolvemos la lista actualizada
             return $this->listarInspecciones($datos);
