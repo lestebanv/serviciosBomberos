@@ -109,7 +109,7 @@ function crear_tablas_plugin_bomberos()
         telefono VARCHAR(20),
         email VARCHAR(100),
         grupo_sanguineo ENUM('A+', 'AB+', 'B+','O+','A-', 'AB-', 'B-','O-') NOT NULL DEFAULT 'O+', 
-        rango ENUM('Comandante','Subcomandante','Capitán','Teniente','Subteniente','Sargento','Cabo')NOT NULL DEFAULT 'Cabo',
+        rango ENUM('Comandante','Subcomandante','Capitán','Teniente','Subteniente','Sargento','Cabo','Bombero') NOT NULL DEFAULT 'Bombero',
         estado  ENUM('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
         fecha_ingreso DATE,
         observaciones TEXT,
