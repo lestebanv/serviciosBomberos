@@ -4,18 +4,19 @@ class ControladorCursos extends ClaseControladorBaseBomberos
     protected $tablaCursos;
     protected $tablaInscripciones;
     
-    // CORRECCIÓN 1: Agregamos los campos de texto que faltaban (nombre, descripcion, instructor, lugar)
+    // Reglas de sanitización completas para permitir texto
     protected $reglasSanitizacion = [
         'form_data' => [
             'id_curso' => 'int',
-            'nombre_curso' => 'text',    // Faltaba
-            'descripcion' => 'textarea', // Faltaba (usamos textarea o text)
-            'instructor' => 'text',      // Faltaba
-            'lugar' => 'text',           // Faltaba
+            'nombre_curso' => 'text',
+            'descripcion' => 'textarea', 
+            'instructor' => 'text',
+            'lugar' => 'text',
             'duracion_horas' => 'int',
             'capacidad_maxima' => 'int',
             'fecha_inicio' => 'text',
             'estado' => 'text',
+            'actualpagina' => 'int' // Agregado para paginación
         ],
     ];
 
@@ -53,18 +54,15 @@ class ControladorCursos extends ClaseControladorBaseBomberos
                 case 'eliminar_curso':
                     return $this->eliminarCurso($datos);
                 default:
-                    $this->lanzarExcepcion("Funcionalidad no encontrada en el modulo cursos " . esc_html($funcionalidad));
+                    $this->lanzarExcepcion("Funcionalidad no encontrada en el modulo cursos: " . esc_html($funcionalidad));
             }
        } catch (Exception $e) {
-            $this->manejarExcepcion($e, $peticion); // Corregido $solicitud a $peticion o $datos
+            $this->manejarExcepcion($e, $peticion);
         }
     }
 
-    // ... (Mantén tu método listarCursos y formularioCreacion igual) ...
     public function listarCursos($datos)
     {
-        // ... (Tu código existente de listarCursos está bien) ...
-        // Solo asegúrate de copiarlo tal cual lo tenías
         try {
             global $wpdb;
 
@@ -79,6 +77,7 @@ class ControladorCursos extends ClaseControladorBaseBomberos
 
             $totalpaginas = ceil($totalRegistros / $elementosPorPagina);
 
+            // Se agregó id_curso a la selección para evitar errores en índices
             $strSqlCursos = $wpdb->prepare(
                 "SELECT * FROM {$this->tablaCursos} ORDER BY fecha_inicio DESC LIMIT %d OFFSET %d",
                 $elementosPorPagina,
@@ -87,7 +86,7 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             $listaCursos = $wpdb->get_results($strSqlCursos, ARRAY_A);
 
             if ($listaCursos === null) {
-                $this->lanzarExcepcion("Error al cargar la lista de cursos".$wpdb->last_error);
+                $this->lanzarExcepcion("Error al cargar la lista de cursos: ".$wpdb->last_error);
             }
 
             ob_start();
@@ -115,20 +114,19 @@ class ControladorCursos extends ClaseControladorBaseBomberos
     {
         try {
             global $wpdb;
+            
+            // Validación de campos obligatorios
             $camposObligatorios = ['nombre_curso', 'fecha_inicio'];
             foreach ($camposObligatorios as $campo) {
                 if (empty($datos[$campo])) {
-                    // Si fallaba la sanitización, esto saltaba porque el campo llegaba vacío
-                    $this->lanzarExcepcion("El campo '$campo' es obligatorio en insertar curso");
+                    $this->lanzarExcepcion("El campo '$campo' es obligatorio.");
                 }
             }
 
-            // CORRECCIÓN 2: Validación de fecha más robusta (compara solo fechas, ignora horas)
+            // Validación de fecha (sin horas para evitar problemas de zona horaria)
             $fechaInicio = strtotime($datos['fecha_inicio']);
-            $fechaHoy = strtotime(date('Y-m-d')); // Esto toma las 00:00:00 de hoy
+            $fechaHoy = strtotime(date('Y-m-d')); 
             
-            // Si la fecha de inicio es menor estricta a hoy (ayer o antes), falla. 
-            // Si es hoy, pasa.
             if ($fechaInicio < $fechaHoy) {
                 $this->lanzarExcepcion('La fecha de inicio no puede ser anterior a la fecha actual.');
             }
@@ -141,38 +139,27 @@ class ControladorCursos extends ClaseControladorBaseBomberos
                 'instructor' => $datos['instructor'] ?? '',
                 'lugar' => $datos['lugar'] ?? '',
                 'capacidad_maxima' => isset($datos['capacidad_maxima']) ? (int) $datos['capacidad_maxima'] : null,
-                // OJO: Aquí se guarda como 'Planificado'. 
-                // Asegúrate que tu web pública muestre los planificados o cámbialo a 'Abierto'
-                'estado' => 'Planificado', 
+                'estado' => 'Planificado', // Estado inicial por defecto
             ];
 
             $resultado = $wpdb->insert($this->tablaCursos, $datosCurso);
             if ($resultado === false) {
-                $this->lanzarExcepcion("Error al registrar un nuevo curso.");
+                $this->lanzarExcepcion("Error al registrar el curso en la base de datos.");
             }
 
-            // Al insertar, no tenemos 'actualpagina', así que por defecto listará la página 1.
             return $this->listarCursos($datos);
          } catch (Exception $e) {
             $this->manejarExcepcion($e, $datos);
         }
     }
 
-    // ... (El resto de métodos formularioEdicion, actualizarCurso, eliminarCurso déjalos igual) ...
-    public function formularioEdicion($datos) { /* ... Tu código original ... */ return parent::formularioEdicion($datos) ?? $this->formularioEdicionOriginal($datos); }
-    // Nota: Para no pegar todo el archivo gigante, asumo que mantienes el resto igual.
-    // Solo asegurate de que actualizarCurso use la nueva variable $reglasSanitizacion definida arriba.
-    
-    // Pego actualizarCurso y eliminarCurso y formularioEdicion para que tengas el bloque completo si lo necesitas
-    public function formularioEdicionOriginal($datos)
+    public function formularioEdicion($datos)
     {
-        // (Pega aquí el contenido de tu función formularioEdicion original)
-        // Ya que la clase usa las variables globales, solo necesitas asegurarte de que
-        // $reglasSanitizacion al principio de la clase esté corregido.
-         try {
+        try {
             global $wpdb;
             $idCurso = isset($datos['id']) ? (int) $datos['id'] : 0;
-            $actualpagina=$datos['actualpagina'];
+            $actualpagina = isset($datos['actualpagina']) ? $datos['actualpagina'] : 1;
+            
             if ($idCurso <= 0) {
                 $this->lanzarExcepcion('ID inválido para edición del curso');
             }
@@ -183,13 +170,12 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             if (!$curso) {
                 $this->lanzarExcepcion('Curso no encontrado id '.$idCurso);
             }
+            
             $strSqlInscripciones = $wpdb->prepare("SELECT * FROM {$this->tablaInscripciones} WHERE id_curso = %d", $idCurso);
             $listaInscripciones = $wpdb->get_results($strSqlInscripciones, ARRAY_A);
             
-            // CORRECCION PEQUEÑA: Si valoresUnicos no existe en la clase padre, defínelo o hazlo manual
-            // Asumo que existe en ClaseControladorBaseBomberos. Si no, usa un array manual.
-            $estadosValidos = ['Planificado', 'Abierto', 'En Curso', 'Finalizado', 'Cancelado']; 
-            // O usa $this->valoresUnicos($this->tablaCursos,'estado') si funciona.
+            // Definimos los estados válidos manualmente para asegurar consistencia con el ENUM de la BD
+            $estadosValidos = ['Planificado', 'En curso', 'Finalizado', 'Cancelado'];
 
             ob_start();
             include plugin_dir_path(__FILE__) . 'formularioEditarCurso.php';
@@ -199,20 +185,21 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             $this->manejarExcepcion($e, $datos);
         }
     }
-    
-    // Necesitas estos métodos en la clase para que funcione el resto
+
     public function actualizarCurso($datos)
     {
         try {
             global $wpdb;
             $idCurso = isset($datos['id_curso']) ? (int) $datos['id_curso'] : 0;
+            
             if ($idCurso <= 0) {
-                $this->lanzarExcepcion('ID de curso inválido en actualizacion'.$idCurso);
+                $this->lanzarExcepcion('ID de curso inválido en actualización: '.$idCurso);
             }
 
             if (empty($datos['nombre_curso']) || empty($datos['fecha_inicio'])) {
-                $this->lanzarExcepcion("Los campos 'nombre_curso' y 'fecha_inicio' son obligatorios.",$datos);
+                $this->lanzarExcepcion("Los campos 'nombre_curso' y 'fecha_inicio' son obligatorios.", $datos);
             }
+            
             $datosCurso = [
                 'nombre_curso' => $datos['nombre_curso'],
                 'descripcion' => $datos['descripcion'] ?? '',
@@ -221,7 +208,7 @@ class ControladorCursos extends ClaseControladorBaseBomberos
                 'instructor' => $datos['instructor'] ?? '',
                 'lugar' => $datos['lugar'] ?? '',
                 'capacidad_maxima' => isset($datos['capacidad_maxima']) ? (int) $datos['capacidad_maxima'] : null,
-                'estado' => $datos['estado'] ?? 'Planificado', // Unificamos casing
+                'estado' => $datos['estado'] ?? 'Planificado',
             ];
 
             $resultado = $wpdb->update(
@@ -233,13 +220,13 @@ class ControladorCursos extends ClaseControladorBaseBomberos
             );
 
             if ($resultado === false) {
-                $this->lanzarExcepcion("Error al actualizar el curso".$idCurso);
+                $this->lanzarExcepcion("Error al actualizar el curso ID: ".$idCurso);
             }
 
             return $this->listarCursos($datos);
         } catch (Exception $e) {
-                $this->manejarExcepcion($e, $datos);
-            }
+            $this->manejarExcepcion($e, $datos);
+        }
     }
 
     public function eliminarCurso($datos)
@@ -247,16 +234,20 @@ class ControladorCursos extends ClaseControladorBaseBomberos
         try {
             global $wpdb;
             $idCurso = isset($datos['id']) ? (int) $datos['id'] : 0;
+            
             if ($idCurso <= 0) {
-                $this->lanzarExcepcion('ID de curso inválido en eliminacion');
+                $this->lanzarExcepcion('ID de curso inválido para eliminar');
             }
+            
             $resultado = $wpdb->delete($this->tablaCursos, ['id_curso' => $idCurso], ['%d']);
+            
             if ($resultado === false) {
                 $this->lanzarExcepcion('No se pudo eliminar el curso.');
             }
+            
             return $this->listarCursos($datos);
         } catch (Exception $e) {
-                $this->manejarExcepcion($e, $datos);
+            $this->manejarExcepcion($e, $datos);
         }
     }
 }
