@@ -23,7 +23,7 @@ if (!isset($objincripcion)) {
     <div style="margin-top: 20px; text-align: center;">
         <p>✅ Hemos enviado los detalles a tu correo electrónico.</p>
         <div style="background-color: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 0.9em;">
-            <strong>⚠️ Atención:</strong> La hora exacta del curso se confirmará un día antes del evento.
+            <strong>⚠️ Atención:</strong> Estar pendientes a la hora exacta del curso.
         </div>
     </div>
 </div>
