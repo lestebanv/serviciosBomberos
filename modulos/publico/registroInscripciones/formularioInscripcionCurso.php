@@ -10,7 +10,6 @@ if (!defined('ABSPATH')) {
     <div id="bomberos-inscripcion-mensaje" class="bomberos-mensaje-ajax notice" style="display:none; margin-bottom: 15px; padding: 10px;"></div>
 
     <?php 
-    // Si no hay cursos en el array (porque no hay futuros o no hay activos), mostramos aviso.
     if (empty($cursosDisponibles)): 
     ?>
         <div class="notice notice-warning inline">
@@ -26,15 +25,9 @@ if (!defined('ABSPATH')) {
                     
                     <?php foreach ($cursosDisponibles as $curso): ?>
                         <?php 
-                            // Lógica visual para los cupos
-                            // Usamos el valor calculado en el controlador, o asumimos 0 si no existe
                             $cupos = isset($curso['cupos_disponibles']) ? (int)$curso['cupos_disponibles'] : 0;
-                            $capacidad = isset($curso['capacidad_maxima']) ? (int)$curso['capacidad_maxima'] : 0;
-                            
-                            // Determinar si está lleno
                             $estaLleno = ($cupos <= 0);
                             
-                            // Construir el texto de la opción
                             $nombre = esc_html($curso['nombre_curso']);
                             $fecha = date_i18n(get_option('date_format'), strtotime($curso['fecha_inicio']));
                             
@@ -44,11 +37,9 @@ if (!defined('ABSPATH')) {
                                 $textoOpcion = "$fecha - $nombre (Cupos disponibles: $cupos)";
                             }
                         ?>
-                        
                         <option value="<?php echo esc_attr($curso['id_curso']); ?>" <?php echo $estaLleno ? 'disabled' : ''; ?> style="<?php echo $estaLleno ? 'color: #999;' : ''; ?>">
                             <?php echo $textoOpcion; ?>
                         </option>
-                        
                     <?php endforeach; ?>
                 </select>
             </p>
@@ -66,11 +57,6 @@ if (!defined('ABSPATH')) {
             <p>
                 <label for="telefono_asistente"><?php esc_html_e('Teléfono:', 'bomberos-servicios'); ?> <span class="required">*</span></label><br>
                 <input type="tel" name="telefono_asistente" id="telefono_asistente" class="regular-text" required style="width: 100%; max-width: 400px;">
-            </p>
-
-            <p>
-                <label for="notas"><?php esc_html_e('Observaciones (Opcional):', 'bomberos-servicios'); ?></label><br>
-                <textarea name="notas" id="notas" class="regular-text" rows="3" style="width: 100%; max-width: 400px;"></textarea>
             </p>
 
             <p>

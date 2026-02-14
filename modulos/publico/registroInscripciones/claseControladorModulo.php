@@ -6,16 +6,13 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
     private $tablaInscripciones;
     private $tablaCursos;
 
-    // CORRECCIÓN 1: Agregamos los campos del formulario a la lista blanca.
-    // Si no están aquí, la función sanitizarRequest los borra y llegan vacíos.
     protected $reglasSanitizacion = [
         'form_data' => [
             'id_inscripcion' => 'int',
             'id_curso' => 'int',
-            'nombre_asistente' => 'text',    // Agregado
-            'email_asistente' => 'email',    // Agregado
-            'telefono_asistente' => 'text',  // Agregado
-            'notas' => 'textarea',
+            'nombre_asistente' => 'text',
+            'email_asistente' => 'email',
+            'telefono_asistente' => 'text',
             'actualpagina' => 'int'
         ],
     ];
@@ -32,12 +29,9 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
     {
         try {
             global $wpdb;
-            
-            // CORRECCIÓN 2: Filtramos los cursos.
-            // Solo mostramos cursos cuya fecha de inicio sea hoy o futuro (>=)
-            // Y que el estado NO sea 'Cancelado' ni 'Finalizado'.
             $fechaHoy = date('Y-m-d');
             
+            // Traer solo cursos futuros y activos
             $sql = $wpdb->prepare(
                 "SELECT * FROM {$this->tablaCursos} 
                  WHERE fecha_inicio >= %s 
@@ -48,7 +42,7 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
 
             $cursosDisponibles = $wpdb->get_results($sql, ARRAY_A);
             
-            // Opcional: Calcular cupos disponibles para mostrarlos en el select
+            // Calcular cupos
             foreach ($cursosDisponibles as $key => $curso) {
                 $inscritos = $wpdb->get_var($wpdb->prepare(
                     "SELECT COUNT(*) FROM {$this->tablaInscripciones} WHERE id_curso = %d AND estado_inscripcion != 'Cancelada'", 
@@ -97,14 +91,13 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
 
             $idCurso = (int)$datos['id_curso'];
 
-            // 1. Obtener datos del curso (Capacidad y Estado)
             $curso = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->tablaCursos} WHERE id_curso = %d", $idCurso), ARRAY_A);
             
             if (!$curso) {
                 $this->lanzarExcepcion("El curso seleccionado no existe o fue eliminado.");
             }
 
-            // 2. Verificar duplicados (misma persona, mismo curso)
+            // Validar duplicados
             $existe = $wpdb->get_var($wpdb->prepare(
                 "SELECT COUNT(*) FROM {$this->tablaInscripciones} WHERE id_curso = %d AND email_asistente = %s",
                 $idCurso,
@@ -112,20 +105,28 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
             ));
 
             if ($existe > 0) {
-                $this->lanzarExcepcion("Ya existe una inscripción con este correo electrónico para este curso.");
+                 // Aquí retornamos un mensaje bonito en lugar de lanzar excepción técnica
+                 $msgHTML = '<div class="notice notice-warning inline"><p><strong>¡Atención!</strong> Ya existe una inscripción registrada con este correo electrónico para este curso.</p></div>';
+                 return $this->armarRespuesta('Correo ya registrado', $msgHTML);
             }
 
-            // CORRECCIÓN 3: Validar Capacidad Máxima
+            // Validar Capacidad Máxima
             $totalInscritos = $wpdb->get_var($wpdb->prepare(
                 "SELECT COUNT(*) FROM {$this->tablaInscripciones} WHERE id_curso = %d AND estado_inscripcion != 'Cancelada'",
                 $idCurso
             ));
 
             if ($totalInscritos >= $curso['capacidad_maxima']) {
-                $this->lanzarExcepcion("Lo sentimos, no se puede completar el registro. El curso ha alcanzado su capacidad máxima ({$curso['capacidad_maxima']} cupos).");
+                // CORRECCIÓN CLAVE: No usamos lanzarExcepcion para evitar el prefijo de error del sistema.
+                // Retornamos una respuesta "exitosa" (en transporte) pero con mensaje de aviso.
+                $msgHTML = '<div class="notice notice-error inline" style="background-color: #f8d7da; border-left-color: #dc3545; color: #721c24;">
+                                <p><strong>Lo sentimos, cupos agotados.</strong></p>
+                                <p>El curso seleccionado acaba de completar su aforo máximo. Por favor intente seleccionar otro curso o contáctenos.</p>
+                            </div>';
+                return $this->armarRespuesta('Cupos Agotados', $msgHTML);
             }
 
-            // Si pasa todas las validaciones, insertamos
+            // Insertar
             $dataInscripcion = [
                 'id_curso'           => $idCurso,
                 'nombre_asistente'   => $datos['nombre_asistente'],
@@ -138,12 +139,11 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
             $result = $wpdb->insert($this->tablaInscripciones, $dataInscripcion);
             
             if ($result === false) {
-                $this->lanzarExcepcion("Error al guardar en la base de datos.");
+                $this->lanzarExcepcion("Hubo un problema técnico al guardar la inscripción.");
             }
 
             $id = $wpdb->insert_id;
             
-            // Obtenemos datos combinados para el mensaje de respuesta
             $strsql = $wpdb->prepare("
                        SELECT i.*, c.nombre_curso, c.fecha_inicio 
                        FROM {$this->tablaInscripciones} AS i 
@@ -153,11 +153,10 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
             $objincripcion = $wpdb->get_row($strsql, ARRAY_A);
             
             ob_start();
-            // Asegúrate de tener este archivo creado o usa un echo simple si no existe
             if (file_exists(plugin_dir_path(__FILE__) . 'mensajeRespuestaInscripcion.php')) {
                 include plugin_dir_path(__FILE__) . 'mensajeRespuestaInscripcion.php';
             } else {
-                echo "<div class='notice notice-success'><p>Inscripción realizada con éxito al curso " . esc_html($objincripcion['nombre_curso']) . "</p></div>";
+                echo "<div class='notice notice-success inline'><p><strong>¡Inscripción Exitosa!</strong><br>Se ha registrado correctamente en: " . esc_html($objincripcion['nombre_curso']) . "</p></div>";
             }
             $html = ob_get_clean();
             
