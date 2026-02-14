@@ -29,13 +29,17 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
     {
         try {
             global $wpdb;
-            $fechaHoy = date('Y-m-d');
             
-            // Traer solo cursos futuros y activos
+            // CORRECCIÓN IMPORTANTE: Usar current_time para respetar la zona horaria de WordPress (Colombia)
+            // y no la del servidor (que puede ser UTC).
+            $fechaHoy = current_time('Y-m-d');
+            
+            // Traer cursos futuros y activos.
+            // Aseguramos que el estado se compare correctamente ignorando mayúsculas/minúsculas por si acaso.
             $sql = $wpdb->prepare(
                 "SELECT * FROM {$this->tablaCursos} 
                  WHERE fecha_inicio >= %s 
-                 AND estado NOT IN ('Cancelado', 'Finalizado')
+                 AND estado NOT IN ('Cancelado', 'Finalizado', 'cancelado', 'finalizado')
                  ORDER BY fecha_inicio ASC",
                 $fechaHoy
             );
@@ -43,12 +47,14 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
             $cursosDisponibles = $wpdb->get_results($sql, ARRAY_A);
             
             // Calcular cupos
-            foreach ($cursosDisponibles as $key => $curso) {
-                $inscritos = $wpdb->get_var($wpdb->prepare(
-                    "SELECT COUNT(*) FROM {$this->tablaInscripciones} WHERE id_curso = %d AND estado_inscripcion != 'Cancelada'", 
-                    $curso['id_curso']
-                ));
-                $cursosDisponibles[$key]['cupos_disponibles'] = $curso['capacidad_maxima'] - $inscritos;
+            if ($cursosDisponibles) {
+                foreach ($cursosDisponibles as $key => $curso) {
+                    $inscritos = $wpdb->get_var($wpdb->prepare(
+                        "SELECT COUNT(*) FROM {$this->tablaInscripciones} WHERE id_curso = %d AND estado_inscripcion != 'Cancelada'", 
+                        $curso['id_curso']
+                    ));
+                    $cursosDisponibles[$key]['cupos_disponibles'] = $curso['capacidad_maxima'] - $inscritos;
+                }
             }
             
             ob_start();
@@ -60,6 +66,8 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
         }
     }
 
+    // ... (El resto del archivo: ejecutarFuncionalidad y registrarInscripcion déjalos IGUAL, no cambian) ...
+    
     public function ejecutarFuncionalidad($peticion)
     {
         try {
@@ -105,7 +113,6 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
             ));
 
             if ($existe > 0) {
-                 // Aquí retornamos un mensaje bonito en lugar de lanzar excepción técnica
                  $msgHTML = '<div class="notice notice-warning inline"><p><strong>¡Atención!</strong> Ya existe una inscripción registrada con este correo electrónico para este curso.</p></div>';
                  return $this->armarRespuesta('Correo ya registrado', $msgHTML);
             }
@@ -117,11 +124,9 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
             ));
 
             if ($totalInscritos >= $curso['capacidad_maxima']) {
-                // CORRECCIÓN CLAVE: No usamos lanzarExcepcion para evitar el prefijo de error del sistema.
-                // Retornamos una respuesta "exitosa" (en transporte) pero con mensaje de aviso.
                 $msgHTML = '<div class="notice notice-error inline" style="background-color: #f8d7da; border-left-color: #dc3545; color: #721c24;">
                                 <p><strong>Lo sentimos, cupos agotados.</strong></p>
-                                <p>El curso seleccionado acaba de completar su aforo máximo. Por favor intente seleccionar otro curso o contáctenos.</p>
+                                <p>El curso seleccionado acaba de completar su aforo máximo.</p>
                             </div>';
                 return $this->armarRespuesta('Cupos Agotados', $msgHTML);
             }
