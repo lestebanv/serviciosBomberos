@@ -29,11 +29,8 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
     {
         try {
             global $wpdb;
-            
-            // Usar current_time para respetar la zona horaria de WordPress (Colombia)
             $fechaHoy = current_time('Y-m-d');
             
-            // Traer cursos futuros y activos.
             $sql = $wpdb->prepare(
                 "SELECT * FROM {$this->tablaCursos} 
                  WHERE fecha_inicio >= %s 
@@ -44,7 +41,6 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
 
             $cursosDisponibles = $wpdb->get_results($sql, ARRAY_A);
             
-            // Calcular cupos
             if ($cursosDisponibles) {
                 foreach ($cursosDisponibles as $key => $curso) {
                     $inscritos = $wpdb->get_var($wpdb->prepare(
@@ -86,6 +82,8 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
     {
         try {
             global $wpdb;
+            
+            // Validaciones
             $camposObligatorios = ['nombre_asistente', 'email_asistente', 'id_curso'];
             foreach ($camposObligatorios as $campo) {
                 if (empty($datos[$campo])) {
@@ -94,7 +92,6 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
             }
 
             $idCurso = (int)$datos['id_curso'];
-
             $curso = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->tablaCursos} WHERE id_curso = %d", $idCurso), ARRAY_A);
             
             if (!$curso) {
@@ -113,7 +110,7 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
                  return $this->armarRespuesta('Correo ya registrado', $msgHTML);
             }
 
-            // Validar Capacidad Máxima
+            // Validar Capacidad
             $totalInscritos = $wpdb->get_var($wpdb->prepare(
                 "SELECT COUNT(*) FROM {$this->tablaInscripciones} WHERE id_curso = %d AND estado_inscripcion != 'Cancelada'",
                 $idCurso
@@ -145,87 +142,74 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
 
             $id = $wpdb->insert_id;
             
-            // =========================================================================
-            // INICIO LÓGICA DE CORREO
-            // =========================================================================
-
-            // 1. Obtener datos completos del curso (Instructor, Lugar, Nombre, Fecha)
+            // RECUPERAR DATOS COMPLETOS (JOIN)
             $strsql = $wpdb->prepare("
                        SELECT i.*, c.nombre_curso, c.fecha_inicio, c.instructor, c.lugar 
                        FROM {$this->tablaInscripciones} AS i 
                        INNER JOIN {$this->tablaCursos} AS c ON i.id_curso = c.id_curso  
                        WHERE i.id_inscripcion = %d", $id);
             
+            // Usamos $infoCompleta consistentemente
             $infoCompleta = $wpdb->get_row($strsql, ARRAY_A);
             
-            // 2. Formatear datos para el correo
-            $fechaLegible = date_i18n(get_option('date_format'), strtotime($infoCompleta['fecha_inicio']));
-            $nombreInstructor = !empty($infoCompleta['instructor']) ? $infoCompleta['instructor'] : 'Por definir';
-            $lugarCurso = !empty($infoCompleta['lugar']) ? $infoCompleta['lugar'] : 'Instalaciones del Cuerpo de Bomberos';
+            // CORREO
+            if ($infoCompleta) {
+                $fechaLegible = date_i18n(get_option('date_format'), strtotime($infoCompleta['fecha_inicio']));
+                $nombreInstructor = !empty($infoCompleta['instructor']) ? $infoCompleta['instructor'] : 'Por definir';
+                $lugarCurso = !empty($infoCompleta['lugar']) ? $infoCompleta['lugar'] : 'Instalaciones del Cuerpo de Bomberos';
 
-            // 3. Crear el cuerpo del correo (HTML)
-            $asunto = 'Confirmación de Inscripción - ' . $infoCompleta['nombre_curso'];
-            $mensaje = '
-            <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e5e5e5; padding: 20px;">
-                <h2 style="color: #d2232a; text-align: center;">¡Inscripción Exitosa!</h2>
-                <p>Hola <strong>' . esc_html($infoCompleta['nombre_asistente']) . '</strong>,</p>
-                <p>Hemos recibido tu inscripción correctamente. A continuación los detalles:</p>
-                
-                <table style="width: 100%; margin-top: 15px; border-collapse: collapse;">
-                    <tr style="background-color: #f9f9f9;">
-                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Curso:</strong></td>
-                        <td style="padding: 10px; border-bottom: 1px solid #eee;">' . esc_html($infoCompleta['nombre_curso']) . '</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Fecha:</strong></td>
-                        <td style="padding: 10px; border-bottom: 1px solid #eee;">' . $fechaLegible . '</td>
-                    </tr>
-                    <tr style="background-color: #f9f9f9;">
-                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Instructor:</strong></td>
-                        <td style="padding: 10px; border-bottom: 1px solid #eee;">' . esc_html($nombreInstructor) . '</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Lugar:</strong></td>
-                        <td style="padding: 10px; border-bottom: 1px solid #eee;">' . esc_html($lugarCurso) . '</td>
-                    </tr>
-                </table>
+                $asunto = 'Confirmación de Inscripción - ' . $infoCompleta['nombre_curso'];
+                $mensaje = '
+                <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e5e5e5; padding: 20px;">
+                    <h2 style="color: #d2232a; text-align: center;">¡Inscripción Exitosa!</h2>
+                    <p>Hola <strong>' . esc_html($infoCompleta['nombre_asistente']) . '</strong>,</p>
+                    <p>Hemos recibido tu inscripción correctamente. A continuación los detalles:</p>
+                    
+                    <table style="width: 100%; margin-top: 15px; border-collapse: collapse;">
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Curso:</strong></td>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;">' . esc_html($infoCompleta['nombre_curso']) . '</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Fecha:</strong></td>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;">' . $fechaLegible . '</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Instructor:</strong></td>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;">' . esc_html($nombreInstructor) . '</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Lugar:</strong></td>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;">' . esc_html($lugarCurso) . '</td>
+                        </tr>
+                    </table>
 
-                <div style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: center;">
-                    <strong>⚠️ NOTA IMPORTANTE SOBRE LA HORA:</strong><br>
-                    Por favor estar atentos a este medio. Un día antes del evento les confirmaremos la hora exacta de inicio.
-                </div>
+                    <div style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: center;">
+                        <strong>⚠️ NOTA IMPORTANTE SOBRE LA HORA:</strong><br>
+                        Por favor estar atentos a este medio. Un día antes del evento les confirmaremos la hora exacta de inicio.
+                    </div>
 
-                <p style="margin-top: 30px; font-size: 12px; color: #777; text-align: center;">
-                    Cuerpo de Bomberos Voluntarios de Pamplona
-                </p>
-            </div>';
+                    <p style="margin-top: 30px; font-size: 12px; color: #777; text-align: center;">
+                        Cuerpo de Bomberos Voluntarios de Pamplona
+                    </p>
+                </div>';
 
-            // 4. Enviar el correo
-            // Usamos try-catch específico para el correo. Si falla el correo, NO detenemos el registro
-            // pero le avisamos al usuario o lo registramos en el log.
-            try {
-                $this->enviarCorreoPorGmail($infoCompleta['email_asistente'], $asunto, $mensaje);
-            } catch (Exception $mailError) {
-                // Si hay error en el correo, lo registramos en el log del plugin pero no rompemos la ejecución
-                $this->logError("Error enviando correo de inscripción: " . $mailError->getMessage());
-                // Opcional: Si quieres mostrar el error en pantalla, descomenta la siguiente línea:
-                // $mensajeErrorCorreo = "<br><small style='color:red'>(Nota: Hubo un problema enviando el correo de confirmación, pero tu registro es válido)</small>";
+                try {
+                    $this->enviarCorreoPorGmail($infoCompleta['email_asistente'], $asunto, $mensaje);
+                } catch (Exception $mailError) {
+                    $this->logError("Error enviando correo: " . $mailError->getMessage());
+                }
             }
 
-            // =========================================================================
-            // FIN LÓGICA DE CORREO
-            // =========================================================================
-
+            // PASAR DATOS A LA VISTA
+            // Para compatibilidad con tu vista actual, creamos $objincripcion
+            $objincripcion = $infoCompleta;
+            
             ob_start();
             if (file_exists(plugin_dir_path(__FILE__) . 'mensajeRespuestaInscripcion.php')) {
                 include plugin_dir_path(__FILE__) . 'mensajeRespuestaInscripcion.php';
             } else {
-                echo "<div class='notice notice-success inline'>
-                        <p><strong>¡Inscripción Exitosa!</strong><br>
-                        Se ha registrado correctamente en: " . esc_html($infoCompleta['nombre_curso']) . ".
-                        " . ($mensajeErrorCorreo ?? '') . "
-                        </p>
-                      </div>";
+                echo "<div class='notice notice-success inline'><p><strong>¡Inscripción Exitosa!</strong></p></div>";
             }
             $html = ob_get_clean();
             
