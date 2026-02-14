@@ -30,12 +30,10 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
         try {
             global $wpdb;
             
-            // CORRECCIÓN IMPORTANTE: Usar current_time para respetar la zona horaria de WordPress (Colombia)
-            // y no la del servidor (que puede ser UTC).
+            // Usar current_time para respetar la zona horaria de WordPress (Colombia)
             $fechaHoy = current_time('Y-m-d');
             
             // Traer cursos futuros y activos.
-            // Aseguramos que el estado se compare correctamente ignorando mayúsculas/minúsculas por si acaso.
             $sql = $wpdb->prepare(
                 "SELECT * FROM {$this->tablaCursos} 
                  WHERE fecha_inicio >= %s 
@@ -66,8 +64,6 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
         }
     }
 
-    // ... (El resto del archivo: ejecutarFuncionalidad y registrarInscripcion déjalos IGUAL, no cambian) ...
-    
     public function ejecutarFuncionalidad($peticion)
     {
         try {
@@ -149,19 +145,87 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
 
             $id = $wpdb->insert_id;
             
+            // =========================================================================
+            // INICIO LÓGICA DE CORREO
+            // =========================================================================
+
+            // 1. Obtener datos completos del curso (Instructor, Lugar, Nombre, Fecha)
             $strsql = $wpdb->prepare("
-                       SELECT i.*, c.nombre_curso, c.fecha_inicio 
+                       SELECT i.*, c.nombre_curso, c.fecha_inicio, c.instructor, c.lugar 
                        FROM {$this->tablaInscripciones} AS i 
                        INNER JOIN {$this->tablaCursos} AS c ON i.id_curso = c.id_curso  
                        WHERE i.id_inscripcion = %d", $id);
             
-            $objincripcion = $wpdb->get_row($strsql, ARRAY_A);
+            $infoCompleta = $wpdb->get_row($strsql, ARRAY_A);
             
+            // 2. Formatear datos para el correo
+            $fechaLegible = date_i18n(get_option('date_format'), strtotime($infoCompleta['fecha_inicio']));
+            $nombreInstructor = !empty($infoCompleta['instructor']) ? $infoCompleta['instructor'] : 'Por definir';
+            $lugarCurso = !empty($infoCompleta['lugar']) ? $infoCompleta['lugar'] : 'Instalaciones del Cuerpo de Bomberos';
+
+            // 3. Crear el cuerpo del correo (HTML)
+            $asunto = 'Confirmación de Inscripción - ' . $infoCompleta['nombre_curso'];
+            $mensaje = '
+            <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e5e5e5; padding: 20px;">
+                <h2 style="color: #d2232a; text-align: center;">¡Inscripción Exitosa!</h2>
+                <p>Hola <strong>' . esc_html($infoCompleta['nombre_asistente']) . '</strong>,</p>
+                <p>Hemos recibido tu inscripción correctamente. A continuación los detalles:</p>
+                
+                <table style="width: 100%; margin-top: 15px; border-collapse: collapse;">
+                    <tr style="background-color: #f9f9f9;">
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Curso:</strong></td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">' . esc_html($infoCompleta['nombre_curso']) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Fecha:</strong></td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">' . $fechaLegible . '</td>
+                    </tr>
+                    <tr style="background-color: #f9f9f9;">
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Instructor:</strong></td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">' . esc_html($nombreInstructor) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Lugar:</strong></td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">' . esc_html($lugarCurso) . '</td>
+                    </tr>
+                </table>
+
+                <div style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: center;">
+                    <strong>⚠️ NOTA IMPORTANTE SOBRE LA HORA:</strong><br>
+                    Por favor estar atentos a este medio. Un día antes del evento les confirmaremos la hora exacta de inicio.
+                </div>
+
+                <p style="margin-top: 30px; font-size: 12px; color: #777; text-align: center;">
+                    Cuerpo de Bomberos Voluntarios de Pamplona
+                </p>
+            </div>';
+
+            // 4. Enviar el correo
+            // Usamos try-catch específico para el correo. Si falla el correo, NO detenemos el registro
+            // pero le avisamos al usuario o lo registramos en el log.
+            try {
+                $this->enviarCorreoPorGmail($infoCompleta['email_asistente'], $asunto, $mensaje);
+            } catch (Exception $mailError) {
+                // Si hay error en el correo, lo registramos en el log del plugin pero no rompemos la ejecución
+                $this->logError("Error enviando correo de inscripción: " . $mailError->getMessage());
+                // Opcional: Si quieres mostrar el error en pantalla, descomenta la siguiente línea:
+                // $mensajeErrorCorreo = "<br><small style='color:red'>(Nota: Hubo un problema enviando el correo de confirmación, pero tu registro es válido)</small>";
+            }
+
+            // =========================================================================
+            // FIN LÓGICA DE CORREO
+            // =========================================================================
+
             ob_start();
             if (file_exists(plugin_dir_path(__FILE__) . 'mensajeRespuestaInscripcion.php')) {
                 include plugin_dir_path(__FILE__) . 'mensajeRespuestaInscripcion.php';
             } else {
-                echo "<div class='notice notice-success inline'><p><strong>¡Inscripción Exitosa!</strong><br>Se ha registrado correctamente en: " . esc_html($objincripcion['nombre_curso']) . "</p></div>";
+                echo "<div class='notice notice-success inline'>
+                        <p><strong>¡Inscripción Exitosa!</strong><br>
+                        Se ha registrado correctamente en: " . esc_html($infoCompleta['nombre_curso']) . ".
+                        " . ($mensajeErrorCorreo ?? '') . "
+                        </p>
+                      </div>";
             }
             $html = ob_get_clean();
             
