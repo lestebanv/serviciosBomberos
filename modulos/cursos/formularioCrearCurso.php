@@ -24,6 +24,7 @@ if (!defined('ABSPATH')) {
                     <textarea name="descripcion" id="descripcion" class="regular-text" rows="5"></textarea>
                 </td>
             </tr>
+            <!-- FECHA -->
             <tr class="form-field form-required">
                 <th scope="row">
                     <label for="fecha_inicio"><?php esc_html_e('Fecha de Inicio', 'bomberos-servicios'); ?></label>
@@ -32,6 +33,16 @@ if (!defined('ABSPATH')) {
                     <input type="date" name="fecha_inicio" id="fecha_inicio" required aria-required="true">
                 </td>
             </tr>
+            <!-- HORA (Nuevo Campo) -->
+            <tr class="form-field form-required">
+                <th scope="row">
+                    <label for="hora_inicio"><?php esc_html_e('Hora de Inicio', 'bomberos-servicios'); ?></label>
+                </th>
+                <td>
+                    <input type="time" name="hora_inicio" id="hora_inicio" required aria-required="true">
+                </td>
+            </tr>
+
             <tr class="form-field">
                 <th scope="row">
                     <label for="duracion_horas"><?php esc_html_e('Duración (Horas)', 'bomberos-servicios'); ?></label>

@@ -51,20 +51,21 @@ function crear_tablas_plugin_bomberos()
 
 
     
-    $sql_cursos = "CREATE TABLE IF NOT EXISTS $tabla_cursos (
-                    id_curso BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-                    nombre_curso VARCHAR(255) NOT NULL,
-                    descripcion TEXT,
-                    fecha_inicio DATE NOT NULL, -- Renombrado de fecha_prevista a fecha_inicio
-                    duracion_horas INT(11),
-                    instructor VARCHAR(100),
-                    lugar VARCHAR(255),
-                    capacidad_maxima INT(11),
-                    estado ENUM('Planificado', 'En curso', 'Finalizado', 'Cancelado') NOT NULL DEFAULT 'planificado',
-                    fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    fecha_actualizacion DATETIME ON UPDATE CURRENT_TIMESTAMP,
-                    PRIMARY KEY (id_curso)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+$sql_cursos = "CREATE TABLE IF NOT EXISTS $tabla_cursos (
+    id_curso BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    nombre_curso VARCHAR(255) NOT NULL,
+    descripcion TEXT,
+    fecha_inicio DATE NOT NULL,
+    hora_inicio TIME DEFAULT '08:00:00',  /* <--- AGREGAR ESTA LÍNEA */
+    duracion_horas INT(11),
+    instructor VARCHAR(100),
+    lugar VARCHAR(255),
+    capacidad_maxima INT(11),
+    estado ENUM('Planificado', 'En curso', 'Finalizado', 'Cancelado') NOT NULL DEFAULT 'planificado',
+    fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_curso)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
         
     $sql_inscripciones_cursos = "CREATE TABLE IF NOT EXISTS $tabla_inscripciones_cursos (
         id_inscripcion BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,

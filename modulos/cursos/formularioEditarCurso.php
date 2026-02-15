@@ -26,6 +26,7 @@ if (!defined('ABSPATH')) {
                     <textarea name="descripcion" id="descripcion" class="regular-text" rows="5"><?php echo esc_textarea($curso['descripcion']); ?></textarea>
                 </td>
             </tr>
+            <!-- FECHA -->
             <tr class="form-field form-required">
                 <th scope="row">
                     <label for="fecha_inicio">Fecha de Inicio</label>
@@ -34,6 +35,16 @@ if (!defined('ABSPATH')) {
                     <input type="date" name="fecha_inicio" id="fecha_inicio" value="<?php echo esc_attr($curso['fecha_inicio']); ?>" required aria-required="true">
                 </td>
             </tr>
+            <!-- HORA (Nuevo Campo) -->
+            <tr class="form-field form-required">
+                <th scope="row">
+                    <label for="hora_inicio">Hora de Inicio</label>
+                </th>
+                <td>
+                    <input type="time" name="hora_inicio" id="hora_inicio" value="<?php echo esc_attr($curso['hora_inicio'] ?? '08:00'); ?>" required aria-required="true">
+                </td>
+            </tr>
+
             <tr class="form-field">
                 <th scope="row">
                     <label for="duracion_horas">Duración (Horas)</label>
@@ -86,18 +97,14 @@ if (!defined('ABSPATH')) {
         </p>
     </form>
 
-
-
-
-                       <!--Nuevo -->
- <div id="seccion-correo-participantes" style="margin-top: 30px; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd;">
+    <!-- ... (El resto del archivo se mantiene igual: sección de correos y tabla de inscritos) ... -->
+    <div id="seccion-correo-participantes" style="margin-top: 30px; padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd;">
         <hr>
         <h3>Enviar Correo a los Inscritos</h3>
         <?php if (empty($listaInscripciones)): ?>
             <p>Aún no hay inscritos en este curso para enviarles correos.</p>
         <?php else: ?>
             <form id="form-correo-participantes" method="post">
-                <!-- Campos ocultos para saber a qué curso y página volver -->
                 <input type="hidden" name="id_curso" value="<?php echo esc_attr($curso['id_curso']); ?>">
                 <input type="hidden" name="actualpagina" value="<?php echo esc_attr($actualpagina); ?>">
                 
@@ -135,14 +142,6 @@ if (!defined('ABSPATH')) {
             </form>
         <?php endif; ?>
     </div>
-
-
-
-
-
-
-
-
 
     <?php if (!$listaInscripciones):?>
            <hr> Aun no hay Inscritos en este curso <hr>

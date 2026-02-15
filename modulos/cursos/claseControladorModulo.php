@@ -3,15 +3,16 @@ class ControladorCursos extends ClaseControladorBaseBomberos
 {
     protected $tablaCursos;
     protected $tablaInscripciones;
-    protected $reglasSanitizacion = [
-        'form_data' => [
-            'id_curso' => 'int',
-            'duracion_horas' => 'int',
-            'capacidad_maxima' => 'int',
-            'fecha_inicio' => 'text',
-            'estado' => 'text',
-        ],
-    ];
+   protected $reglasSanitizacion = [
+    'form_data' => [
+        'id_curso' => 'int',
+        'duracion_horas' => 'int',
+        'capacidad_maxima' => 'int',
+        'fecha_inicio' => 'text',
+        'hora_inicio' => 'text', // <--- AGREGAR ESTO
+        'estado' => 'text',
+    ],
+];
 
     public function __construct()
     {
@@ -131,6 +132,7 @@ class ControladorCursos extends ClaseControladorBaseBomberos
                 'nombre_curso' => $datos['nombre_curso'],
                 'descripcion' => $datos['descripcion'] ?? '',
                 'fecha_inicio' => $datos['fecha_inicio'],
+                'hora_inicio' => $datos['hora_inicio'] ?? '08:00',
                 'duracion_horas' => isset($datos['duracion_horas']) ? (int) $datos['duracion_horas'] : null,
                 'instructor' => $datos['instructor'] ?? '',
                 'lugar' => $datos['lugar'] ?? '',
@@ -194,6 +196,7 @@ public function actualizarCurso($datos)
             'nombre_curso' => $datos['nombre_curso'],
             'descripcion' => $datos['descripcion'] ?? '',
             'fecha_inicio' => $datos['fecha_inicio'],
+            'hora_inicio' => $datos['hora_inicio'] ?? '08:00',
             'duracion_horas' => isset($datos['duracion_horas']) ? (int) $datos['duracion_horas'] : null,
             'instructor' => $datos['instructor'] ?? '',
             'lugar' => $datos['lugar'] ?? '',
