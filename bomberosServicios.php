@@ -38,7 +38,7 @@ function configurarPHPMailer($phpmailer)
     $phpmailer->Port       = 587;
     $phpmailer->SMTPSecure = 'tls';
     $phpmailer->Username   = 'luis.alberto.esteban.villamizar@gmail.com';
-    $phpmailer->Password   = 'ntvk kbaq bfcp zerj';
+    $phpmailer->Password   = 'ntvkkbaqbfcpzerj';
     $phpmailer->From       = 'luis.alberto.esteban.villamizar@gmail.com';
     $phpmailer->FromName   = 'Luis';
 }
