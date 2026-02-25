@@ -35,12 +35,12 @@ function configurarPHPMailer($phpmailer)
     $phpmailer->isSMTP();
     $phpmailer->Host       = 'smtp.gmail.com';
     $phpmailer->SMTPAuth   = true;
-    $phpmailer->Port       = 587;
-    $phpmailer->SMTPSecure = 'tls';
-    $phpmailer->Username   = 'luis.alberto.esteban.villamizar@gmail.com';
-    $phpmailer->Password   = 'ntvkkbaqbfcpzerj';
-    $phpmailer->From       = 'luis.alberto.esteban.villamizar@gmail.com';
-    $phpmailer->FromName   = 'Luis';
+    $phpmailer->Port       = 465;# Antes era 587, pero para TLS es 465
+    $phpmailer->SMTPSecure = 'ssl';#Antes era tls pero para SSL es ssl
+    $phpmailer->Username   = 'cuerpobomberospamplona@gmail.com';
+    $phpmailer->Password   = 'otsl igdm jxrh usrl';
+    $phpmailer->From       = 'cuerpobomberospamplona@gmail.com';
+    $phpmailer->FromName   = 'Bomberos Pamplona';
 }
 
 // Encolar scripts y estilos para la interfaz de administración
