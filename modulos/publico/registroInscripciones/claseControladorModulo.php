@@ -143,7 +143,7 @@ class ControladorBomberosShortCodeRegistroInscripciones extends ClaseControlador
                 $cuerpo = '<h1>¡Inscripción Confirmada!</h1>';
                 $cuerpo .= '<p>Hola <strong>' . esc_html($objincripcion['nombre_asistente']) . '</strong>,</p>';
                 $cuerpo .= '<p>Tu inscripción al siguiente curso ha sido registrada con éxito:</p>';
-                $cuerpo .= '<h2 style="color:#8a2be2;">' . esc_html($objincripcion['nombre_curso']) . '</h2>';
+                $cuerpo .= '<h2 style="color:#cc0000;">' . esc_html($objincripcion['nombre_curso']) . '</h2>';
                 $cuerpo .= '<ul>';
                 $cuerpo .= '<li><strong>Fecha de Inicio:</strong> ' . esc_html($fechaFormateada) . '</li>';
                 $cuerpo .= '<li><strong>Hora de Inicio:</strong> ' . esc_html($horaFormateada) . '</li>'; // Hora agregada
