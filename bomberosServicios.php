@@ -33,13 +33,13 @@ add_action('plugins_loaded', function () {
 function configurarPHPMailer($phpmailer)
 {
     $phpmailer->isSMTP();
-    $phpmailer->Host       = 'smtp.gmail.com';
+    $phpmailer->Host       = '';
     $phpmailer->SMTPAuth   = true;
-    $phpmailer->Port       = 465;# Antes era 587, pero para TLS es 465
-    $phpmailer->SMTPSecure = 'ssl';#Antes era tls pero para SSL es ssl
-    $phpmailer->Username   = 'cuerpobomberospamplona@gmail.com';
-    $phpmailer->Password   = 'otsl igdm jxrh usrl';
-    $phpmailer->From       = 'cuerpobomberospamplona@gmail.com';
+    $phpmailer->Port       = 0;
+    $phpmailer->SMTPSecure = '';
+    $phpmailer->Username   = '';
+    $phpmailer->Password   = '';
+    $phpmailer->From       = '';
     $phpmailer->FromName   = 'Bomberos Pamplona';
 }
 
