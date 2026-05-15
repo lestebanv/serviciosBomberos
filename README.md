@@ -209,8 +209,6 @@ Este proyecto está bajo la licencia **MIT**.
 
 ---
 
-<p align="center">Hecho con ❤️ para la Comunidad de Servicios de Emergencia</p>
 
-<p align="center">
   <a href="#">⬆️ Volver Arriba</a>
 </p>
