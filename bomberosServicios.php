@@ -33,14 +33,14 @@ add_action('plugins_loaded', function () {
 function configurarPHPMailer($phpmailer)
 {
     $phpmailer->isSMTP();
-    $phpmailer->Host       = 'smtp.gmail.com';
+    $phpmailer->Host       = '';
     $phpmailer->SMTPAuth   = true;
-    $phpmailer->Port       = 587;
-    $phpmailer->SMTPSecure = 'tls';
-    $phpmailer->Username   = 'luis.alberto.esteban.villamizar@gmail.com';
-    $phpmailer->Password   = 'ntvk kbaq bfcp zerj';
-    $phpmailer->From       = 'luis.alberto.esteban.villamizar@gmail.com';
-    $phpmailer->FromName   = 'Luis';
+    $phpmailer->Port       = ;
+    $phpmailer->SMTPSecure = '';
+    $phpmailer->Username   = '';
+    $phpmailer->Password   = '';
+    $phpmailer->From       = '';
+    $phpmailer->FromName   = '';
 }
 
 // Encolar scripts y estilos para la interfaz de administración
