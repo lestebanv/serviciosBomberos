@@ -2,45 +2,47 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/lestebanv/serviciosBomberos?style=for-the-badge&logo=github) ![GitHub forks](https://img.shields.io/github/forks/lestebanv/serviciosBomberos?style=for-the-badge&logo=github) ![GitHub issues](https://img.shields.io/github/issues/lestebanv/serviciosBomberos?style=for-the-badge&logo=github)
 
-## 📑 Table of Contents
+## 📑 Tabla de Contenido
 
-- [Description](#description)
-- [Quick Start](#quick-start)
-- [Screenshots](#screenshots)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
+- [Descripción](#descripción)
+- [Inicio Rápido](#inicio-rápido)
+- [Capturas de Pantalla](#capturas-de-pantalla)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Contribuciones](#contribuciones)
 
-## 📝 Description
+## 📝 Descripción
 
-serviciosBomberos is a specialized WordPress plugin designed to modernize and streamline the service request process for fire departments. It serves as a digital bridge between the fire station and the community, offering a dedicated platform for businesses to request mandatory technical inspections and for citizens to enroll in professional safety training programs. By centralizing these essential services within an easy-to-use WordPress interface, the plugin enhances organizational efficiency, improves response times for administrative tasks, and ensures that vital safety compliance and educational initiatives are more accessible to the public.
+serviciosBomberos es un plugin especializado para WordPress diseñado para modernizar y optimizar el proceso de solicitud de servicios en los cuerpos de bomberos. Funciona como un puente digital entre la estación de bomberos y la comunidad, ofreciendo una plataforma dedicada para que las empresas soliciten inspecciones técnicas obligatorias y para que los ciudadanos se inscriban en programas profesionales de capacitación en seguridad.
 
-## ⚡ Quick Start
+Al centralizar estos servicios esenciales dentro de una interfaz fácil de usar en WordPress, el plugin mejora la eficiencia organizacional, agiliza los tiempos de respuesta en tareas administrativas y garantiza que las iniciativas de cumplimiento de seguridad y formación educativa sean más accesibles para el público.
+
+## ⚡ Inicio Rápido
 
 ```bash
 
-# Clone the repository
+# Clonar el repositorio
 git clone https://github.com/lestebanv/serviciosBomberos.git
 
-# Install dependencies and run
+# Instalar dependencias y ejecutar
 
-# (See Development Setup below)
+# (Ver configuración de desarrollo más abajo)
 ```
 
-## 📸 Screenshots
+## 📸 Capturas de Pantalla
 
-> **Tip:** You can auto-generate a beautiful project mockup image using the **Screenshot** button above!
+> **Tip:** Puedes generar automáticamente una imagen profesional del proyecto usando el botón **Screenshot** de arriba.
 
 <p align="center">
-  <img src="https://via.placeholder.com/800x400?text=Main+Application+View" alt="Main Application View" width="80%"/>
+  <img src="https://via.placeholder.com/800x400?text=Vista+Principal+de+la+Aplicacion" alt="Vista Principal de la Aplicación" width="80%"/>
 </p>
 
 <p align="center">
-  <img src="https://via.placeholder.com/800x400?text=Feature+Showcase" alt="Feature Showcase" width="80%"/>
+  <img src="https://via.placeholder.com/800x400?text=Demostracion+de+Funciones" alt="Demostración de Funciones" width="80%"/>
 </p>
 
-## 📁 Project Structure
+## 📁 Estructura del Proyecto
 
-```
+```plaintext
 .
 ├── Requerimientos pendientes.txt
 ├── assets
@@ -113,13 +115,29 @@ git clone https://github.com/lestebanv/serviciosBomberos.git
             └── manejadorEventos.js
 ```
 
-## 👥 Contributing
+## 👥 Contribuciones
 
-Contributions are welcome! Here's how you can help:
+¡Las contribuciones son bienvenidas! Así puedes ayudar:
 
-1. **Fork** the repository
-2. **Clone** your fork: `git clone https://github.com/lestebanv/serviciosBomberos.git`
-3. **Create** a new branch: `git checkout -b feature/your-feature`
-4. **Commit** your changes: `git commit -am 'Add some feature'`
-5. **Push** to your branch: `git push origin feature/your-feature`
-6. **Open** a pull request
+1. Haz un **Fork** del repositorio
+2. Clona tu fork:
+   ```bash
+   git clone https://github.com/lestebanv/serviciosBomberos.git
+   ```
+
+3. Crea una nueva rama:
+   ```bash
+   git checkout -b feature/tu-funcionalidad
+   ```
+
+4. Guarda tus cambios:
+   ```bash
+   git commit -am 'Agregar nueva funcionalidad'
+   ```
+
+5. Sube tus cambios:
+   ```bash
+   git push origin feature/tu-funcionalidad
+   ```
+
+6. Abre un **Pull Request**
